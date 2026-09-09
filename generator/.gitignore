@@ -1,0 +1,17 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/webgpu-headers-d_generator
+webgpu-headers-d_generator.so
+webgpu-headers-d_generator.dylib
+webgpu-headers-d_generator.dll
+libwebgpu-headers-d_generator.a
+webgpu-headers-d_generator.a
+webgpu-headers-d_generator.lib
+webgpu-headers-d_generator-test-*
+*.exe
+*.pdb
+*.o
+*.obj
+*.lst

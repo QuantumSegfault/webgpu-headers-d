@@ -1,0 +1,8 @@
+{
+  "description": "A minimal D application.",
+  "license": "proprietary",
+  "authors": ["Demetrius Kanios"],
+  "copyright": "Copyright © 2026, Demetrius Kanios",
+  "name": "generator",
+  "dependencies": { "jsoniopipe": "*", "iopipe": "*", "io": "*" }
+}

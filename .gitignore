@@ -1,0 +1,17 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/webgpu-headers-d
+webgpu-headers-d.so
+webgpu-headers-d.dylib
+webgpu-headers-d.dll
+libwebgpu-headers-d.a
+webgpu-headers-d.a
+webgpu-headers-d.lib
+webgpu-headers-d-test-*
+*.exe
+*.pdb
+*.o
+*.obj
+*.lst
