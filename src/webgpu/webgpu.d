@@ -339,11 +339,10 @@ enum ErrorType : uint {
 enum FeatureLevel : uint {
     /// Indicates no value is passed for this argument. See @ref SentinelValues.
     undefined = 0,
-    /// \"Compatibility\" profile which can be supported on OpenGL ES 3.1 and
+    /// "Compatibility" profile which can be supported on OpenGL ES 3.1 and
     /// D3D11.
     compatibility = 1,
-    /// \"Core\" profile which can be supported on Vulkan/Metal/D3D12 (at
-    /// least).
+    /// "Core" profile which can be supported on Vulkan/Metal/D3D12 (at least).
     core = 2,
 }
 
@@ -1254,86 +1253,1048 @@ void getInstanceFeatures() {}
 void getInstanceLimits() {}
 void hasInstanceFeature() {}
 
-struct AdapterInfo {}
-struct BindGroupDescriptor {}
-struct BindGroupEntry {}
-struct BindGroupLayoutDescriptor {}
-struct BindGroupLayoutEntry {}
-struct BlendComponent {}
-struct BlendState {}
-struct BufferBindingLayout {}
-struct BufferDescriptor {}
-struct Color {}
-struct ColorTargetState {}
-struct CommandBufferDescriptor {}
-struct CommandEncoderDescriptor {}
-struct CompatibilityModeLimits {}
-struct CompilationInfo {}
-struct CompilationMessage {}
-struct ComputePassDescriptor {}
-struct ComputePipelineDescriptor {}
-struct ComputeState {}
-struct ConstantEntry {}
-struct DepthStencilState {}
-struct DeviceDescriptor {}
-struct Extent3D {}
-struct ExternalTextureBindingEntry {}
-struct ExternalTextureBindingLayout {}
-struct FragmentState {}
-struct Future {}
-struct FutureWaitInfo {}
-struct InstanceDescriptor {}
-struct InstanceLimits {}
-struct Limits {}
-struct MultisampleState {}
-struct Origin3D {}
-struct PassTimestampWrites {}
-struct PipelineLayoutDescriptor {}
-struct PrimitiveState {}
-struct QuerySetDescriptor {}
-struct QueueDescriptor {}
-struct RenderBundleDescriptor {}
-struct RenderBundleEncoderDescriptor {}
-struct RenderPassColorAttachment {}
-struct RenderPassDepthStencilAttachment {}
-struct RenderPassDescriptor {}
-struct RenderPassMaxDrawCount {}
-struct RenderPipelineDescriptor {}
-struct RequestAdapterOptions {}
-struct RequestAdapterWebXROptions {}
-struct SamplerBindingLayout {}
-struct SamplerDescriptor {}
-struct ShaderModuleDescriptor {}
-struct ShaderSourceSPIRV {}
-struct ShaderSourceWGSL {}
-struct StencilFaceState {}
-struct StorageTextureBindingLayout {}
-struct SupportedFeatures {}
-struct SupportedInstanceFeatures {}
-struct SupportedWGSLLanguageFeatures {}
-struct SurfaceCapabilities {}
-struct SurfaceColorManagement {}
-struct SurfaceConfiguration {}
-struct SurfaceDescriptor {}
-struct SurfaceSourceAndroidNativeWindow {}
-struct SurfaceSourceMetalLayer {}
-struct SurfaceSourceWaylandSurface {}
-struct SurfaceSourceWindowsHWND {}
-struct SurfaceSourceXCBWindow {}
-struct SurfaceSourceXlibWindow {}
-struct SurfaceTexture {}
-struct TexelCopyBufferInfo {}
-struct TexelCopyBufferLayout {}
-struct TexelCopyTextureInfo {}
-struct TextureBindingLayout {}
-struct TextureBindingViewDimension {}
-struct TextureComponentSwizzle {}
-struct TextureComponentSwizzleDescriptor {}
-struct TextureDescriptor {}
-struct TextureViewDescriptor {}
-struct VertexAttribute {}
-struct VertexBufferLayout {}
-struct VertexState {}
+/// TODO
+extern(C) struct AdapterInfo {
+    /// TODO
+    StringView vendor;
+    /// TODO
+    StringView architecture;
+    /// TODO
+    StringView device;
+    /// TODO
+    StringView description;
+    /// TODO
+    BackendType backendType;
+    /// TODO
+    AdapterType adapterType;
+    /// TODO
+    uint vendorID;
+    /// TODO
+    uint deviceID;
+    /// TODO
+    uint subgroupMinSize;
+    /// TODO
+    uint subgroupMaxSize;
+}
+
+/// TODO
+extern(C) struct BindGroupDescriptor {
+    /// TODO
+    StringView label;
+    /// TODO
+    BindGroupLayout layout;
+    /// TODO
+    const(BindGroupEntry)[] entries;
+}
+
+/// TODO
+extern(C) struct BindGroupEntry {
+    /// Binding index in the bind group.
+    uint binding;
+    /// Set this if the binding is a buffer object. Otherwise must be null.
+    Buffer buffer;
+    /// If the binding is a buffer, this is the byte offset of the binding
+    /// range. Otherwise ignored.
+    ulong offset;
+    /// If the binding is a buffer, this is the byte size of the binding range
+    /// (@ref WGPU_WHOLE_SIZE means the binding ends at the end of the buffer).
+    /// Otherwise ignored.
+    ulong size;
+    /// Set this if the binding is a sampler object. Otherwise must be null.
+    Sampler sampler;
+    /// Set this if the binding is a texture view object. Otherwise must be
+    /// null.
+    TextureView textureView;
+}
+
+/// TODO
+extern(C) struct BindGroupLayoutDescriptor {
+    /// TODO
+    StringView label;
+    /// TODO
+    const(BindGroupLayoutEntry)[] entries;
+}
+
+/// TODO
+extern(C) struct BindGroupLayoutEntry {
+    /// TODO
+    uint binding;
+    /// TODO
+    ShaderStage visibility;
+    /// If non-zero, this entry defines a binding array with this size.
+    uint bindingArraySize;
+    /// TODO
+    BufferBindingLayout buffer;
+    /// TODO
+    SamplerBindingLayout sampler;
+    /// TODO
+    TextureBindingLayout texture;
+    /// TODO
+    StorageTextureBindingLayout storageTexture;
+}
+
+/// TODO
+extern(C) struct BlendComponent {
+    /// If set to @ref WGPUBlendOperation_Undefined, [defaults](@ref
+    /// SentinelValues) to @ref WGPUBlendOperation_Add.
+    BlendOperation operation;
+    /// If set to @ref WGPUBlendFactor_Undefined, [defaults](@ref
+    /// SentinelValues) to @ref WGPUBlendFactor_One.
+    BlendFactor srcFactor;
+    /// If set to @ref WGPUBlendFactor_Undefined, [defaults](@ref
+    /// SentinelValues) to @ref WGPUBlendFactor_Zero.
+    BlendFactor dstFactor;
+}
+
+/// TODO
+extern(C) struct BlendState {
+    /// TODO
+    BlendComponent color;
+    /// TODO
+    BlendComponent alpha;
+}
+
+/// TODO
+extern(C) struct BufferBindingLayout {
+    /// If set to @ref WGPUBufferBindingType_Undefined, [defaults](@ref
+    /// SentinelValues) to @ref WGPUBufferBindingType_Uniform.
+    BufferBindingType type;
+    /// TODO
+    bool hasDynamicOffset;
+    /// TODO
+    ulong minBindingSize;
+}
+
+/// TODO
+extern(C) struct BufferDescriptor {
+    /// TODO
+    StringView label;
+    /// TODO
+    BufferUsage usage;
+    /// TODO
+    ulong size;
+    /// When true, the buffer is mapped in write mode at creation. It should
+    /// thus be unmapped once its initial data has been written. @note Mapping
+    /// at creation does **not** require the usage @ref
+    /// WGPUBufferUsage_MapWrite.
+    bool mappedAtCreation;
+}
+
+/// An RGBA color. Represents a `f32`, `i32`, or `u32` color using @ref
+/// DoubleAsSupertype. If any channel is non-finite, produces a @ref
+/// NonFiniteFloatValueError.
+extern(C) struct Color {
+    /// 
+    double r;
+    /// 
+    double g;
+    /// 
+    double b;
+    /// 
+    double a;
+}
+
+/// TODO
+extern(C) struct ColorTargetState {
+    /// The texture format of the target. If @ref WGPUTextureFormat_Undefined,
+    /// indicates a "hole" in the parent @ref WGPUFragmentState `targets` array:
+    /// the pipeline does not output a value at this `location`.
+    TextureFormat format;
+    /// TODO
+    BlendState blend;
+    /// TODO
+    ColorWriteMask writeMask;
+}
+
+/// TODO
+extern(C) struct CommandBufferDescriptor {
+    /// TODO
+    StringView label;
+}
+
+/// TODO
+extern(C) struct CommandEncoderDescriptor {
+    /// TODO
+    StringView label;
+}
+
+/// Note: While Compatibility Mode is optional to implement, this extension
+/// struct is required to be supported (for both queries and requests) and
+/// behave as defined in the WebGPU spec.
+extern(C) struct CompatibilityModeLimits {
+    /// TODO
+    uint maxStorageBuffersInVertexStage;
+    /// TODO
+    uint maxStorageTexturesInVertexStage;
+    /// TODO
+    uint maxStorageBuffersInFragmentStage;
+    /// TODO
+    uint maxStorageTexturesInFragmentStage;
+}
+
+/// TODO
+extern(C) struct CompilationInfo {
+    /// TODO
+    const(CompilationMessage)[] messages;
+}
+
+/// TODO
+extern(C) struct CompilationMessage {
+    /// A @ref LocalizableHumanReadableMessageString.
+    StringView message;
+    /// Severity level of the message.
+    CompilationMessageType type;
+    /// Line number where the message is attached, starting at 1.
+    ulong lineNum;
+    /// Offset in UTF-8 code units (bytes) from the beginning of the line,
+    /// starting at 1.
+    ulong linePos;
+    /// Offset in UTF-8 code units (bytes) from the beginning of the shader
+    /// code, starting at 0.
+    ulong offset;
+    /// Length in UTF-8 code units (bytes) of the span the message corresponds
+    /// to.
+    ulong length;
+}
+
+/// TODO
+extern(C) struct ComputePassDescriptor {
+    /// TODO
+    StringView label;
+    /// TODO
+    PassTimestampWrites timestampWrites;
+}
+
+/// TODO
+extern(C) struct ComputePipelineDescriptor {
+    /// TODO
+    StringView label;
+    /// TODO
+    PipelineLayout layout;
+    /// TODO
+    ComputeState compute;
+}
+
+/// TODO
+extern(C) struct ComputeState {
+    /// TODO
+    ShaderModule module_;
+    /// TODO
+    StringView entryPoint;
+    /// TODO
+    const(ConstantEntry)[] constants;
+}
+
+/// TODO
+extern(C) struct ConstantEntry {
+    /// TODO
+    StringView key;
+    /// Represents a WGSL numeric or boolean value using @ref DoubleAsSupertype.
+    /// If non-finite, produces a @ref NonFiniteFloatValueError.
+    double value;
+}
+
+/// TODO
+extern(C) struct DepthStencilState {
+    /// TODO
+    TextureFormat format;
+    /// TODO
+    OptionalBool depthWriteEnabled;
+    /// TODO
+    CompareFunction depthCompare;
+    /// TODO
+    StencilFaceState stencilFront;
+    /// TODO
+    StencilFaceState stencilBack;
+    /// TODO
+    uint stencilReadMask;
+    /// TODO
+    uint stencilWriteMask;
+    /// TODO
+    int depthBias;
+    /// TODO If non-finite, produces a @ref NonFiniteFloatValueError.
+    float depthBiasSlopeScale;
+    /// TODO If non-finite, produces a @ref NonFiniteFloatValueError.
+    float depthBiasClamp;
+}
+
+/// TODO
+extern(C) struct DeviceDescriptor {
+    /// TODO
+    StringView label;
+    /// TODO
+    const(FeatureName)[] requiredFeatures;
+    /// TODO
+    Limits requiredLimits;
+    /// TODO
+    QueueDescriptor defaultQueue;
+    /// TODO
+    DeviceLost deviceLostCallbackInfo;
+    /// Called when there is an uncaptured error on this device, from any
+    /// thread. See @ref ErrorScopes. **Important:** This callback does not have
+    /// a configurable @ref WGPUCallbackMode; it may be called at any time (like
+    /// @ref WGPUCallbackMode_AllowSpontaneous). As such, calls into the
+    /// `webgpu.h` API from this callback are unsafe. See @ref
+    /// CallbackReentrancy.
+    UncapturedError uncapturedErrorCallbackInfo;
+}
+
+/// TODO
+extern(C) struct Extent3D {
+    /// TODO
+    uint width;
+    /// TODO
+    uint height;
+    /// TODO
+    uint depthOrArrayLayers;
+}
+
+/// Chained in an @ref WGPUBindGroupEntry to set it to an @ref
+/// WGPUExternalTexture. This must have a corresponding @ref
+/// WGPUExternalTextureBindingLayout in the @ref WGPUBindGroupLayout.
+extern(C) struct ExternalTextureBindingEntry {
+    /// TODO
+    ExternalTexture externalTexture;
+}
+
+/// Chained in @ref WGPUBindGroupLayoutEntry to specify that the corresponding
+/// entries in an @ref WGPUBindGroup will contain an @ref WGPUExternalTexture.
+extern(C) struct ExternalTextureBindingLayout {
+}
+
+/// TODO
+extern(C) struct FragmentState {
+    /// TODO
+    ShaderModule module_;
+    /// TODO
+    StringView entryPoint;
+    /// TODO
+    const(ConstantEntry)[] constants;
+    /// TODO
+    const(ColorTargetState)[] targets;
+}
+
+/// Opaque handle to an asynchronous operation. See @ref Asynchronous-Operations
+/// for more information.
+extern(C) struct Future {
+    /// Opaque id of the @ref WGPUFuture
+    ulong id;
+}
+
+/// Struct holding a future to wait on, and a `completed` boolean flag.
+extern(C) struct FutureWaitInfo {
+    /// The future to wait on.
+    Future future;
+    /// Whether or not the future completed.
+    bool completed;
+}
+
+/// TODO
+extern(C) struct InstanceDescriptor {
+    /// TODO
+    const(InstanceFeatureName)[] requiredFeatures;
+    /// TODO
+    InstanceLimits requiredLimits;
+}
+
+/// TODO
+extern(C) struct InstanceLimits {
+    /// The maximum number @ref WGPUFutureWaitInfo supported in a call to
+    /// ::wgpuInstanceWaitAny with `timeoutNS \u003e 0`.
+    size_t timedWaitAnyMaxCount;
+}
+
+/// TODO
+extern(C) struct Limits {
+    /// TODO
+    uint maxTextureDimension1D;
+    /// TODO
+    uint maxTextureDimension2D;
+    /// TODO
+    uint maxTextureDimension3D;
+    /// TODO
+    uint maxTextureArrayLayers;
+    /// TODO
+    uint maxBindGroups;
+    /// TODO
+    uint maxBindGroupsPlusVertexBuffers;
+    /// TODO
+    uint maxBindingsPerBindGroup;
+    /// TODO
+    uint maxDynamicUniformBuffersPerPipelineLayout;
+    /// TODO
+    uint maxDynamicStorageBuffersPerPipelineLayout;
+    /// TODO
+    uint maxSampledTexturesPerShaderStage;
+    /// TODO
+    uint maxSamplersPerShaderStage;
+    /// TODO
+    uint maxStorageBuffersPerShaderStage;
+    /// TODO
+    uint maxStorageTexturesPerShaderStage;
+    /// TODO
+    uint maxUniformBuffersPerShaderStage;
+    /// TODO
+    ulong maxUniformBufferBindingSize;
+    /// TODO
+    ulong maxStorageBufferBindingSize;
+    /// TODO
+    uint minUniformBufferOffsetAlignment;
+    /// TODO
+    uint minStorageBufferOffsetAlignment;
+    /// TODO
+    uint maxVertexBuffers;
+    /// TODO
+    ulong maxBufferSize;
+    /// TODO
+    uint maxVertexAttributes;
+    /// TODO
+    uint maxVertexBufferArrayStride;
+    /// TODO
+    uint maxInterStageShaderVariables;
+    /// TODO
+    uint maxColorAttachments;
+    /// TODO
+    uint maxColorAttachmentBytesPerSample;
+    /// TODO
+    uint maxComputeWorkgroupStorageSize;
+    /// TODO
+    uint maxComputeInvocationsPerWorkgroup;
+    /// TODO
+    uint maxComputeWorkgroupSizeX;
+    /// TODO
+    uint maxComputeWorkgroupSizeY;
+    /// TODO
+    uint maxComputeWorkgroupSizeZ;
+    /// TODO
+    uint maxComputeWorkgroupsPerDimension;
+    /// TODO
+    uint maxImmediateSize;
+}
+
+/// TODO
+extern(C) struct MultisampleState {
+    /// TODO
+    uint count;
+    /// TODO
+    uint mask;
+    /// TODO
+    bool alphaToCoverageEnabled;
+}
+
+/// TODO
+extern(C) struct Origin3D {
+    /// TODO
+    uint x;
+    /// TODO
+    uint y;
+    /// TODO
+    uint z;
+}
+
+/// TODO
+extern(C) struct PassTimestampWrites {
+    /// Query set to write timestamps to.
+    QuerySet querySet;
+    /// TODO
+    uint beginningOfPassWriteIndex;
+    /// TODO
+    uint endOfPassWriteIndex;
+}
+
+/// TODO
+extern(C) struct PipelineLayoutDescriptor {
+    /// TODO
+    StringView label;
+    /// TODO
+    const(BindGroupLayout)[] bindGroupLayouts;
+    /// TODO
+    uint immediateSize;
+}
+
+/// TODO
+extern(C) struct PrimitiveState {
+    /// If set to @ref WGPUPrimitiveTopology_Undefined, [defaults](@ref
+    /// SentinelValues) to @ref WGPUPrimitiveTopology_TriangleList.
+    PrimitiveTopology topology;
+    /// TODO
+    IndexFormat stripIndexFormat;
+    /// If set to @ref WGPUFrontFace_Undefined, [defaults](@ref SentinelValues)
+    /// to @ref WGPUFrontFace_CCW.
+    FrontFace frontFace;
+    /// If set to @ref WGPUCullMode_Undefined, [defaults](@ref SentinelValues)
+    /// to @ref WGPUCullMode_None.
+    CullMode cullMode;
+    /// TODO
+    bool unclippedDepth;
+}
+
+/// TODO
+extern(C) struct QuerySetDescriptor {
+    /// TODO
+    StringView label;
+    /// TODO
+    QueryType type;
+    /// TODO
+    uint count;
+}
+
+/// TODO
+extern(C) struct QueueDescriptor {
+    /// TODO
+    StringView label;
+}
+
+/// TODO
+extern(C) struct RenderBundleDescriptor {
+    /// TODO
+    StringView label;
+}
+
+/// TODO
+extern(C) struct RenderBundleEncoderDescriptor {
+    /// TODO
+    StringView label;
+    /// TODO
+    const(TextureFormat)[] colorFormats;
+    /// TODO
+    TextureFormat depthStencilFormat;
+    /// TODO
+    uint sampleCount;
+    /// TODO
+    bool depthReadOnly;
+    /// TODO
+    bool stencilReadOnly;
+}
+
+/// TODO
+extern(C) struct RenderPassColorAttachment {
+    /// If `NULL`, indicates a hole in the parent @ref
+    /// WGPURenderPassDescriptor::colorAttachments array.
+    TextureView view;
+    /// TODO
+    uint depthSlice;
+    /// TODO
+    TextureView resolveTarget;
+    /// TODO
+    LoadOp loadOp;
+    /// TODO
+    StoreOp storeOp;
+    /// TODO
+    Color clearValue;
+}
+
+/// TODO
+extern(C) struct RenderPassDepthStencilAttachment {
+    /// TODO
+    TextureView view;
+    /// TODO
+    LoadOp depthLoadOp;
+    /// TODO
+    StoreOp depthStoreOp;
+    /// This is a @ref NullableFloatingPointType. If `NaN`, indicates an
+    /// `undefined` value (as defined by the JS spec). Use @ref
+    /// WGPU_DEPTH_CLEAR_VALUE_UNDEFINED to indicate this semantically. If
+    /// infinite, produces a @ref NonFiniteFloatValueError.
+    float depthClearValue;
+    /// TODO
+    bool depthReadOnly;
+    /// TODO
+    LoadOp stencilLoadOp;
+    /// TODO
+    StoreOp stencilStoreOp;
+    /// TODO
+    uint stencilClearValue;
+    /// TODO
+    bool stencilReadOnly;
+}
+
+/// TODO
+extern(C) struct RenderPassDescriptor {
+    /// TODO
+    StringView label;
+    /// TODO
+    const(RenderPassColorAttachment)[] colorAttachments;
+    /// TODO
+    RenderPassDepthStencilAttachment depthStencilAttachment;
+    /// TODO
+    QuerySet occlusionQuerySet;
+    /// TODO
+    PassTimestampWrites timestampWrites;
+}
+
+/// TODO
+extern(C) struct RenderPassMaxDrawCount {
+    /// TODO
+    ulong maxDrawCount;
+}
+
+/// TODO
+extern(C) struct RenderPipelineDescriptor {
+    /// TODO
+    StringView label;
+    /// TODO
+    PipelineLayout layout;
+    /// TODO
+    VertexState vertex;
+    /// TODO
+    PrimitiveState primitive;
+    /// TODO
+    DepthStencilState depthStencil;
+    /// TODO
+    MultisampleState multisample;
+    /// TODO
+    FragmentState fragment;
+}
+
+/// TODO
+extern(C) struct RequestAdapterOptions {
+    /// "Feature level" for the adapter request. If an adapter is returned, it
+    /// must support the features and limits in the requested feature level. If
+    /// set to @ref WGPUFeatureLevel_Undefined, [defaults](@ref SentinelValues)
+    /// to @ref WGPUFeatureLevel_Core. Additionally, implementations may ignore
+    /// @ref WGPUFeatureLevel_Compatibility and provide @ref
+    /// WGPUFeatureLevel_Core instead.
+    FeatureLevel featureLevel;
+    /// TODO
+    PowerPreference powerPreference;
+    /// If true, requires the adapter to be a "fallback" adapter as defined by
+    /// the JS spec. If this is not possible, the request returns null.
+    bool forceFallbackAdapter;
+    /// If set, requires the adapter to have a particular backend type. If this
+    /// is not possible, the request returns null.
+    BackendType backendType;
+    /// If set, requires the adapter to be able to output to a particular
+    /// surface. If this is not possible, the request returns null.
+    Surface compatibleSurface;
+}
+
+/// Extension providing requestAdapter options for implementations with WebXR
+/// interop (i.e. Wasm).
+extern(C) struct RequestAdapterWebXROptions {
+    /// Sets the `xrCompatible` option in the JS API.
+    bool xrCompatible;
+}
+
+/// TODO
+extern(C) struct SamplerBindingLayout {
+    /// If set to @ref WGPUSamplerBindingType_Undefined, [defaults](@ref
+    /// SentinelValues) to @ref WGPUSamplerBindingType_Filtering.
+    SamplerBindingType type;
+}
+
+/// TODO
+extern(C) struct SamplerDescriptor {
+    /// TODO
+    StringView label;
+    /// If set to @ref WGPUAddressMode_Undefined, [defaults](@ref
+    /// SentinelValues) to @ref WGPUAddressMode_ClampToEdge.
+    AddressMode addressModeU;
+    /// If set to @ref WGPUAddressMode_Undefined, [defaults](@ref
+    /// SentinelValues) to @ref WGPUAddressMode_ClampToEdge.
+    AddressMode addressModeV;
+    /// If set to @ref WGPUAddressMode_Undefined, [defaults](@ref
+    /// SentinelValues) to @ref WGPUAddressMode_ClampToEdge.
+    AddressMode addressModeW;
+    /// If set to @ref WGPUFilterMode_Undefined, [defaults](@ref SentinelValues)
+    /// to @ref WGPUFilterMode_Nearest.
+    FilterMode magFilter;
+    /// If set to @ref WGPUFilterMode_Undefined, [defaults](@ref SentinelValues)
+    /// to @ref WGPUFilterMode_Nearest.
+    FilterMode minFilter;
+    /// If set to @ref WGPUFilterMode_Undefined, [defaults](@ref SentinelValues)
+    /// to @ref WGPUMipmapFilterMode_Nearest.
+    MipmapFilterMode mipmapFilter;
+    /// TODO If non-finite, produces a @ref NonFiniteFloatValueError.
+    float lodMinClamp;
+    /// TODO If non-finite, produces a @ref NonFiniteFloatValueError.
+    float lodMaxClamp;
+    /// TODO
+    CompareFunction compare;
+    /// TODO
+    ushort maxAnisotropy;
+}
+
+/// TODO
+extern(C) struct ShaderModuleDescriptor {
+    /// TODO
+    StringView label;
+}
+
+/// TODO
+extern(C) struct ShaderSourceSPIRV {
+    /// TODO
+    uint codeSize;
+    /// TODO
+    const(uint)* code;
+}
+
+/// TODO
+extern(C) struct ShaderSourceWGSL {
+    /// TODO
+    StringView code;
+}
+
+/// TODO
+extern(C) struct StencilFaceState {
+    /// If set to @ref WGPUCompareFunction_Undefined, [defaults](@ref
+    /// SentinelValues) to @ref WGPUCompareFunction_Always.
+    CompareFunction compare;
+    /// If set to @ref WGPUStencilOperation_Undefined, [defaults](@ref
+    /// SentinelValues) to @ref WGPUStencilOperation_Keep.
+    StencilOperation failOp;
+    /// If set to @ref WGPUStencilOperation_Undefined, [defaults](@ref
+    /// SentinelValues) to @ref WGPUStencilOperation_Keep.
+    StencilOperation depthFailOp;
+    /// If set to @ref WGPUStencilOperation_Undefined, [defaults](@ref
+    /// SentinelValues) to @ref WGPUStencilOperation_Keep.
+    StencilOperation passOp;
+}
+
+/// TODO
+extern(C) struct StorageTextureBindingLayout {
+    /// If set to @ref WGPUStorageTextureAccess_Undefined, [defaults](@ref
+    /// SentinelValues) to @ref WGPUStorageTextureAccess_WriteOnly.
+    StorageTextureAccess access;
+    /// TODO
+    TextureFormat format;
+    /// If set to @ref WGPUTextureViewDimension_Undefined, [defaults](@ref
+    /// SentinelValues) to @ref WGPUTextureViewDimension_2D.
+    TextureViewDimension viewDimension;
+}
+
+/// TODO
+extern(C) struct SupportedFeatures {
+    /// TODO
+    const(FeatureName)[] features;
+}
+
+/// TODO
+extern(C) struct SupportedInstanceFeatures {
+    /// TODO
+    const(InstanceFeatureName)[] features;
+}
+
+/// TODO
+extern(C) struct SupportedWGSLLanguageFeatures {
+    /// TODO
+    const(WGSLLanguageFeatureName)[] features;
+}
+
+/// Filled by @ref wgpuSurfaceGetCapabilities with what's supported for @ref
+/// wgpuSurfaceConfigure for a pair of @ref WGPUSurface and @ref WGPUAdapter.
+extern(C) struct SurfaceCapabilities {
+    /// The bit set of supported @ref WGPUTextureUsage bits. Guaranteed to
+    /// contain @ref WGPUTextureUsage_RenderAttachment.
+    TextureUsage usages;
+    /// A list of supported @ref WGPUTextureFormat values, in order of
+    /// preference.
+    const(TextureFormat)[] formats;
+    /// A list of supported @ref WGPUPresentMode values. Guaranteed to contain
+    /// @ref WGPUPresentMode_Fifo.
+    const(PresentMode)[] presentModes;
+    /// A list of supported @ref WGPUCompositeAlphaMode values. @ref
+    /// WGPUCompositeAlphaMode_Auto will be an alias for the first element and
+    /// will never be present in this array.
+    const(CompositeAlphaMode)[] alphaModes;
+}
+
+/// Extension of @ref WGPUSurfaceConfiguration for color spaces and HDR.
+extern(C) struct SurfaceColorManagement {
+    /// TODO
+    PredefinedColorSpace colorSpace;
+    /// TODO
+    ToneMappingMode toneMappingMode;
+}
+
+/// Options to @ref wgpuSurfaceConfigure for defining how a @ref WGPUSurface
+/// will be rendered to and presented to the user. See @ref
+/// Surface-Configuration for more details.
+extern(C) struct SurfaceConfiguration {
+    /// The @ref WGPUDevice to use to render to surface's textures.
+    Device device;
+    /// The @ref WGPUTextureFormat of the surface's textures.
+    TextureFormat format;
+    /// The @ref WGPUTextureUsage of the surface's textures.
+    TextureUsage usage;
+    /// The width of the surface's textures.
+    uint width;
+    /// The height of the surface's textures.
+    uint height;
+    /// The additional @ref WGPUTextureFormat for @ref WGPUTextureView format
+    /// reinterpretation of the surface's textures.
+    const(TextureFormat)[] viewFormats;
+    /// How the surface's frames will be composited on the screen. If set to
+    /// @ref WGPUCompositeAlphaMode_Auto, [defaults] to @ref
+    /// WGPUCompositeAlphaMode_Inherit in native (allowing the mode to be
+    /// configured externally), and to @ref WGPUCompositeAlphaMode_Opaque in
+    /// Wasm.
+    CompositeAlphaMode alphaMode;
+    /// When and in which order the surface's frames will be shown on the
+    /// screen. If set to @ref WGPUPresentMode_Undefined, [defaults](@ref
+    /// SentinelValues) to @ref WGPUPresentMode_Fifo.
+    PresentMode presentMode;
+}
+
+/// The root descriptor for the creation of an @ref WGPUSurface with @ref
+/// wgpuInstanceCreateSurface. It isn't sufficient by itself and must have one
+/// of the `WGPUSurfaceSource*` in its chain. See @ref Surface-Creation for more
+/// details.
+extern(C) struct SurfaceDescriptor {
+    /// Label used to refer to the object.
+    StringView label;
+}
+
+/// Chained in @ref WGPUSurfaceDescriptor to make an @ref WGPUSurface wrapping
+/// an Android
+/// [`ANativeWindow`](https://developer.android.com/ndk/reference/group/a-native-window).
+extern(C) struct SurfaceSourceAndroidNativeWindow {
+    /// The pointer to the
+    /// [`ANativeWindow`](https://developer.android.com/ndk/reference/group/a-native-window)
+    /// that will be wrapped by the @ref WGPUSurface.
+    void* window;
+}
+
+/// Chained in @ref WGPUSurfaceDescriptor to make an @ref WGPUSurface wrapping a
+/// [`CAMetalLayer`](https://developer.apple.com/documentation/quartzcore/cametallayer?language=objc).
+extern(C) struct SurfaceSourceMetalLayer {
+    /// The pointer to the
+    /// [`CAMetalLayer`](https://developer.apple.com/documentation/quartzcore/cametallayer?language=objc)
+    /// that will be wrapped by the @ref WGPUSurface.
+    void* layer;
+}
+
+/// Chained in @ref WGPUSurfaceDescriptor to make an @ref WGPUSurface wrapping a
+/// [Wayland](https://wayland.freedesktop.org/)
+/// [`wl_surface`](https://wayland.freedesktop.org/docs/html/apa.html#protocol-spec-wl_surface).
+extern(C) struct SurfaceSourceWaylandSurface {
+    /// A
+    /// [`wl_display`](https://wayland.freedesktop.org/docs/html/apa.html#protocol-spec-wl_display)
+    /// for this Wayland instance.
+    void* display;
+    /// A
+    /// [`wl_surface`](https://wayland.freedesktop.org/docs/html/apa.html#protocol-spec-wl_surface)
+    /// that will be wrapped by the @ref WGPUSurface
+    void* surface;
+}
+
+/// Chained in @ref WGPUSurfaceDescriptor to make an @ref WGPUSurface wrapping a
+/// Windows
+/// [`HWND`](https://learn.microsoft.com/en-us/windows/apps/develop/ui-input/retrieve-hwnd).
+extern(C) struct SurfaceSourceWindowsHWND {
+    /// The
+    /// [`HINSTANCE`](https://learn.microsoft.com/en-us/windows/win32/learnwin32/winmain--the-application-entry-point)
+    /// for this application. Most commonly `GetModuleHandle(nullptr)`.
+    void* hinstance;
+    /// The
+    /// [`HWND`](https://learn.microsoft.com/en-us/windows/apps/develop/ui-input/retrieve-hwnd)
+    /// that will be wrapped by the @ref WGPUSurface.
+    void* hwnd;
+}
+
+/// Chained in @ref WGPUSurfaceDescriptor to make an @ref WGPUSurface wrapping
+/// an [XCB](https://xcb.freedesktop.org/) `xcb_window_t`.
+extern(C) struct SurfaceSourceXCBWindow {
+    /// The `xcb_connection_t` for the connection to the X server.
+    void* connection;
+    /// The `xcb_window_t` for the window that will be wrapped by the @ref
+    /// WGPUSurface.
+    uint window;
+}
+
+/// Chained in @ref WGPUSurfaceDescriptor to make an @ref WGPUSurface wrapping
+/// an [Xlib](https://www.x.org/releases/current/doc/libX11/libX11/libX11.html)
+/// `Window`.
+extern(C) struct SurfaceSourceXlibWindow {
+    /// A pointer to the
+    /// [`Display`](https://www.x.org/releases/current/doc/libX11/libX11/libX11.html#Opening_the_Display)
+    /// connected to the X server.
+    void* display;
+    /// The
+    /// [`Window`](https://www.x.org/releases/current/doc/libX11/libX11/libX11.html#Creating_Windows)
+    /// that will be wrapped by the @ref WGPUSurface.
+    ulong window;
+}
+
+/// Queried each frame from a @ref WGPUSurface to get a @ref WGPUTexture to
+/// render to along with some metadata. See @ref Surface-Presenting for more
+/// details.
+extern(C) struct SurfaceTexture {
+    /// The @ref WGPUTexture representing the frame that will be shown on the
+    /// surface. It is @ref ReturnedWithOwnership from @ref
+    /// wgpuSurfaceGetCurrentTexture.
+    Texture texture;
+    /// Whether the call to @ref wgpuSurfaceGetCurrentTexture succeeded and a
+    /// hint as to why it might not have.
+    SurfaceGetCurrentTextureStatus status;
+}
+
+/// TODO
+extern(C) struct TexelCopyBufferInfo {
+    /// TODO
+    TexelCopyBufferLayout layout;
+    /// TODO
+    Buffer buffer;
+}
+
+/// TODO
+extern(C) struct TexelCopyBufferLayout {
+    /// TODO
+    ulong offset;
+    /// TODO
+    uint bytesPerRow;
+    /// TODO
+    uint rowsPerImage;
+}
+
+/// TODO
+extern(C) struct TexelCopyTextureInfo {
+    /// TODO
+    Texture texture;
+    /// TODO
+    uint mipLevel;
+    /// TODO
+    Origin3D origin;
+    /// If set to @ref WGPUTextureAspect_Undefined, [defaults](@ref
+    /// SentinelValues) to @ref WGPUTextureAspect_All.
+    TextureAspect aspect;
+}
+
+/// TODO
+extern(C) struct TextureBindingLayout {
+    /// If set to @ref WGPUTextureSampleType_Undefined, [defaults](@ref
+    /// SentinelValues) to @ref WGPUTextureSampleType_Float.
+    TextureSampleType sampleType;
+    /// If set to @ref WGPUTextureViewDimension_Undefined, [defaults](@ref
+    /// SentinelValues) to @ref WGPUTextureViewDimension_2D.
+    TextureViewDimension viewDimension;
+    /// TODO
+    bool multisampled;
+}
+
+/// Note: While Compatibility Mode is optional to implement, this extension
+/// struct is required to be accepted (but per the WebGPU spec, its contents are
+/// ignored on devices that have the @ref WGPUFeatureName_CoreFeaturesAndLimits
+/// feature).
+extern(C) struct TextureBindingViewDimension {
+    /// TODO
+    TextureViewDimension textureBindingViewDimension;
+}
+
+/// When accessed by a shader, the red/green/blue/alpha channels are replaced by
+/// the value corresponding to the component specified in r, g, b, and a,
+/// respectively unlike the JS API which uses a string of length four, with each
+/// character mapping to the texture view's red/green/blue/alpha channels.
+extern(C) struct TextureComponentSwizzle {
+    /// The value that replaces the red channel in the shader. If set to @ref
+    /// WGPUComponentSwizzle_Undefined, [defaults](@ref SentinelValues) to @ref
+    /// WGPUComponentSwizzle_R.
+    ComponentSwizzle r;
+    /// The value that replaces the green channel in the shader. If set to @ref
+    /// WGPUComponentSwizzle_Undefined, [defaults](@ref SentinelValues) to @ref
+    /// WGPUComponentSwizzle_G.
+    ComponentSwizzle g;
+    /// The value that replaces the blue channel in the shader. If set to @ref
+    /// WGPUComponentSwizzle_Undefined, [defaults](@ref SentinelValues) to @ref
+    /// WGPUComponentSwizzle_B.
+    ComponentSwizzle b;
+    /// The value that replaces the alpha channel in the shader. If set to @ref
+    /// WGPUComponentSwizzle_Undefined, [defaults](@ref SentinelValues) to @ref
+    /// WGPUComponentSwizzle_A.
+    ComponentSwizzle a;
+}
+
+/// TODO
+extern(C) struct TextureComponentSwizzleDescriptor {
+    /// TODO
+    TextureComponentSwizzle swizzle;
+}
+
+/// TODO
+extern(C) struct TextureDescriptor {
+    /// TODO
+    StringView label;
+    /// TODO
+    TextureUsage usage;
+    /// If set to @ref WGPUTextureDimension_Undefined, [defaults](@ref
+    /// SentinelValues) to @ref WGPUTextureDimension_2D.
+    TextureDimension dimension;
+    /// TODO
+    Extent3D size;
+    /// TODO
+    TextureFormat format;
+    /// TODO
+    uint mipLevelCount;
+    /// TODO
+    uint sampleCount;
+    /// TODO
+    const(TextureFormat)[] viewFormats;
+}
+
+/// TODO
+extern(C) struct TextureViewDescriptor {
+    /// TODO
+    StringView label;
+    /// TODO
+    TextureFormat format;
+    /// TODO
+    TextureViewDimension dimension;
+    /// TODO
+    uint baseMipLevel;
+    /// TODO
+    uint mipLevelCount;
+    /// TODO
+    uint baseArrayLayer;
+    /// TODO
+    uint arrayLayerCount;
+    /// If set to @ref WGPUTextureAspect_Undefined, [defaults](@ref
+    /// SentinelValues) to @ref WGPUTextureAspect_All.
+    TextureAspect aspect;
+    /// TODO
+    TextureUsage usage;
+}
+
+/// TODO
+extern(C) struct VertexAttribute {
+    /// TODO
+    VertexFormat format;
+    /// TODO
+    ulong offset;
+    /// TODO
+    uint shaderLocation;
+}
+
+/// If `attributes` is empty *and* `stepMode` is @ref
+/// WGPUVertexStepMode_Undefined, indicates a "hole" in the parent @ref
+/// WGPUVertexState `buffers` array, with behavior equivalent to `null` in the
+/// JS API. If `attributes` is empty but `stepMode` is *not* @ref
+/// WGPUVertexStepMode_Undefined, indicates a vertex buffer with no attributes,
+/// with behavior equivalent to `{ attributes: [] }` in the JS API. (TODO: If
+/// the JS API changes not to distinguish these cases, then this distinction
+/// doesn't matter and we can remove this documentation.) If `stepMode` is @ref
+/// WGPUVertexStepMode_Undefined but `attributes` is *not* empty, `stepMode`
+/// [defaults](@ref SentinelValues) to @ref WGPUVertexStepMode_Vertex.
+extern(C) struct VertexBufferLayout {
+    /// TODO
+    VertexStepMode stepMode;
+    /// TODO
+    ulong arrayStride;
+    /// TODO
+    const(VertexAttribute)[] attributes;
+}
+
+/// TODO
+extern(C) struct VertexState {
+    /// TODO
+    ShaderModule module_;
+    /// TODO
+    StringView entryPoint;
+    /// TODO
+    const(ConstantEntry)[] constants;
+    /// TODO
+    const(VertexBufferLayout)[] buffers;
+}
+
 
 struct Adapter {}
 struct BindGroup {}

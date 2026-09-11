@@ -229,7 +229,7 @@ string escapeIdentifier(return scope string str)
 
     switch (str) {
         static foreach (keyword; AliasSeq!(
-                "null", "auto", "false", "true", "float", "uint"
+                "null", "auto", "false", "true", "float", "uint", "module"
             )) {
     case keyword:
             return keyword ~ "_";
@@ -273,7 +273,72 @@ string toDocBlock(string doc, uint indent = 0)
 
     import std.string : replace, stripRight;
 
-    return doc.replace("\\n", "\n").byChar.array.wrap(80, indentStr, indentStr).stripRight("\n");
+    return doc.replace("\\\"", "\"").replace("\\n", "\n").byChar.array.wrap(80, indentStr, indentStr).stripRight(
+        "\n");
+}
+
+string toDType(string type, bool forParameter, string pointer, const scope string[string] identifierMap)
+{
+    import std.string : startsWith;
+
+    if (type.startsWith("array\\u003c")) {
+        import std.exception;
+
+        enforce(pointer == "mutable" || pointer == "immutable");
+        auto innerType = toDType(type[11 .. $ - 6], forParameter, null, identifierMap);
+        return (pointer == "immutable" ? ("const(" ~ innerType ~ ")") : innerType) ~ "[]";
+    }
+
+    string result;
+    switch (type) {
+    case "out_string":
+    case "string_with_default_empty":
+    case "nullable_string":
+        result = forParameter ? "const(char)[]" : "StringView";
+        break;
+    case "uint16":
+        result = "ushort";
+        break;
+    case "int32":
+        result = "int";
+        break;
+    case "uint32":
+        result = "uint";
+        break;
+    case "uint64":
+        result = "ulong";
+        break;
+    case "usize":
+        result = "size_t";
+        break;
+    case "bool":
+        result = "bool";
+        break;
+    case "float32":
+    case "nullable_float32":
+        result = "float";
+        break;
+    case "float64_supertype":
+        result = "double";
+        break;
+    case "c_void":
+        result = "void";
+        break;
+    default:
+        break;
+    }
+
+    if (result) {
+        if (pointer) {
+            if (pointer == "immutable")
+                return "const(" ~ result ~ ")*";
+            else
+                return result ~ "*";
+        }
+        return result;
+    }
+
+    return identifierMap[type];
 }
 
 void main()
@@ -304,8 +369,6 @@ void main()
         identifierMap["object." ~ object.name] = object.name.snakeToCamel(true);
     }
 
-    writeln(identifierMap);
-
     auto outFile = File("src/webgpu/webgpu.d", "w");
 
     outFile.writeln("module webgpu.webgpu;");
@@ -319,7 +382,8 @@ void main()
 
         outFile.writeln(constant.doc.toDocBlock);
         outFile.writeln(
-            "enum " ~ identifierMap["constant." ~ constant.name] ~ " = " ~ constant.value.asDCode ~ ";");
+            "enum " ~ identifierMap["constant." ~ constant.name] ~ " = " ~ constant
+                .value.asDCode ~ ";");
     }
 
     outFile.writeln();
@@ -388,7 +452,15 @@ void main()
     outFile.writeln();
 
     foreach (ref struct_; api.structs) {
-        outFile.writeln("struct " ~ identifierMap["struct." ~ struct_.name] ~ " {}");
+        outFile.writeln(struct_.doc.toDocBlock);
+        outFile.writeln("extern(C) struct " ~ identifierMap["struct." ~ struct_.name] ~ " {");
+        foreach (ref member; struct_.members) {
+            outFile.writeln(member.doc.toDocBlock(1));
+            outFile.writefln!"    %s %s;"(member.type.toDType(false, member.pointer, identifierMap), member
+                    .name.snakeToCamel(false).escapeIdentifier);
+        }
+        outFile.writeln("}");
+        outFile.writeln();
     }
 
     outFile.writeln();

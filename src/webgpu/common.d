@@ -26,3 +26,34 @@ package mixin template BitFlags() {
         return result;
     }
 }
+
+struct StringView {
+@safe @nogc pure nothrow:
+    const(char)* ptr;
+    size_t length;
+
+    this(inout T[] slice) inout @trusted
+    {
+        ptr = slice.ptr;
+        length = slice.length;
+    }
+
+    void opAssign(T[] slice) @trusted
+    {
+        ptr = slice.ptr;
+        length = slice.length;
+    }
+
+    alias asDSlice this;
+    inout(T)[] asDSlice() @trusted inout
+    {
+        return (ptr && length) ? ptr[0 .. length] : null;
+    }
+
+    bool opEquals(in T[] other) const => this[] == other;
+    size_t toHash() const => this[].hashOf;
+}
+
+auto toSlice(T)(inout T[] slice) => inout Slice!T(slice);
+
+alias StringView = Slice!(const char);
