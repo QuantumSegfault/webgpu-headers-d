@@ -1,5 +1,7 @@
 module webgpu.webgpu;
 
+import webgpu.common : BitFlags;
+
 /// Indicates no array layer count is specified. For more info, see @ref
 /// SentinelValues and the places that use this sentinel value.
 enum ARRAY_LAYER_COUNT_UNDEFINED = uint.max;
@@ -1138,11 +1140,103 @@ enum WGSLLanguageFeatureName : uint {
 }
 
 
-struct BufferUsage {}
-struct ColorWriteMask {}
-struct MapMode {}
-struct ShaderStage {}
-struct TextureUsage {}
+/// TODO
+struct BufferUsage {
+    mixin BitFlags!();
+
+    /// TODO
+    enum none = typeof(this).init;
+    /// The buffer can be *mapped* on the CPU side in *read* mode (using @ref
+    /// WGPUMapMode_Read).
+    enum mapRead = typeof(this)[0];
+    /// The buffer can be *mapped* on the CPU side in *write* mode (using @ref
+    /// WGPUMapMode_Write). @note This usage is **not** required to set
+    /// `mappedAtCreation` to `true` in @ref WGPUBufferDescriptor.
+    enum mapWrite = typeof(this)[1];
+    /// The buffer can be used as the *source* of a GPU-side copy operation.
+    enum copySrc = typeof(this)[2];
+    /// The buffer can be used as the *destination* of a GPU-side copy
+    /// operation.
+    enum copyDst = typeof(this)[3];
+    /// The buffer can be used as an Index buffer when doing indexed drawing in
+    /// a render pipeline.
+    enum index = typeof(this)[4];
+    /// The buffer can be used as a Vertex buffer when using a render pipeline.
+    enum vertex = typeof(this)[5];
+    /// The buffer can be bound to a shader as a uniform buffer.
+    enum uniform = typeof(this)[6];
+    /// The buffer can be bound to a shader as a storage buffer.
+    enum storage = typeof(this)[7];
+    /// The buffer can store arguments for an indirect draw call.
+    enum indirect = typeof(this)[8];
+    /// The buffer can store the result of a timestamp or occlusion query.
+    enum queryResolve = typeof(this)[9];
+}
+
+/// TODO
+struct ColorWriteMask {
+    mixin BitFlags!();
+
+    /// TODO
+    enum none = typeof(this).init;
+    /// TODO
+    enum red = typeof(this)[0];
+    /// TODO
+    enum green = typeof(this)[1];
+    /// TODO
+    enum blue = typeof(this)[2];
+    /// TODO
+    enum alpha = typeof(this)[3];
+    /// TODO
+    enum all = red | green | blue | alpha;
+}
+
+/// TODO
+struct MapMode {
+    mixin BitFlags!();
+
+    /// TODO
+    enum none = typeof(this).init;
+    /// TODO
+    enum read = typeof(this)[0];
+    /// TODO
+    enum write = typeof(this)[1];
+}
+
+/// TODO
+struct ShaderStage {
+    mixin BitFlags!();
+
+    /// TODO
+    enum none = typeof(this).init;
+    /// TODO
+    enum vertex = typeof(this)[0];
+    /// TODO
+    enum fragment = typeof(this)[1];
+    /// TODO
+    enum compute = typeof(this)[2];
+}
+
+/// TODO
+struct TextureUsage {
+    mixin BitFlags!();
+
+    /// TODO
+    enum none = typeof(this).init;
+    /// TODO
+    enum copySrc = typeof(this)[0];
+    /// TODO
+    enum copyDst = typeof(this)[1];
+    /// TODO
+    enum textureBinding = typeof(this)[2];
+    /// TODO
+    enum storageBinding = typeof(this)[3];
+    /// TODO
+    enum renderAttachment = typeof(this)[4];
+    /// TODO
+    enum transientAttachment = typeof(this)[5];
+}
+
 
 struct BufferMap {}
 struct CompilationInfo {}

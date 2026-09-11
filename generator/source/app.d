@@ -285,6 +285,8 @@ void main()
     auto outFile = File("src/webgpu/webgpu.d", "w");
 
     outFile.writeln("module webgpu.webgpu;");
+    outFile.writeln();
+    outFile.writeln("import webgpu.common : BitFlags;");
 
     outFile.writeln();
 
@@ -315,7 +317,35 @@ void main()
     outFile.writeln();
 
     foreach (ref bitflag; api.bitflags) {
-        outFile.writeln("struct " ~ bitflag.name.snakeToCamel(true) ~ " {}");
+        import std.algorithm.iteration : map;
+        import std.string : join;
+
+        outFile.writeln(bitflag.doc.toDocBlock);
+        outFile.writeln("struct " ~ bitflag.name.snakeToCamel(true) ~ " {");
+        outFile.writeln("    mixin BitFlags!();");
+        outFile.writeln();
+        foreach (i, ref entry; bitflag.entries) {
+            outFile.writeln(entry.doc.toDocBlock(1));
+            auto entryName = entry.name.snakeToCamel(false)
+                .escapeIdentifier;
+            if (entry.valueCombination.isNull) {
+                if (i == 0) {
+                    assert(entry.name == "none");
+
+                    outFile.writeln("    enum none = typeof(this).init;");
+                } else {
+                    outFile.writefln!"    enum %s = typeof(this)[%d];"(entryName, i - 1);
+                }
+            } else {
+                outFile.writefln!"    enum %s = %s;"(
+                    entryName,
+                    entry.valueCombination.get.map!((n) => n.snakeToCamel(false)
+                        .escapeIdentifier).join(" | ")
+                );
+            }
+        }
+        outFile.writeln("}");
+        outFile.writeln();
     }
 
     outFile.writeln();
