@@ -282,6 +282,30 @@ void main()
         .bufd
         .assumeText.deserialize!API;
 
+    string[string] identifierMap;
+    foreach (ref constant; api.constants) {
+        import std.string : toUpper;
+
+        identifierMap["constant." ~ constant.name] = constant.name.toUpper;
+    }
+    foreach (ref enum_; api.enums) {
+        identifierMap["enum." ~ enum_.name] = enum_.name.snakeToCamel(true);
+    }
+    foreach (ref bitflag; api.bitflags) {
+        identifierMap["bitflag." ~ bitflag.name] = bitflag.name.snakeToCamel(true);
+    }
+    foreach (ref callback; api.callbacks) {
+        identifierMap["callback." ~ callback.name] = callback.name.snakeToCamel(true);
+    }
+    foreach (ref struct_; api.structs) {
+        identifierMap["struct." ~ struct_.name] = struct_.name.snakeToCamel(true);
+    }
+    foreach (ref object; api.objects) {
+        identifierMap["object." ~ object.name] = object.name.snakeToCamel(true);
+    }
+
+    writeln(identifierMap);
+
     auto outFile = File("src/webgpu/webgpu.d", "w");
 
     outFile.writeln("module webgpu.webgpu;");
@@ -294,14 +318,15 @@ void main()
         import std.string : toUpper;
 
         outFile.writeln(constant.doc.toDocBlock);
-        outFile.writeln("enum " ~ constant.name.toUpper ~ " = " ~ constant.value.asDCode ~ ";");
+        outFile.writeln(
+            "enum " ~ identifierMap["constant." ~ constant.name] ~ " = " ~ constant.value.asDCode ~ ";");
     }
 
     outFile.writeln();
 
     foreach (ref enum_; api.enums) {
         outFile.writeln(enum_.doc.toDocBlock);
-        outFile.writeln("enum " ~ enum_.name.snakeToCamel(true) ~ " : uint {");
+        outFile.writeln("enum " ~ identifierMap["enum." ~ enum_.name] ~ " : uint {");
         foreach (i, ref entry; enum_.entries) {
             if (entry.isNull)
                 continue;
@@ -321,7 +346,7 @@ void main()
         import std.string : join;
 
         outFile.writeln(bitflag.doc.toDocBlock);
-        outFile.writeln("struct " ~ bitflag.name.snakeToCamel(true) ~ " {");
+        outFile.writeln("struct " ~ identifierMap["bitflag." ~ bitflag.name] ~ " {");
         outFile.writeln("    mixin BitFlags!();");
         outFile.writeln();
         foreach (i, ref entry; bitflag.entries) {
@@ -351,7 +376,7 @@ void main()
     outFile.writeln();
 
     foreach (ref callback; api.callbacks) {
-        outFile.writeln("struct " ~ callback.name.snakeToCamel(true) ~ " {}");
+        outFile.writeln("struct " ~ identifierMap["callback." ~ callback.name] ~ " {}");
     }
 
     outFile.writeln();
@@ -363,12 +388,12 @@ void main()
     outFile.writeln();
 
     foreach (ref struct_; api.structs) {
-        outFile.writeln("struct " ~ struct_.name.snakeToCamel(true) ~ " {}");
+        outFile.writeln("struct " ~ identifierMap["struct." ~ struct_.name] ~ " {}");
     }
 
     outFile.writeln();
 
     foreach (ref object; api.objects) {
-        outFile.writeln("struct " ~ object.name.snakeToCamel(true) ~ " {}");
+        outFile.writeln("struct " ~ identifierMap["object." ~ object.name] ~ " {}");
     }
 }
