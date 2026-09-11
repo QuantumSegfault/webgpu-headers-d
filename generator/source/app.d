@@ -9,6 +9,9 @@ import iopipe.json.serialize;
 
 import std.typecons : Nullable;
 import std.format : format;
+import std.ascii : toUpper, isDigit;
+import std.stdio : writeln, File;
+import std.meta : AliasSeq;
 
 @ignoreExtras
 struct API {
@@ -197,9 +200,145 @@ struct API {
     Struct[] structs;
 }
 
+string snakeToCamel(const scope char[] str, bool upperFirst)
+{
+    import std.string : count;
+
+    auto result = new char[str.length - str.count('_')];
+
+    auto wordBegin = upperFirst;
+    auto next = 0;
+
+    foreach (c; str) {
+        if (c == '_') {
+            wordBegin = true;
+            continue;
+        }
+        result[next++] = wordBegin ? c.toUpper : c;
+        wordBegin = false;
+    }
+
+    return cast(string)result;
+}
+
+string escapeIdentifier(return scope string str)
+{
+    if (str[0].isDigit) {
+        return "_" ~ str;
+    }
+
+    switch (str) {
+        static foreach (keyword; AliasSeq!(
+                "null", "auto", "false", "true", "float", "uint"
+            )) {
+    case keyword:
+            return keyword ~ "_";
+        }
+    default:
+        return str;
+    }
+}
+
+string asDCode(in API.Value64 value)
+{
+    import std.conv;
+
+    final switch (value.tag) with (API.Value64.Tag) {
+    case integer:
+        return to!string(value.value);
+    case usizeMax:
+        return "size_t.max";
+    case uint32Max:
+        return "uint.max";
+    case uint64Max:
+        return "ulong.max";
+    case nan:
+        return "float.nan";
+    }
+}
+
+string toDocBlock(string doc, uint indent = 0)
+{
+    import std.string : replace, wrap;
+    import std.array : array;
+    import std.utf : byChar;
+
+    string indentStr;
+    {
+        char[] tmp = new char[indent * 4 + 4];
+        tmp[0 .. $ - 4] = ' ';
+        tmp[$ - 4 .. $] = "/// ";
+        indentStr = cast(string)tmp[];
+    }
+
+    import std.string : replace, stripRight;
+
+    return doc.replace("\\n", "\n").byChar.array.wrap(80, indentStr, indentStr).stripRight("\n");
+}
+
 void main()
 {
-    auto api = FileIopipe("generator/webgpu-headers/webgpu.json").refCounted
+    API api = FileIopipe("generator/webgpu-headers/webgpu.json").refCounted
         .bufd
         .assumeText.deserialize!API;
+
+    auto outFile = File("src/webgpu/webgpu.d", "w");
+
+    outFile.writeln("module webgpu.webgpu;");
+
+    outFile.writeln();
+
+    foreach (ref constant; api.constants) {
+        import std.string : toUpper;
+
+        outFile.writeln(constant.doc.toDocBlock);
+        outFile.writeln("enum " ~ constant.name.toUpper ~ " = " ~ constant.value.asDCode ~ ";");
+    }
+
+    outFile.writeln();
+
+    foreach (ref enum_; api.enums) {
+        outFile.writeln(enum_.doc.toDocBlock);
+        outFile.writeln("enum " ~ enum_.name.snakeToCamel(true) ~ " : uint {");
+        foreach (i, ref entry; enum_.entries) {
+            if (entry.isNull)
+                continue;
+
+            outFile.writeln(entry.get.doc.toDocBlock(1));
+            outFile.writefln!"    %s = %d,"(entry.get.name.snakeToCamel(false)
+                    .escapeIdentifier, i);
+        }
+        outFile.writeln("}");
+        outFile.writeln();
+    }
+
+    outFile.writeln();
+
+    foreach (ref bitflag; api.bitflags) {
+        outFile.writeln("struct " ~ bitflag.name.snakeToCamel(true) ~ " {}");
+    }
+
+    outFile.writeln();
+
+    foreach (ref callback; api.callbacks) {
+        outFile.writeln("struct " ~ callback.name.snakeToCamel(true) ~ " {}");
+    }
+
+    outFile.writeln();
+
+    foreach (ref func; api.functions) {
+        outFile.writeln("void " ~ func.name.snakeToCamel(false).escapeIdentifier ~ "() {}");
+    }
+
+    outFile.writeln();
+
+    foreach (ref struct_; api.structs) {
+        outFile.writeln("struct " ~ struct_.name.snakeToCamel(true) ~ " {}");
+    }
+
+    outFile.writeln();
+
+    foreach (ref object; api.objects) {
+        outFile.writeln("struct " ~ object.name.snakeToCamel(true) ~ " {}");
+    }
 }
