@@ -1,6 +1,6 @@
 module webgpu.webgpu;
 
-import webgpu.common : BitFlags;
+import webgpu.common;
 
 /// Indicates no array layer count is specified. For more info, see @ref
 /// SentinelValues and the places that use this sentinel value.
@@ -1282,7 +1282,7 @@ struct BindGroupDescriptor {
     /// TODO
     StringView label = StringView.init;
     /// TODO
-    BindGroupLayout layout = BindGroupLayout.init;
+    BindGroupLayout.Handle layout = BindGroupLayout.Handle.init;
     /// TODO
     const(BindGroupEntry)[] entries = null;
 }
@@ -1292,7 +1292,7 @@ struct BindGroupEntry {
     /// Binding index in the bind group.
     uint binding = 0;
     /// Set this if the binding is a buffer object. Otherwise must be null.
-    Buffer buffer = Buffer.init;
+    Buffer.Handle buffer = Buffer.Handle.init;
     /// If the binding is a buffer, this is the byte offset of the binding
     /// range. Otherwise ignored.
     ulong offset = 0;
@@ -1301,10 +1301,10 @@ struct BindGroupEntry {
     /// Otherwise ignored.
     ulong size = WHOLE_SIZE;
     /// Set this if the binding is a sampler object. Otherwise must be null.
-    Sampler sampler = Sampler.init;
+    Sampler.Handle sampler = Sampler.Handle.init;
     /// Set this if the binding is a texture view object. Otherwise must be
     /// null.
-    TextureView textureView = TextureView.init;
+    TextureView.Handle textureView = TextureView.Handle.init;
 }
 
 /// TODO
@@ -1401,7 +1401,7 @@ struct ColorTargetState {
     /// the pipeline does not output a value at this `location`.
     TextureFormat format = TextureFormat.undefined;
     /// TODO
-    BlendState blend = null;
+    const(BlendState)* blend = null;
     /// TODO
     ColorWriteMask writeMask = ColorWriteMask.all;
 }
@@ -1462,7 +1462,7 @@ struct ComputePassDescriptor {
     /// TODO
     StringView label = StringView.init;
     /// TODO
-    PassTimestampWrites timestampWrites = null;
+    const(PassTimestampWrites)* timestampWrites = null;
 }
 
 /// TODO
@@ -1470,7 +1470,7 @@ struct ComputePipelineDescriptor {
     /// TODO
     StringView label = StringView.init;
     /// TODO
-    PipelineLayout layout = PipelineLayout.init;
+    PipelineLayout.Handle layout = PipelineLayout.Handle.init;
     /// TODO
     ComputeState compute = ComputeState.init;
 }
@@ -1478,7 +1478,7 @@ struct ComputePipelineDescriptor {
 /// TODO
 struct ComputeState {
     /// TODO
-    ShaderModule module_ = ShaderModule.init;
+    ShaderModule.Handle module_ = ShaderModule.Handle.init;
     /// TODO
     StringView entryPoint = StringView.init;
     /// TODO
@@ -1525,7 +1525,7 @@ struct DeviceDescriptor {
     /// TODO
     const(FeatureName)[] requiredFeatures = null;
     /// TODO
-    Limits requiredLimits = null;
+    const(Limits)* requiredLimits = null;
     /// TODO
     QueueDescriptor defaultQueue = QueueDescriptor.init;
     /// TODO
@@ -1554,7 +1554,7 @@ struct Extent3D {
 /// WGPUExternalTextureBindingLayout in the @ref WGPUBindGroupLayout.
 struct ExternalTextureBindingEntry {
     /// TODO
-    ExternalTexture externalTexture = ExternalTexture.init;
+    ExternalTexture.Handle externalTexture = ExternalTexture.Handle.init;
 }
 
 /// Chained in @ref WGPUBindGroupLayoutEntry to specify that the corresponding
@@ -1565,7 +1565,7 @@ struct ExternalTextureBindingLayout {
 /// TODO
 struct FragmentState {
     /// TODO
-    ShaderModule module_ = ShaderModule.init;
+    ShaderModule.Handle module_ = ShaderModule.Handle.init;
     /// TODO
     StringView entryPoint = StringView.init;
     /// TODO
@@ -1594,7 +1594,7 @@ struct InstanceDescriptor {
     /// TODO
     const(InstanceFeatureName)[] requiredFeatures = null;
     /// TODO
-    InstanceLimits requiredLimits = null;
+    const(InstanceLimits)* requiredLimits = null;
 }
 
 /// TODO
@@ -1695,7 +1695,7 @@ struct Origin3D {
 /// TODO
 struct PassTimestampWrites {
     /// Query set to write timestamps to.
-    QuerySet querySet = QuerySet.init;
+    QuerySet.Handle querySet = QuerySet.Handle.init;
     /// TODO
     uint beginningOfPassWriteIndex = QUERY_SET_INDEX_UNDEFINED;
     /// TODO
@@ -1707,7 +1707,7 @@ struct PipelineLayoutDescriptor {
     /// TODO
     StringView label = StringView.init;
     /// TODO
-    const(BindGroupLayout)[] bindGroupLayouts = null;
+    const(BindGroupLayout.Handle)[] bindGroupLayouts = null;
     /// TODO
     uint immediateSize = 0;
 }
@@ -1771,11 +1771,11 @@ struct RenderBundleEncoderDescriptor {
 struct RenderPassColorAttachment {
     /// If `NULL`, indicates a hole in the parent @ref
     /// WGPURenderPassDescriptor::colorAttachments array.
-    TextureView view = TextureView.init;
+    TextureView.Handle view = TextureView.Handle.init;
     /// TODO
     uint depthSlice = DEPTH_SLICE_UNDEFINED;
     /// TODO
-    TextureView resolveTarget = TextureView.init;
+    TextureView.Handle resolveTarget = TextureView.Handle.init;
     /// TODO
     LoadOp loadOp = LoadOp.undefined;
     /// TODO
@@ -1787,7 +1787,7 @@ struct RenderPassColorAttachment {
 /// TODO
 struct RenderPassDepthStencilAttachment {
     /// TODO
-    TextureView view = TextureView.init;
+    TextureView.Handle view = TextureView.Handle.init;
     /// TODO
     LoadOp depthLoadOp = LoadOp.undefined;
     /// TODO
@@ -1796,7 +1796,7 @@ struct RenderPassDepthStencilAttachment {
     /// `undefined` value (as defined by the JS spec). Use @ref
     /// WGPU_DEPTH_CLEAR_VALUE_UNDEFINED to indicate this semantically. If
     /// infinite, produces a @ref NonFiniteFloatValueError.
-    float depthClearValue = DEPTH_CLEAR_VALUE_UNDEFINEDf;
+    float depthClearValue = DEPTH_CLEAR_VALUE_UNDEFINED;
     /// TODO
     bool depthReadOnly = false;
     /// TODO
@@ -1816,11 +1816,11 @@ struct RenderPassDescriptor {
     /// TODO
     const(RenderPassColorAttachment)[] colorAttachments = null;
     /// TODO
-    RenderPassDepthStencilAttachment depthStencilAttachment = null;
+    const(RenderPassDepthStencilAttachment)* depthStencilAttachment = null;
     /// TODO
-    QuerySet occlusionQuerySet = QuerySet.init;
+    QuerySet.Handle occlusionQuerySet = QuerySet.Handle.init;
     /// TODO
-    PassTimestampWrites timestampWrites = null;
+    const(PassTimestampWrites)* timestampWrites = null;
 }
 
 /// TODO
@@ -1834,17 +1834,17 @@ struct RenderPipelineDescriptor {
     /// TODO
     StringView label = StringView.init;
     /// TODO
-    PipelineLayout layout = PipelineLayout.init;
+    PipelineLayout.Handle layout = PipelineLayout.Handle.init;
     /// TODO
     VertexState vertex = VertexState.init;
     /// TODO
     PrimitiveState primitive = PrimitiveState.init;
     /// TODO
-    DepthStencilState depthStencil = null;
+    const(DepthStencilState)* depthStencil = null;
     /// TODO
     MultisampleState multisample = MultisampleState.init;
     /// TODO
-    FragmentState fragment = null;
+    const(FragmentState)* fragment = null;
 }
 
 /// TODO
@@ -1866,7 +1866,7 @@ struct RequestAdapterOptions {
     BackendType backendType = BackendType.undefined;
     /// If set, requires the adapter to be able to output to a particular
     /// surface. If this is not possible, the request returns null.
-    Surface compatibleSurface = Surface.init;
+    Surface.Handle compatibleSurface = Surface.Handle.init;
 }
 
 /// Extension providing requestAdapter options for implementations with WebXR
@@ -2012,7 +2012,7 @@ struct SurfaceColorManagement {
 /// Surface-Configuration for more details.
 struct SurfaceConfiguration {
     /// The @ref WGPUDevice to use to render to surface's textures.
-    Device device = Device.init;
+    Device.Handle device = Device.Handle.init;
     /// The @ref WGPUTextureFormat of the surface's textures.
     TextureFormat format = TextureFormat.undefined;
     /// The @ref WGPUTextureUsage of the surface's textures.
@@ -2123,7 +2123,7 @@ struct SurfaceTexture {
     /// The @ref WGPUTexture representing the frame that will be shown on the
     /// surface. It is @ref ReturnedWithOwnership from @ref
     /// wgpuSurfaceGetCurrentTexture.
-    Texture texture = Texture.init;
+    Texture.Handle texture = Texture.Handle.init;
     /// Whether the call to @ref wgpuSurfaceGetCurrentTexture succeeded and a
     /// hint as to why it might not have.
     SurfaceGetCurrentTextureStatus status = cast(SurfaceGetCurrentTextureStatus)0;
@@ -2134,7 +2134,7 @@ struct TexelCopyBufferInfo {
     /// TODO
     TexelCopyBufferLayout layout = TexelCopyBufferLayout.init;
     /// TODO
-    Buffer buffer = Buffer.init;
+    Buffer.Handle buffer = Buffer.Handle.init;
 }
 
 /// TODO
@@ -2150,7 +2150,7 @@ struct TexelCopyBufferLayout {
 /// TODO
 struct TexelCopyTextureInfo {
     /// TODO
-    Texture texture = Texture.init;
+    Texture.Handle texture = Texture.Handle.init;
     /// TODO
     uint mipLevel = 0;
     /// TODO
@@ -2286,7 +2286,7 @@ struct VertexBufferLayout {
 /// TODO
 struct VertexState {
     /// TODO
-    ShaderModule module_ = ShaderModule.init;
+    ShaderModule.Handle module_ = ShaderModule.Handle.init;
     /// TODO
     StringView entryPoint = StringView.init;
     /// TODO

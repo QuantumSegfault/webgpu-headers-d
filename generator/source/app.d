@@ -333,6 +333,14 @@ string toDType(string type, TypeLocation loc, string pointer, const scope string
         break;
     }
 
+    if (type.startsWith("object.")) {
+        result = identifierMap[type] ~ ".Handle";
+    }
+
+    if (!result) {
+        result = identifierMap[type];
+    }
+
     if (result) {
         if (pointer) {
             if (pointer == "immutable")
@@ -343,7 +351,7 @@ string toDType(string type, TypeLocation loc, string pointer, const scope string
         return result;
     }
 
-    return identifierMap[type];
+    return result;
 }
 
 void main()
@@ -537,7 +545,8 @@ void main()
             } else if (only("float32", "nullable_float32", "float64", "float64_supertype").canFind(
                     member.type)) {
                 if (member.default_.isNull) {
-                    initializer = "0.0";
+                    initializer = (member.type == "float32" || member.type == "nullable_float32") ? "0.0f"
+                        : "0.0";
                 } else {
                     auto default_ = member.default_.get;
 
@@ -548,6 +557,9 @@ void main()
                         initializer = format("%.20g", default_.number);
                         if (!initializer.canFind("."))
                             initializer ~= ".0";
+
+                        if (member.type == "float32" || member.type == "nullable_float32")
+                            initializer ~= "f";
                     } else if (default_.tag == API.ParameterType.Default.Tag.string) {
                         enforce(default_.str.startsWith("constant."));
                         initializer = identifierMap[default_.str];
@@ -555,9 +567,6 @@ void main()
                         assert(0);
                     }
                 }
-
-                if (member.type == "float32" || member.type == "nullable_float32")
-                    initializer ~= "f";
             } else if (member.type == "bool") {
                 if (member.default_.isNull) {
                     initializer = "false";

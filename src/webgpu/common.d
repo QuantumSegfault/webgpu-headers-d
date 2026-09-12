@@ -8,7 +8,7 @@ package mixin template BitFlags() {
 @safe nothrow @nogc pure:
 
     static typeof(this) opIndex(size_t i)
-    in (i < 64) => F(cast(T)(1 << i));
+    in (i < 64) => F(cast(ulong)(1 << i));
 
     auto opUnary(string op : "~")() const => F(~bits);
 
@@ -32,31 +32,56 @@ struct StringView {
     const(char)* ptr;
     size_t length;
 
-    this(inout T[] slice) inout @trusted
+    this(const(char)[] slice) @trusted
     {
         ptr = slice.ptr;
         length = slice.length;
     }
 
-    void opAssign(T[] slice) @trusted
+    void opAssign(const(char)[] slice) @trusted
     {
         ptr = slice.ptr;
         length = slice.length;
     }
 
-    alias asDSlice this;
-    inout(T)[] asDSlice() @trusted inout
+    alias asDStr this;
+    const(char)[] asDStr() @trusted inout
     {
         return (ptr && length) ? ptr[0 .. length] : null;
     }
 
-    bool opEquals(in T[] other) const => this[] == other;
+    bool opEquals(const(char)[] other) const => this[] == other;
     size_t toHash() const => this[].hashOf;
 }
 
-auto toSlice(T)(inout T[] slice) => inout Slice!T(slice);
+auto asStringView(T)(const(char)[] slice) => StringView(slice);
 
-alias StringView = Slice!(const char);
+package enum ZeroInit(T) = () {
+    static if (__traits(isZeroInit, T)) {
+        return T.init;
+    } else {
+        T t;
+
+        static foreach (field; t.tupleof) {
+            {
+                alias FT = typeof(field);
+
+                static if (__traits(isZeroInit, FT))
+                    __traits(child, t, field) = FT.init;
+                else static if (is(FT == struct))
+                    __traits(child, t, field) = ZeroInit!(typeof(field));
+                else static if (is(FT == enum))
+                    __traits(child, t, field) = cast(FT)0;
+                else static if (__traits(isFloating, FT))
+                    __traits(child, t, field) = 0;
+                else
+                    static assert(0, "Cannot ZeroInit field of type `", typeof(field), "`");
+            }
+        }
+
+        return t;
+    }
+}();
 
 template WebGPUObject(string ident) {
     package struct Impl;
