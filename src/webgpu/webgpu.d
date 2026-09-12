@@ -1237,16 +1237,16 @@ struct TextureUsage {
 }
 
 
-struct BufferMap {}
-struct CompilationInfo {}
-struct CreateComputePipelineAsync {}
-struct CreateRenderPipelineAsync {}
-struct DeviceLost {}
-struct PopErrorScope {}
-struct QueueWorkDone {}
-struct RequestAdapter {}
-struct RequestDevice {}
-struct UncapturedError {}
+struct BufferMapCallback {}
+struct CompilationInfoCallback {}
+struct CreateComputePipelineAsyncCallback {}
+struct CreateRenderPipelineAsyncCallback {}
+struct DeviceLostCallback {}
+struct PopErrorScopeCallback {}
+struct QueueWorkDoneCallback {}
+struct RequestAdapterCallback {}
+struct RequestDeviceCallback {}
+struct UncapturedErrorCallback {}
 
 void createInstance() {}
 void getInstanceFeatures() {}
@@ -1529,14 +1529,14 @@ struct DeviceDescriptor {
     /// TODO
     QueueDescriptor defaultQueue = QueueDescriptor.init;
     /// TODO
-    DeviceLost deviceLostCallbackInfo = DeviceLost.init;
+    DeviceLostCallback deviceLostCallbackInfo = DeviceLostCallback.init;
     /// Called when there is an uncaptured error on this device, from any
     /// thread. See @ref ErrorScopes. **Important:** This callback does not have
     /// a configurable @ref WGPUCallbackMode; it may be called at any time (like
     /// @ref WGPUCallbackMode_AllowSpontaneous). As such, calls into the
     /// `webgpu.h` API from this callback are unsafe. See @ref
     /// CallbackReentrancy.
-    UncapturedError uncapturedErrorCallbackInfo = UncapturedError.init;
+    UncapturedErrorCallback uncapturedErrorCallbackInfo = UncapturedErrorCallback.init;
 }
 
 /// TODO
@@ -2296,26 +2296,76 @@ struct VertexState {
 }
 
 
-struct Adapter {}
-struct BindGroup {}
-struct BindGroupLayout {}
-struct Buffer {}
-struct CommandBuffer {}
-struct CommandEncoder {}
-struct ComputePassEncoder {}
-struct ComputePipeline {}
-struct Device {}
-struct ExternalTexture {}
-struct Instance {}
-struct PipelineLayout {}
-struct QuerySet {}
-struct Queue {}
-struct RenderBundle {}
-struct RenderBundleEncoder {}
-struct RenderPassEncoder {}
-struct RenderPipeline {}
-struct Sampler {}
-struct ShaderModule {}
-struct Surface {}
-struct Texture {}
-struct TextureView {}
+/// TODO
+alias Adapter = WebGPUObject!"Adapter";
+
+/// TODO
+alias BindGroup = WebGPUObject!"BindGroup";
+
+/// TODO
+alias BindGroupLayout = WebGPUObject!"BindGroupLayout";
+
+/// TODO
+alias Buffer = WebGPUObject!"Buffer";
+
+/// TODO
+alias CommandBuffer = WebGPUObject!"CommandBuffer";
+
+/// TODO
+alias CommandEncoder = WebGPUObject!"CommandEncoder";
+
+/// TODO
+alias ComputePassEncoder = WebGPUObject!"ComputePassEncoder";
+
+/// TODO
+alias ComputePipeline = WebGPUObject!"ComputePipeline";
+
+/// TODO Releasing the last ref to a `WGPUDevice` also calls @ref
+/// wgpuDeviceDestroy. For more info, see @ref DeviceRelease.
+alias Device = WebGPUObject!"Device";
+
+/// A sampleable 2D texture that may perform 0-copy YUV sampling internally.
+/// Creation of @ref WGPUExternalTexture is extremely implementation-dependent
+/// and not defined in this header.
+alias ExternalTexture = WebGPUObject!"ExternalTexture";
+
+/// TODO
+alias Instance = WebGPUObject!"Instance";
+
+/// TODO
+alias PipelineLayout = WebGPUObject!"PipelineLayout";
+
+/// TODO
+alias QuerySet = WebGPUObject!"QuerySet";
+
+/// TODO
+alias Queue = WebGPUObject!"Queue";
+
+/// TODO
+alias RenderBundle = WebGPUObject!"RenderBundle";
+
+/// TODO
+alias RenderBundleEncoder = WebGPUObject!"RenderBundleEncoder";
+
+/// TODO
+alias RenderPassEncoder = WebGPUObject!"RenderPassEncoder";
+
+/// TODO
+alias RenderPipeline = WebGPUObject!"RenderPipeline";
+
+/// TODO
+alias Sampler = WebGPUObject!"Sampler";
+
+/// TODO
+alias ShaderModule = WebGPUObject!"ShaderModule";
+
+/// An object used to continuously present image data to the user, see @ref
+/// Surfaces for more details.
+alias Surface = WebGPUObject!"Surface";
+
+/// TODO
+alias Texture = WebGPUObject!"Texture";
+
+/// TODO
+alias TextureView = WebGPUObject!"TextureView";
+

@@ -57,3 +57,106 @@ struct StringView {
 auto toSlice(T)(inout T[] slice) => inout Slice!T(slice);
 
 alias StringView = Slice!(const char);
+
+template WebGPUObject(string ident) {
+    package struct Impl;
+
+    package alias Handle = Impl*;
+
+    extern (C) nothrow @nogc {
+        pragma(mangle, "wgpu" ~ ident ~ "AddRef")
+        private void addRef(Handle);
+
+        pragma(mangle, "wgpu" ~ ident ~ "Release")
+        private void release(Handle);
+    }
+
+    struct Uniq {
+    nothrow @nogc:
+        package Handle handle;
+
+        package this(Handle handle)
+        {
+            this.handle = handle;
+        }
+
+        @disable this(ref Uniq rhs);
+        this(return scope Uniq rhs) @safe
+        {
+            handle = rhs.handle;
+            rhs.handle = null;
+        }
+
+        Handle getHandle() return @safe => handle;
+        alias getHandle this;
+
+        Uniq dupRef() @trusted
+        {
+            if (handle)
+                addRef(handle);
+            return Uniq(handle);
+        }
+
+        ~this() scope @trusted
+        {
+            if (handle)
+                release(handle);
+        }
+    }
+
+    struct Rc {
+    nothrow @nogc:
+        package Handle handle;
+
+        package this(Handle handle)
+        {
+            this.handle = handle;
+        }
+
+        this(ref return scope Rc rhs) @trusted
+        {
+            handle = rhs.handle;
+            if (handle)
+                addRef(rhs);
+        }
+
+        Handle getHandle() return @safe => handle;
+        alias getHandle this;
+
+        ~this() scope @trusted
+        {
+            if (handle)
+                release(handle);
+        }
+    }
+}
+
+private template isWebGPUObject(alias T : Base!ident, alias Base : WebGPUObject, string ident) {
+    enum isWebGPUObject = true;
+}
+
+private template isWebGPUObject(alias T) {
+    enum isWebGPUObject = false;
+}
+
+template asRef(U) if (isWebGPUObject!(__traits(parent, U))) {
+    alias T = __traits(parent, U);
+    T.Rc asRef(U u)
+    {
+        auto handle = u.handle;
+        u.handle = null;
+
+        return T.Rc(handle);
+    }
+}
+
+template asUniq(R) if (isWebGPUObject!(__traits(parent, R))) {
+    alias T = __traits(parent, R);
+    T.Uniq asUniq(R r)
+    {
+        auto handle = r.handle;
+        r.handle = null;
+
+        return T.Uniq(handle);
+    }
+}

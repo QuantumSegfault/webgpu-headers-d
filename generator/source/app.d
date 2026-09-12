@@ -278,13 +278,19 @@ string toDocBlock(string doc, uint indent = 0)
         "\n");
 }
 
-string toDType(string type, bool forParameter, string pointer, const scope string[string] identifierMap)
+enum TypeLocation {
+    field,
+    param,
+    ret
+}
+
+string toDType(string type, TypeLocation loc, string pointer, const scope string[string] identifierMap)
 {
     import std.string : startsWith;
 
     if (type.startsWith("array\\u003c")) {
         enforce(pointer == "mutable" || pointer == "immutable");
-        auto innerType = toDType(type[11 .. $ - 6], forParameter, null, identifierMap);
+        auto innerType = toDType(type[11 .. $ - 6], loc, null, identifierMap);
         return (pointer == "immutable" ? ("const(" ~ innerType ~ ")") : innerType) ~ "[]";
     }
 
@@ -293,7 +299,7 @@ string toDType(string type, bool forParameter, string pointer, const scope strin
     case "out_string":
     case "string_with_default_empty":
     case "nullable_string":
-        result = forParameter ? "const(char)[]" : "StringView";
+        result = loc == TypeLocation.field ? "StringView" : "const(char)[]";
         break;
     case "uint16":
         result = "ushort";
@@ -359,11 +365,12 @@ void main()
         identifierMap["bitflag." ~ bitflag.name] = bitflag.name.snakeToCamel(true);
     }
     foreach (ref callback; api.callbacks) {
-        identifierMap["callback." ~ callback.name] = callback.name.snakeToCamel(true);
+        identifierMap["callback." ~ callback.name] = callback.name.snakeToCamel(true) ~ "Callback";
     }
     foreach (ref struct_; api.structs) {
         identifierMap["struct." ~ struct_.name] = struct_.name.snakeToCamel(true);
     }
+
     foreach (ref object; api.objects) {
         identifierMap["object." ~ object.name] = object.name.snakeToCamel(true);
     }
@@ -372,7 +379,7 @@ void main()
 
     outFile.writeln("module webgpu.webgpu;");
     outFile.writeln();
-    outFile.writeln("import webgpu.common : BitFlags;");
+    outFile.writeln("import webgpu.common;");
 
     outFile.writeln();
 
@@ -576,12 +583,12 @@ void main()
 
                 enforce(member.type.startsWith("callback.") || member.type.startsWith("object.") || only("out_string", "string_with_default_empty", "nullable_string")
                         .canFind(member.type));
-                initializer = member.type.toDType(false, member.pointer, identifierMap) ~ ".init";
+                initializer = member.type.toDType(TypeLocation.field, member.pointer, identifierMap) ~ ".init";
             }
 
             outFile.writeln(member.doc.toDocBlock(1));
             outFile.writefln!"    %s %s = %s;"(
-                member.type.toDType(false, member.pointer, identifierMap), member
+                member.type.toDType(TypeLocation.field, member.pointer, identifierMap), member
                     .name.snakeToCamel(false).escapeIdentifier, initializer);
         }
         outFile.writeln("}");
@@ -591,6 +598,9 @@ void main()
     outFile.writeln();
 
     foreach (ref object; api.objects) {
-        outFile.writeln("struct " ~ identifierMap["object." ~ object.name] ~ " {}");
+        outFile.writeln(object.doc.toDocBlock);
+        outFile.writeln("alias " ~ identifierMap["object." ~ object.name] ~ " = " ~ "WebGPUObject!\"" ~ identifierMap["object." ~ object
+                .name] ~ "\";");
+        outFile.writeln();
     }
 }
