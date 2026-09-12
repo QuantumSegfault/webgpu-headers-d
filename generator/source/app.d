@@ -12,6 +12,7 @@ import std.format : format;
 import std.ascii : toUpper, isDigit;
 import std.stdio : writeln, File;
 import std.meta : AliasSeq;
+import std.exception : enforce;
 
 @ignoreExtras
 struct API {
@@ -241,7 +242,7 @@ string escapeIdentifier(return scope string str)
 
 string asDCode(in API.Value64 value)
 {
-    import std.conv;
+    import std.conv : to;
 
     final switch (value.tag) with (API.Value64.Tag) {
     case integer:
@@ -282,8 +283,6 @@ string toDType(string type, bool forParameter, string pointer, const scope strin
     import std.string : startsWith;
 
     if (type.startsWith("array\\u003c")) {
-        import std.exception;
-
         enforce(pointer == "mutable" || pointer == "immutable");
         auto innerType = toDType(type[11 .. $ - 6], forParameter, null, identifierMap);
         return (pointer == "immutable" ? ("const(" ~ innerType ~ ")") : innerType) ~ "[]";
@@ -452,12 +451,138 @@ void main()
     outFile.writeln();
 
     foreach (ref struct_; api.structs) {
+        import std.string : startsWith;
+        import std.range : only;
+        import std.algorithm.searching : canFind;
+        import std.conv : to;
+
         outFile.writeln(struct_.doc.toDocBlock);
         outFile.writeln("extern(C) struct " ~ identifierMap["struct." ~ struct_.name] ~ " {");
         foreach (ref member; struct_.members) {
+            enforce(member.passedWithOwnership.isNull);
+            enforce(!member.optional || member.pointer || member.type.startsWith("object."));
+
+            string initializer = "";
+            if (member.pointer) {
+                enforce(member.default_.isNull);
+
+                initializer = "null";
+            } else if (member.type.startsWith("enum.")) {
+                if (member.default_.isNull) {
+                    string enumName = member.type[5 .. $];
+                    bool hasUndefined = false;
+                    bool foundEnum = false;
+                    foreach (ref e; api.enums) {
+                        if (e.name == enumName) {
+                            foundEnum = true;
+                            foreach (ref entry; e.entries) {
+                                if (!entry.isNull && entry.get.name == "undefined") {
+                                    hasUndefined = true;
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    enforce(foundEnum);
+
+                    if (hasUndefined) {
+                        initializer = identifierMap[member.type] ~ ".undefined";
+                    } else {
+                        initializer = "cast(" ~ identifierMap[member.type] ~ ")0";
+                    }
+                } else {
+                    auto default_ = member.default_.get;
+                    enforce(default_.tag == API.ParameterType.Default.Tag.string);
+                    initializer = identifierMap[member.type] ~ "." ~ default_.str.snakeToCamel(false)
+                        .escapeIdentifier;
+                }
+            } else if (member.type.startsWith("bitflag.")) {
+                if (member.default_.isNull) {
+                    initializer = identifierMap[member.type] ~ ".none";
+                } else {
+                    auto default_ = member.default_.get;
+                    enforce(default_.tag == API.ParameterType.Default.Tag.string);
+                    initializer = identifierMap[member.type] ~ "." ~ default_.str.snakeToCamel(false)
+                        .escapeIdentifier;
+                }
+            } else if (only("uint16", "uint32", "uint64", "usize", "int32").canFind(member.type)) {
+                if (member.default_.isNull) {
+                    initializer = "0";
+                } else {
+                    auto default_ = member.default_.get;
+
+                    enforce(default_.tag == API.ParameterType.Default.Tag.number || default_.tag == API
+                            .ParameterType.Default.Tag.string);
+
+                    if (
+                        default_.tag == API.ParameterType.Default.Tag.number) {
+                        initializer = (cast(long)default_.number).to!string;
+                    } else if (default_.tag == API.ParameterType.Default.Tag.string) {
+                        if (default_.str.startsWith("constant."))
+                            initializer = identifierMap[default_.str];
+                        else
+                            initializer = default_.str;
+                    } else {
+                        assert(0);
+                    }
+                }
+            } else if (only("float32", "nullable_float32", "float64", "float64_supertype").canFind(
+                    member.type)) {
+                if (member.default_.isNull) {
+                    initializer = "0.0";
+                } else {
+                    auto default_ = member.default_.get;
+
+                    enforce(default_.tag == API.ParameterType.Default.Tag.number || default_.tag == API
+                            .ParameterType.Default.Tag.string);
+
+                    if (default_.tag == API.ParameterType.Default.Tag.number) {
+                        initializer = format("%.20g", default_.number);
+                        if (!initializer.canFind("."))
+                            initializer ~= ".0";
+                    } else if (default_.tag == API.ParameterType.Default.Tag.string) {
+                        enforce(default_.str.startsWith("constant."));
+                        initializer = identifierMap[default_.str];
+                    } else {
+                        assert(0);
+                    }
+                }
+
+                if (member.type == "float32" || member.type == "nullable_float32")
+                    initializer ~= "f";
+            } else if (member.type == "bool") {
+                if (member.default_.isNull) {
+                    initializer = "false";
+                } else {
+                    auto default_ = member.default_.get;
+
+                    enforce(default_.tag == API.ParameterType.Default.Tag.boolean);
+                    initializer = default_.boolean ? "true" : "false";
+                }
+            } else if (member.type.startsWith("struct.")) {
+                if (member.default_.isNull) {
+                    initializer = identifierMap[member.type] ~ ".init";
+                } else {
+                    auto default_ = member.default_.get;
+
+                    enforce(default_.tag == API.ParameterType.Default.Tag.string);
+                    enforce(default_.str == "zero");
+
+                    initializer = "ZeroInit!" ~ identifierMap[member.type];
+                }
+            } else {
+                enforce(member.default_.isNull);
+
+                enforce(member.type.startsWith("callback.") || member.type.startsWith("object.") || only("out_string", "string_with_default_empty", "nullable_string")
+                        .canFind(member.type));
+                initializer = member.type.toDType(false, member.pointer, identifierMap) ~ ".init";
+            }
+
             outFile.writeln(member.doc.toDocBlock(1));
-            outFile.writefln!"    %s %s;"(member.type.toDType(false, member.pointer, identifierMap), member
-                    .name.snakeToCamel(false).escapeIdentifier);
+            outFile.writefln!"    %s %s = %s;"(
+                member.type.toDType(false, member.pointer, identifierMap), member
+                    .name.snakeToCamel(false).escapeIdentifier, initializer);
         }
         outFile.writeln("}");
         outFile.writeln();

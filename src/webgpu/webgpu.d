@@ -1256,128 +1256,128 @@ void hasInstanceFeature() {}
 /// TODO
 extern(C) struct AdapterInfo {
     /// TODO
-    StringView vendor;
+    StringView vendor = StringView.init;
     /// TODO
-    StringView architecture;
+    StringView architecture = StringView.init;
     /// TODO
-    StringView device;
+    StringView device = StringView.init;
     /// TODO
-    StringView description;
+    StringView description = StringView.init;
     /// TODO
-    BackendType backendType;
+    BackendType backendType = BackendType.undefined;
     /// TODO
-    AdapterType adapterType;
+    AdapterType adapterType = cast(AdapterType)0;
     /// TODO
-    uint vendorID;
+    uint vendorID = 0;
     /// TODO
-    uint deviceID;
+    uint deviceID = 0;
     /// TODO
-    uint subgroupMinSize;
+    uint subgroupMinSize = 0;
     /// TODO
-    uint subgroupMaxSize;
+    uint subgroupMaxSize = 0;
 }
 
 /// TODO
 extern(C) struct BindGroupDescriptor {
     /// TODO
-    StringView label;
+    StringView label = StringView.init;
     /// TODO
-    BindGroupLayout layout;
+    BindGroupLayout layout = BindGroupLayout.init;
     /// TODO
-    const(BindGroupEntry)[] entries;
+    const(BindGroupEntry)[] entries = null;
 }
 
 /// TODO
 extern(C) struct BindGroupEntry {
     /// Binding index in the bind group.
-    uint binding;
+    uint binding = 0;
     /// Set this if the binding is a buffer object. Otherwise must be null.
-    Buffer buffer;
+    Buffer buffer = Buffer.init;
     /// If the binding is a buffer, this is the byte offset of the binding
     /// range. Otherwise ignored.
-    ulong offset;
+    ulong offset = 0;
     /// If the binding is a buffer, this is the byte size of the binding range
     /// (@ref WGPU_WHOLE_SIZE means the binding ends at the end of the buffer).
     /// Otherwise ignored.
-    ulong size;
+    ulong size = WHOLE_SIZE;
     /// Set this if the binding is a sampler object. Otherwise must be null.
-    Sampler sampler;
+    Sampler sampler = Sampler.init;
     /// Set this if the binding is a texture view object. Otherwise must be
     /// null.
-    TextureView textureView;
+    TextureView textureView = TextureView.init;
 }
 
 /// TODO
 extern(C) struct BindGroupLayoutDescriptor {
     /// TODO
-    StringView label;
+    StringView label = StringView.init;
     /// TODO
-    const(BindGroupLayoutEntry)[] entries;
+    const(BindGroupLayoutEntry)[] entries = null;
 }
 
 /// TODO
 extern(C) struct BindGroupLayoutEntry {
     /// TODO
-    uint binding;
+    uint binding = 0;
     /// TODO
-    ShaderStage visibility;
+    ShaderStage visibility = ShaderStage.none;
     /// If non-zero, this entry defines a binding array with this size.
-    uint bindingArraySize;
+    uint bindingArraySize = 0;
     /// TODO
-    BufferBindingLayout buffer;
+    BufferBindingLayout buffer = ZeroInit!BufferBindingLayout;
     /// TODO
-    SamplerBindingLayout sampler;
+    SamplerBindingLayout sampler = ZeroInit!SamplerBindingLayout;
     /// TODO
-    TextureBindingLayout texture;
+    TextureBindingLayout texture = ZeroInit!TextureBindingLayout;
     /// TODO
-    StorageTextureBindingLayout storageTexture;
+    StorageTextureBindingLayout storageTexture = ZeroInit!StorageTextureBindingLayout;
 }
 
 /// TODO
 extern(C) struct BlendComponent {
     /// If set to @ref WGPUBlendOperation_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUBlendOperation_Add.
-    BlendOperation operation;
+    BlendOperation operation = BlendOperation.undefined;
     /// If set to @ref WGPUBlendFactor_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUBlendFactor_One.
-    BlendFactor srcFactor;
+    BlendFactor srcFactor = BlendFactor.undefined;
     /// If set to @ref WGPUBlendFactor_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUBlendFactor_Zero.
-    BlendFactor dstFactor;
+    BlendFactor dstFactor = BlendFactor.undefined;
 }
 
 /// TODO
 extern(C) struct BlendState {
     /// TODO
-    BlendComponent color;
+    BlendComponent color = BlendComponent.init;
     /// TODO
-    BlendComponent alpha;
+    BlendComponent alpha = BlendComponent.init;
 }
 
 /// TODO
 extern(C) struct BufferBindingLayout {
     /// If set to @ref WGPUBufferBindingType_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUBufferBindingType_Uniform.
-    BufferBindingType type;
+    BufferBindingType type = BufferBindingType.undefined;
     /// TODO
-    bool hasDynamicOffset;
+    bool hasDynamicOffset = false;
     /// TODO
-    ulong minBindingSize;
+    ulong minBindingSize = 0;
 }
 
 /// TODO
 extern(C) struct BufferDescriptor {
     /// TODO
-    StringView label;
+    StringView label = StringView.init;
     /// TODO
-    BufferUsage usage;
+    BufferUsage usage = BufferUsage.none;
     /// TODO
-    ulong size;
+    ulong size = 0;
     /// When true, the buffer is mapped in write mode at creation. It should
     /// thus be unmapped once its initial data has been written. @note Mapping
     /// at creation does **not** require the usage @ref
     /// WGPUBufferUsage_MapWrite.
-    bool mappedAtCreation;
+    bool mappedAtCreation = false;
 }
 
 /// An RGBA color. Represents a `f32`, `i32`, or `u32` color using @ref
@@ -1385,13 +1385,13 @@ extern(C) struct BufferDescriptor {
 /// NonFiniteFloatValueError.
 extern(C) struct Color {
     /// 
-    double r;
+    double r = 0.0;
     /// 
-    double g;
+    double g = 0.0;
     /// 
-    double b;
+    double b = 0.0;
     /// 
-    double a;
+    double a = 0.0;
 }
 
 /// TODO
@@ -1399,23 +1399,23 @@ extern(C) struct ColorTargetState {
     /// The texture format of the target. If @ref WGPUTextureFormat_Undefined,
     /// indicates a "hole" in the parent @ref WGPUFragmentState `targets` array:
     /// the pipeline does not output a value at this `location`.
-    TextureFormat format;
+    TextureFormat format = TextureFormat.undefined;
     /// TODO
-    BlendState blend;
+    BlendState blend = null;
     /// TODO
-    ColorWriteMask writeMask;
+    ColorWriteMask writeMask = ColorWriteMask.all;
 }
 
 /// TODO
 extern(C) struct CommandBufferDescriptor {
     /// TODO
-    StringView label;
+    StringView label = StringView.init;
 }
 
 /// TODO
 extern(C) struct CommandEncoderDescriptor {
     /// TODO
-    StringView label;
+    StringView label = StringView.init;
 }
 
 /// Note: While Compatibility Mode is optional to implement, this extension
@@ -1423,130 +1423,130 @@ extern(C) struct CommandEncoderDescriptor {
 /// behave as defined in the WebGPU spec.
 extern(C) struct CompatibilityModeLimits {
     /// TODO
-    uint maxStorageBuffersInVertexStage;
+    uint maxStorageBuffersInVertexStage = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxStorageTexturesInVertexStage;
+    uint maxStorageTexturesInVertexStage = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxStorageBuffersInFragmentStage;
+    uint maxStorageBuffersInFragmentStage = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxStorageTexturesInFragmentStage;
+    uint maxStorageTexturesInFragmentStage = LIMIT_U32_UNDEFINED;
 }
 
 /// TODO
 extern(C) struct CompilationInfo {
     /// TODO
-    const(CompilationMessage)[] messages;
+    const(CompilationMessage)[] messages = null;
 }
 
 /// TODO
 extern(C) struct CompilationMessage {
     /// A @ref LocalizableHumanReadableMessageString.
-    StringView message;
+    StringView message = StringView.init;
     /// Severity level of the message.
-    CompilationMessageType type;
+    CompilationMessageType type = cast(CompilationMessageType)0;
     /// Line number where the message is attached, starting at 1.
-    ulong lineNum;
+    ulong lineNum = 0;
     /// Offset in UTF-8 code units (bytes) from the beginning of the line,
     /// starting at 1.
-    ulong linePos;
+    ulong linePos = 0;
     /// Offset in UTF-8 code units (bytes) from the beginning of the shader
     /// code, starting at 0.
-    ulong offset;
+    ulong offset = 0;
     /// Length in UTF-8 code units (bytes) of the span the message corresponds
     /// to.
-    ulong length;
+    ulong length = 0;
 }
 
 /// TODO
 extern(C) struct ComputePassDescriptor {
     /// TODO
-    StringView label;
+    StringView label = StringView.init;
     /// TODO
-    PassTimestampWrites timestampWrites;
+    PassTimestampWrites timestampWrites = null;
 }
 
 /// TODO
 extern(C) struct ComputePipelineDescriptor {
     /// TODO
-    StringView label;
+    StringView label = StringView.init;
     /// TODO
-    PipelineLayout layout;
+    PipelineLayout layout = PipelineLayout.init;
     /// TODO
-    ComputeState compute;
+    ComputeState compute = ComputeState.init;
 }
 
 /// TODO
 extern(C) struct ComputeState {
     /// TODO
-    ShaderModule module_;
+    ShaderModule module_ = ShaderModule.init;
     /// TODO
-    StringView entryPoint;
+    StringView entryPoint = StringView.init;
     /// TODO
-    const(ConstantEntry)[] constants;
+    const(ConstantEntry)[] constants = null;
 }
 
 /// TODO
 extern(C) struct ConstantEntry {
     /// TODO
-    StringView key;
+    StringView key = StringView.init;
     /// Represents a WGSL numeric or boolean value using @ref DoubleAsSupertype.
     /// If non-finite, produces a @ref NonFiniteFloatValueError.
-    double value;
+    double value = 0.0;
 }
 
 /// TODO
 extern(C) struct DepthStencilState {
     /// TODO
-    TextureFormat format;
+    TextureFormat format = TextureFormat.undefined;
     /// TODO
-    OptionalBool depthWriteEnabled;
+    OptionalBool depthWriteEnabled = OptionalBool.undefined;
     /// TODO
-    CompareFunction depthCompare;
+    CompareFunction depthCompare = CompareFunction.undefined;
     /// TODO
-    StencilFaceState stencilFront;
+    StencilFaceState stencilFront = StencilFaceState.init;
     /// TODO
-    StencilFaceState stencilBack;
+    StencilFaceState stencilBack = StencilFaceState.init;
     /// TODO
-    uint stencilReadMask;
+    uint stencilReadMask = 0xFFFFFFFF;
     /// TODO
-    uint stencilWriteMask;
+    uint stencilWriteMask = 0xFFFFFFFF;
     /// TODO
-    int depthBias;
+    int depthBias = 0;
     /// TODO If non-finite, produces a @ref NonFiniteFloatValueError.
-    float depthBiasSlopeScale;
+    float depthBiasSlopeScale = 0.0f;
     /// TODO If non-finite, produces a @ref NonFiniteFloatValueError.
-    float depthBiasClamp;
+    float depthBiasClamp = 0.0f;
 }
 
 /// TODO
 extern(C) struct DeviceDescriptor {
     /// TODO
-    StringView label;
+    StringView label = StringView.init;
     /// TODO
-    const(FeatureName)[] requiredFeatures;
+    const(FeatureName)[] requiredFeatures = null;
     /// TODO
-    Limits requiredLimits;
+    Limits requiredLimits = null;
     /// TODO
-    QueueDescriptor defaultQueue;
+    QueueDescriptor defaultQueue = QueueDescriptor.init;
     /// TODO
-    DeviceLost deviceLostCallbackInfo;
+    DeviceLost deviceLostCallbackInfo = DeviceLost.init;
     /// Called when there is an uncaptured error on this device, from any
     /// thread. See @ref ErrorScopes. **Important:** This callback does not have
     /// a configurable @ref WGPUCallbackMode; it may be called at any time (like
     /// @ref WGPUCallbackMode_AllowSpontaneous). As such, calls into the
     /// `webgpu.h` API from this callback are unsafe. See @ref
     /// CallbackReentrancy.
-    UncapturedError uncapturedErrorCallbackInfo;
+    UncapturedError uncapturedErrorCallbackInfo = UncapturedError.init;
 }
 
 /// TODO
 extern(C) struct Extent3D {
     /// TODO
-    uint width;
+    uint width = 0;
     /// TODO
-    uint height;
+    uint height = 1;
     /// TODO
-    uint depthOrArrayLayers;
+    uint depthOrArrayLayers = 1;
 }
 
 /// Chained in an @ref WGPUBindGroupEntry to set it to an @ref
@@ -1554,7 +1554,7 @@ extern(C) struct Extent3D {
 /// WGPUExternalTextureBindingLayout in the @ref WGPUBindGroupLayout.
 extern(C) struct ExternalTextureBindingEntry {
     /// TODO
-    ExternalTexture externalTexture;
+    ExternalTexture externalTexture = ExternalTexture.init;
 }
 
 /// Chained in @ref WGPUBindGroupLayoutEntry to specify that the corresponding
@@ -1565,286 +1565,286 @@ extern(C) struct ExternalTextureBindingLayout {
 /// TODO
 extern(C) struct FragmentState {
     /// TODO
-    ShaderModule module_;
+    ShaderModule module_ = ShaderModule.init;
     /// TODO
-    StringView entryPoint;
+    StringView entryPoint = StringView.init;
     /// TODO
-    const(ConstantEntry)[] constants;
+    const(ConstantEntry)[] constants = null;
     /// TODO
-    const(ColorTargetState)[] targets;
+    const(ColorTargetState)[] targets = null;
 }
 
 /// Opaque handle to an asynchronous operation. See @ref Asynchronous-Operations
 /// for more information.
 extern(C) struct Future {
     /// Opaque id of the @ref WGPUFuture
-    ulong id;
+    ulong id = 0;
 }
 
 /// Struct holding a future to wait on, and a `completed` boolean flag.
 extern(C) struct FutureWaitInfo {
     /// The future to wait on.
-    Future future;
+    Future future = Future.init;
     /// Whether or not the future completed.
-    bool completed;
+    bool completed = false;
 }
 
 /// TODO
 extern(C) struct InstanceDescriptor {
     /// TODO
-    const(InstanceFeatureName)[] requiredFeatures;
+    const(InstanceFeatureName)[] requiredFeatures = null;
     /// TODO
-    InstanceLimits requiredLimits;
+    InstanceLimits requiredLimits = null;
 }
 
 /// TODO
 extern(C) struct InstanceLimits {
     /// The maximum number @ref WGPUFutureWaitInfo supported in a call to
     /// ::wgpuInstanceWaitAny with `timeoutNS \u003e 0`.
-    size_t timedWaitAnyMaxCount;
+    size_t timedWaitAnyMaxCount = 0;
 }
 
 /// TODO
 extern(C) struct Limits {
     /// TODO
-    uint maxTextureDimension1D;
+    uint maxTextureDimension1D = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxTextureDimension2D;
+    uint maxTextureDimension2D = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxTextureDimension3D;
+    uint maxTextureDimension3D = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxTextureArrayLayers;
+    uint maxTextureArrayLayers = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxBindGroups;
+    uint maxBindGroups = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxBindGroupsPlusVertexBuffers;
+    uint maxBindGroupsPlusVertexBuffers = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxBindingsPerBindGroup;
+    uint maxBindingsPerBindGroup = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxDynamicUniformBuffersPerPipelineLayout;
+    uint maxDynamicUniformBuffersPerPipelineLayout = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxDynamicStorageBuffersPerPipelineLayout;
+    uint maxDynamicStorageBuffersPerPipelineLayout = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxSampledTexturesPerShaderStage;
+    uint maxSampledTexturesPerShaderStage = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxSamplersPerShaderStage;
+    uint maxSamplersPerShaderStage = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxStorageBuffersPerShaderStage;
+    uint maxStorageBuffersPerShaderStage = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxStorageTexturesPerShaderStage;
+    uint maxStorageTexturesPerShaderStage = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxUniformBuffersPerShaderStage;
+    uint maxUniformBuffersPerShaderStage = LIMIT_U32_UNDEFINED;
     /// TODO
-    ulong maxUniformBufferBindingSize;
+    ulong maxUniformBufferBindingSize = LIMIT_U64_UNDEFINED;
     /// TODO
-    ulong maxStorageBufferBindingSize;
+    ulong maxStorageBufferBindingSize = LIMIT_U64_UNDEFINED;
     /// TODO
-    uint minUniformBufferOffsetAlignment;
+    uint minUniformBufferOffsetAlignment = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint minStorageBufferOffsetAlignment;
+    uint minStorageBufferOffsetAlignment = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxVertexBuffers;
+    uint maxVertexBuffers = LIMIT_U32_UNDEFINED;
     /// TODO
-    ulong maxBufferSize;
+    ulong maxBufferSize = LIMIT_U64_UNDEFINED;
     /// TODO
-    uint maxVertexAttributes;
+    uint maxVertexAttributes = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxVertexBufferArrayStride;
+    uint maxVertexBufferArrayStride = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxInterStageShaderVariables;
+    uint maxInterStageShaderVariables = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxColorAttachments;
+    uint maxColorAttachments = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxColorAttachmentBytesPerSample;
+    uint maxColorAttachmentBytesPerSample = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxComputeWorkgroupStorageSize;
+    uint maxComputeWorkgroupStorageSize = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxComputeInvocationsPerWorkgroup;
+    uint maxComputeInvocationsPerWorkgroup = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxComputeWorkgroupSizeX;
+    uint maxComputeWorkgroupSizeX = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxComputeWorkgroupSizeY;
+    uint maxComputeWorkgroupSizeY = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxComputeWorkgroupSizeZ;
+    uint maxComputeWorkgroupSizeZ = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxComputeWorkgroupsPerDimension;
+    uint maxComputeWorkgroupsPerDimension = LIMIT_U32_UNDEFINED;
     /// TODO
-    uint maxImmediateSize;
+    uint maxImmediateSize = LIMIT_U32_UNDEFINED;
 }
 
 /// TODO
 extern(C) struct MultisampleState {
     /// TODO
-    uint count;
+    uint count = 1;
     /// TODO
-    uint mask;
+    uint mask = 0xFFFFFFFF;
     /// TODO
-    bool alphaToCoverageEnabled;
+    bool alphaToCoverageEnabled = false;
 }
 
 /// TODO
 extern(C) struct Origin3D {
     /// TODO
-    uint x;
+    uint x = 0;
     /// TODO
-    uint y;
+    uint y = 0;
     /// TODO
-    uint z;
+    uint z = 0;
 }
 
 /// TODO
 extern(C) struct PassTimestampWrites {
     /// Query set to write timestamps to.
-    QuerySet querySet;
+    QuerySet querySet = QuerySet.init;
     /// TODO
-    uint beginningOfPassWriteIndex;
+    uint beginningOfPassWriteIndex = QUERY_SET_INDEX_UNDEFINED;
     /// TODO
-    uint endOfPassWriteIndex;
+    uint endOfPassWriteIndex = QUERY_SET_INDEX_UNDEFINED;
 }
 
 /// TODO
 extern(C) struct PipelineLayoutDescriptor {
     /// TODO
-    StringView label;
+    StringView label = StringView.init;
     /// TODO
-    const(BindGroupLayout)[] bindGroupLayouts;
+    const(BindGroupLayout)[] bindGroupLayouts = null;
     /// TODO
-    uint immediateSize;
+    uint immediateSize = 0;
 }
 
 /// TODO
 extern(C) struct PrimitiveState {
     /// If set to @ref WGPUPrimitiveTopology_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUPrimitiveTopology_TriangleList.
-    PrimitiveTopology topology;
+    PrimitiveTopology topology = PrimitiveTopology.undefined;
     /// TODO
-    IndexFormat stripIndexFormat;
+    IndexFormat stripIndexFormat = IndexFormat.undefined;
     /// If set to @ref WGPUFrontFace_Undefined, [defaults](@ref SentinelValues)
     /// to @ref WGPUFrontFace_CCW.
-    FrontFace frontFace;
+    FrontFace frontFace = FrontFace.undefined;
     /// If set to @ref WGPUCullMode_Undefined, [defaults](@ref SentinelValues)
     /// to @ref WGPUCullMode_None.
-    CullMode cullMode;
+    CullMode cullMode = CullMode.undefined;
     /// TODO
-    bool unclippedDepth;
+    bool unclippedDepth = false;
 }
 
 /// TODO
 extern(C) struct QuerySetDescriptor {
     /// TODO
-    StringView label;
+    StringView label = StringView.init;
     /// TODO
-    QueryType type;
+    QueryType type = cast(QueryType)0;
     /// TODO
-    uint count;
+    uint count = 0;
 }
 
 /// TODO
 extern(C) struct QueueDescriptor {
     /// TODO
-    StringView label;
+    StringView label = StringView.init;
 }
 
 /// TODO
 extern(C) struct RenderBundleDescriptor {
     /// TODO
-    StringView label;
+    StringView label = StringView.init;
 }
 
 /// TODO
 extern(C) struct RenderBundleEncoderDescriptor {
     /// TODO
-    StringView label;
+    StringView label = StringView.init;
     /// TODO
-    const(TextureFormat)[] colorFormats;
+    const(TextureFormat)[] colorFormats = null;
     /// TODO
-    TextureFormat depthStencilFormat;
+    TextureFormat depthStencilFormat = TextureFormat.undefined;
     /// TODO
-    uint sampleCount;
+    uint sampleCount = 1;
     /// TODO
-    bool depthReadOnly;
+    bool depthReadOnly = false;
     /// TODO
-    bool stencilReadOnly;
+    bool stencilReadOnly = false;
 }
 
 /// TODO
 extern(C) struct RenderPassColorAttachment {
     /// If `NULL`, indicates a hole in the parent @ref
     /// WGPURenderPassDescriptor::colorAttachments array.
-    TextureView view;
+    TextureView view = TextureView.init;
     /// TODO
-    uint depthSlice;
+    uint depthSlice = DEPTH_SLICE_UNDEFINED;
     /// TODO
-    TextureView resolveTarget;
+    TextureView resolveTarget = TextureView.init;
     /// TODO
-    LoadOp loadOp;
+    LoadOp loadOp = LoadOp.undefined;
     /// TODO
-    StoreOp storeOp;
+    StoreOp storeOp = StoreOp.undefined;
     /// TODO
-    Color clearValue;
+    Color clearValue = Color.init;
 }
 
 /// TODO
 extern(C) struct RenderPassDepthStencilAttachment {
     /// TODO
-    TextureView view;
+    TextureView view = TextureView.init;
     /// TODO
-    LoadOp depthLoadOp;
+    LoadOp depthLoadOp = LoadOp.undefined;
     /// TODO
-    StoreOp depthStoreOp;
+    StoreOp depthStoreOp = StoreOp.undefined;
     /// This is a @ref NullableFloatingPointType. If `NaN`, indicates an
     /// `undefined` value (as defined by the JS spec). Use @ref
     /// WGPU_DEPTH_CLEAR_VALUE_UNDEFINED to indicate this semantically. If
     /// infinite, produces a @ref NonFiniteFloatValueError.
-    float depthClearValue;
+    float depthClearValue = DEPTH_CLEAR_VALUE_UNDEFINEDf;
     /// TODO
-    bool depthReadOnly;
+    bool depthReadOnly = false;
     /// TODO
-    LoadOp stencilLoadOp;
+    LoadOp stencilLoadOp = LoadOp.undefined;
     /// TODO
-    StoreOp stencilStoreOp;
+    StoreOp stencilStoreOp = StoreOp.undefined;
     /// TODO
-    uint stencilClearValue;
+    uint stencilClearValue = 0;
     /// TODO
-    bool stencilReadOnly;
+    bool stencilReadOnly = false;
 }
 
 /// TODO
 extern(C) struct RenderPassDescriptor {
     /// TODO
-    StringView label;
+    StringView label = StringView.init;
     /// TODO
-    const(RenderPassColorAttachment)[] colorAttachments;
+    const(RenderPassColorAttachment)[] colorAttachments = null;
     /// TODO
-    RenderPassDepthStencilAttachment depthStencilAttachment;
+    RenderPassDepthStencilAttachment depthStencilAttachment = null;
     /// TODO
-    QuerySet occlusionQuerySet;
+    QuerySet occlusionQuerySet = QuerySet.init;
     /// TODO
-    PassTimestampWrites timestampWrites;
+    PassTimestampWrites timestampWrites = null;
 }
 
 /// TODO
 extern(C) struct RenderPassMaxDrawCount {
     /// TODO
-    ulong maxDrawCount;
+    ulong maxDrawCount = 50000000;
 }
 
 /// TODO
 extern(C) struct RenderPipelineDescriptor {
     /// TODO
-    StringView label;
+    StringView label = StringView.init;
     /// TODO
-    PipelineLayout layout;
+    PipelineLayout layout = PipelineLayout.init;
     /// TODO
-    VertexState vertex;
+    VertexState vertex = VertexState.init;
     /// TODO
-    PrimitiveState primitive;
+    PrimitiveState primitive = PrimitiveState.init;
     /// TODO
-    DepthStencilState depthStencil;
+    DepthStencilState depthStencil = null;
     /// TODO
-    MultisampleState multisample;
+    MultisampleState multisample = MultisampleState.init;
     /// TODO
-    FragmentState fragment;
+    FragmentState fragment = null;
 }
 
 /// TODO
@@ -1855,130 +1855,130 @@ extern(C) struct RequestAdapterOptions {
     /// to @ref WGPUFeatureLevel_Core. Additionally, implementations may ignore
     /// @ref WGPUFeatureLevel_Compatibility and provide @ref
     /// WGPUFeatureLevel_Core instead.
-    FeatureLevel featureLevel;
+    FeatureLevel featureLevel = FeatureLevel.undefined;
     /// TODO
-    PowerPreference powerPreference;
+    PowerPreference powerPreference = PowerPreference.undefined;
     /// If true, requires the adapter to be a "fallback" adapter as defined by
     /// the JS spec. If this is not possible, the request returns null.
-    bool forceFallbackAdapter;
+    bool forceFallbackAdapter = false;
     /// If set, requires the adapter to have a particular backend type. If this
     /// is not possible, the request returns null.
-    BackendType backendType;
+    BackendType backendType = BackendType.undefined;
     /// If set, requires the adapter to be able to output to a particular
     /// surface. If this is not possible, the request returns null.
-    Surface compatibleSurface;
+    Surface compatibleSurface = Surface.init;
 }
 
 /// Extension providing requestAdapter options for implementations with WebXR
 /// interop (i.e. Wasm).
 extern(C) struct RequestAdapterWebXROptions {
     /// Sets the `xrCompatible` option in the JS API.
-    bool xrCompatible;
+    bool xrCompatible = false;
 }
 
 /// TODO
 extern(C) struct SamplerBindingLayout {
     /// If set to @ref WGPUSamplerBindingType_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUSamplerBindingType_Filtering.
-    SamplerBindingType type;
+    SamplerBindingType type = SamplerBindingType.undefined;
 }
 
 /// TODO
 extern(C) struct SamplerDescriptor {
     /// TODO
-    StringView label;
+    StringView label = StringView.init;
     /// If set to @ref WGPUAddressMode_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUAddressMode_ClampToEdge.
-    AddressMode addressModeU;
+    AddressMode addressModeU = AddressMode.undefined;
     /// If set to @ref WGPUAddressMode_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUAddressMode_ClampToEdge.
-    AddressMode addressModeV;
+    AddressMode addressModeV = AddressMode.undefined;
     /// If set to @ref WGPUAddressMode_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUAddressMode_ClampToEdge.
-    AddressMode addressModeW;
+    AddressMode addressModeW = AddressMode.undefined;
     /// If set to @ref WGPUFilterMode_Undefined, [defaults](@ref SentinelValues)
     /// to @ref WGPUFilterMode_Nearest.
-    FilterMode magFilter;
+    FilterMode magFilter = FilterMode.undefined;
     /// If set to @ref WGPUFilterMode_Undefined, [defaults](@ref SentinelValues)
     /// to @ref WGPUFilterMode_Nearest.
-    FilterMode minFilter;
+    FilterMode minFilter = FilterMode.undefined;
     /// If set to @ref WGPUFilterMode_Undefined, [defaults](@ref SentinelValues)
     /// to @ref WGPUMipmapFilterMode_Nearest.
-    MipmapFilterMode mipmapFilter;
+    MipmapFilterMode mipmapFilter = MipmapFilterMode.undefined;
     /// TODO If non-finite, produces a @ref NonFiniteFloatValueError.
-    float lodMinClamp;
+    float lodMinClamp = 0.0f;
     /// TODO If non-finite, produces a @ref NonFiniteFloatValueError.
-    float lodMaxClamp;
+    float lodMaxClamp = 32.0f;
     /// TODO
-    CompareFunction compare;
+    CompareFunction compare = CompareFunction.undefined;
     /// TODO
-    ushort maxAnisotropy;
+    ushort maxAnisotropy = 1;
 }
 
 /// TODO
 extern(C) struct ShaderModuleDescriptor {
     /// TODO
-    StringView label;
+    StringView label = StringView.init;
 }
 
 /// TODO
 extern(C) struct ShaderSourceSPIRV {
     /// TODO
-    uint codeSize;
+    uint codeSize = 0;
     /// TODO
-    const(uint)* code;
+    const(uint)* code = null;
 }
 
 /// TODO
 extern(C) struct ShaderSourceWGSL {
     /// TODO
-    StringView code;
+    StringView code = StringView.init;
 }
 
 /// TODO
 extern(C) struct StencilFaceState {
     /// If set to @ref WGPUCompareFunction_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUCompareFunction_Always.
-    CompareFunction compare;
+    CompareFunction compare = CompareFunction.undefined;
     /// If set to @ref WGPUStencilOperation_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUStencilOperation_Keep.
-    StencilOperation failOp;
+    StencilOperation failOp = StencilOperation.undefined;
     /// If set to @ref WGPUStencilOperation_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUStencilOperation_Keep.
-    StencilOperation depthFailOp;
+    StencilOperation depthFailOp = StencilOperation.undefined;
     /// If set to @ref WGPUStencilOperation_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUStencilOperation_Keep.
-    StencilOperation passOp;
+    StencilOperation passOp = StencilOperation.undefined;
 }
 
 /// TODO
 extern(C) struct StorageTextureBindingLayout {
     /// If set to @ref WGPUStorageTextureAccess_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUStorageTextureAccess_WriteOnly.
-    StorageTextureAccess access;
+    StorageTextureAccess access = StorageTextureAccess.undefined;
     /// TODO
-    TextureFormat format;
+    TextureFormat format = TextureFormat.undefined;
     /// If set to @ref WGPUTextureViewDimension_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUTextureViewDimension_2D.
-    TextureViewDimension viewDimension;
+    TextureViewDimension viewDimension = TextureViewDimension.undefined;
 }
 
 /// TODO
 extern(C) struct SupportedFeatures {
     /// TODO
-    const(FeatureName)[] features;
+    const(FeatureName)[] features = null;
 }
 
 /// TODO
 extern(C) struct SupportedInstanceFeatures {
     /// TODO
-    const(InstanceFeatureName)[] features;
+    const(InstanceFeatureName)[] features = null;
 }
 
 /// TODO
 extern(C) struct SupportedWGSLLanguageFeatures {
     /// TODO
-    const(WGSLLanguageFeatureName)[] features;
+    const(WGSLLanguageFeatureName)[] features = null;
 }
 
 /// Filled by @ref wgpuSurfaceGetCapabilities with what's supported for @ref
@@ -1986,25 +1986,25 @@ extern(C) struct SupportedWGSLLanguageFeatures {
 extern(C) struct SurfaceCapabilities {
     /// The bit set of supported @ref WGPUTextureUsage bits. Guaranteed to
     /// contain @ref WGPUTextureUsage_RenderAttachment.
-    TextureUsage usages;
+    TextureUsage usages = TextureUsage.none;
     /// A list of supported @ref WGPUTextureFormat values, in order of
     /// preference.
-    const(TextureFormat)[] formats;
+    const(TextureFormat)[] formats = null;
     /// A list of supported @ref WGPUPresentMode values. Guaranteed to contain
     /// @ref WGPUPresentMode_Fifo.
-    const(PresentMode)[] presentModes;
+    const(PresentMode)[] presentModes = null;
     /// A list of supported @ref WGPUCompositeAlphaMode values. @ref
     /// WGPUCompositeAlphaMode_Auto will be an alias for the first element and
     /// will never be present in this array.
-    const(CompositeAlphaMode)[] alphaModes;
+    const(CompositeAlphaMode)[] alphaModes = null;
 }
 
 /// Extension of @ref WGPUSurfaceConfiguration for color spaces and HDR.
 extern(C) struct SurfaceColorManagement {
     /// TODO
-    PredefinedColorSpace colorSpace;
+    PredefinedColorSpace colorSpace = cast(PredefinedColorSpace)0;
     /// TODO
-    ToneMappingMode toneMappingMode;
+    ToneMappingMode toneMappingMode = cast(ToneMappingMode)0;
 }
 
 /// Options to @ref wgpuSurfaceConfigure for defining how a @ref WGPUSurface
@@ -2012,28 +2012,28 @@ extern(C) struct SurfaceColorManagement {
 /// Surface-Configuration for more details.
 extern(C) struct SurfaceConfiguration {
     /// The @ref WGPUDevice to use to render to surface's textures.
-    Device device;
+    Device device = Device.init;
     /// The @ref WGPUTextureFormat of the surface's textures.
-    TextureFormat format;
+    TextureFormat format = TextureFormat.undefined;
     /// The @ref WGPUTextureUsage of the surface's textures.
-    TextureUsage usage;
+    TextureUsage usage = TextureUsage.renderAttachment;
     /// The width of the surface's textures.
-    uint width;
+    uint width = 0;
     /// The height of the surface's textures.
-    uint height;
+    uint height = 0;
     /// The additional @ref WGPUTextureFormat for @ref WGPUTextureView format
     /// reinterpretation of the surface's textures.
-    const(TextureFormat)[] viewFormats;
+    const(TextureFormat)[] viewFormats = null;
     /// How the surface's frames will be composited on the screen. If set to
     /// @ref WGPUCompositeAlphaMode_Auto, [defaults] to @ref
     /// WGPUCompositeAlphaMode_Inherit in native (allowing the mode to be
     /// configured externally), and to @ref WGPUCompositeAlphaMode_Opaque in
     /// Wasm.
-    CompositeAlphaMode alphaMode;
+    CompositeAlphaMode alphaMode = CompositeAlphaMode.auto_;
     /// When and in which order the surface's frames will be shown on the
     /// screen. If set to @ref WGPUPresentMode_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUPresentMode_Fifo.
-    PresentMode presentMode;
+    PresentMode presentMode = PresentMode.undefined;
 }
 
 /// The root descriptor for the creation of an @ref WGPUSurface with @ref
@@ -2042,7 +2042,7 @@ extern(C) struct SurfaceConfiguration {
 /// details.
 extern(C) struct SurfaceDescriptor {
     /// Label used to refer to the object.
-    StringView label;
+    StringView label = StringView.init;
 }
 
 /// Chained in @ref WGPUSurfaceDescriptor to make an @ref WGPUSurface wrapping
@@ -2052,7 +2052,7 @@ extern(C) struct SurfaceSourceAndroidNativeWindow {
     /// The pointer to the
     /// [`ANativeWindow`](https://developer.android.com/ndk/reference/group/a-native-window)
     /// that will be wrapped by the @ref WGPUSurface.
-    void* window;
+    void* window = null;
 }
 
 /// Chained in @ref WGPUSurfaceDescriptor to make an @ref WGPUSurface wrapping a
@@ -2061,7 +2061,7 @@ extern(C) struct SurfaceSourceMetalLayer {
     /// The pointer to the
     /// [`CAMetalLayer`](https://developer.apple.com/documentation/quartzcore/cametallayer?language=objc)
     /// that will be wrapped by the @ref WGPUSurface.
-    void* layer;
+    void* layer = null;
 }
 
 /// Chained in @ref WGPUSurfaceDescriptor to make an @ref WGPUSurface wrapping a
@@ -2071,11 +2071,11 @@ extern(C) struct SurfaceSourceWaylandSurface {
     /// A
     /// [`wl_display`](https://wayland.freedesktop.org/docs/html/apa.html#protocol-spec-wl_display)
     /// for this Wayland instance.
-    void* display;
+    void* display = null;
     /// A
     /// [`wl_surface`](https://wayland.freedesktop.org/docs/html/apa.html#protocol-spec-wl_surface)
     /// that will be wrapped by the @ref WGPUSurface
-    void* surface;
+    void* surface = null;
 }
 
 /// Chained in @ref WGPUSurfaceDescriptor to make an @ref WGPUSurface wrapping a
@@ -2085,21 +2085,21 @@ extern(C) struct SurfaceSourceWindowsHWND {
     /// The
     /// [`HINSTANCE`](https://learn.microsoft.com/en-us/windows/win32/learnwin32/winmain--the-application-entry-point)
     /// for this application. Most commonly `GetModuleHandle(nullptr)`.
-    void* hinstance;
+    void* hinstance = null;
     /// The
     /// [`HWND`](https://learn.microsoft.com/en-us/windows/apps/develop/ui-input/retrieve-hwnd)
     /// that will be wrapped by the @ref WGPUSurface.
-    void* hwnd;
+    void* hwnd = null;
 }
 
 /// Chained in @ref WGPUSurfaceDescriptor to make an @ref WGPUSurface wrapping
 /// an [XCB](https://xcb.freedesktop.org/) `xcb_window_t`.
 extern(C) struct SurfaceSourceXCBWindow {
     /// The `xcb_connection_t` for the connection to the X server.
-    void* connection;
+    void* connection = null;
     /// The `xcb_window_t` for the window that will be wrapped by the @ref
     /// WGPUSurface.
-    uint window;
+    uint window = 0;
 }
 
 /// Chained in @ref WGPUSurfaceDescriptor to make an @ref WGPUSurface wrapping
@@ -2109,11 +2109,11 @@ extern(C) struct SurfaceSourceXlibWindow {
     /// A pointer to the
     /// [`Display`](https://www.x.org/releases/current/doc/libX11/libX11/libX11.html#Opening_the_Display)
     /// connected to the X server.
-    void* display;
+    void* display = null;
     /// The
     /// [`Window`](https://www.x.org/releases/current/doc/libX11/libX11/libX11.html#Creating_Windows)
     /// that will be wrapped by the @ref WGPUSurface.
-    ulong window;
+    ulong window = 0;
 }
 
 /// Queried each frame from a @ref WGPUSurface to get a @ref WGPUTexture to
@@ -2123,53 +2123,53 @@ extern(C) struct SurfaceTexture {
     /// The @ref WGPUTexture representing the frame that will be shown on the
     /// surface. It is @ref ReturnedWithOwnership from @ref
     /// wgpuSurfaceGetCurrentTexture.
-    Texture texture;
+    Texture texture = Texture.init;
     /// Whether the call to @ref wgpuSurfaceGetCurrentTexture succeeded and a
     /// hint as to why it might not have.
-    SurfaceGetCurrentTextureStatus status;
+    SurfaceGetCurrentTextureStatus status = cast(SurfaceGetCurrentTextureStatus)0;
 }
 
 /// TODO
 extern(C) struct TexelCopyBufferInfo {
     /// TODO
-    TexelCopyBufferLayout layout;
+    TexelCopyBufferLayout layout = TexelCopyBufferLayout.init;
     /// TODO
-    Buffer buffer;
+    Buffer buffer = Buffer.init;
 }
 
 /// TODO
 extern(C) struct TexelCopyBufferLayout {
     /// TODO
-    ulong offset;
+    ulong offset = 0;
     /// TODO
-    uint bytesPerRow;
+    uint bytesPerRow = COPY_STRIDE_UNDEFINED;
     /// TODO
-    uint rowsPerImage;
+    uint rowsPerImage = COPY_STRIDE_UNDEFINED;
 }
 
 /// TODO
 extern(C) struct TexelCopyTextureInfo {
     /// TODO
-    Texture texture;
+    Texture texture = Texture.init;
     /// TODO
-    uint mipLevel;
+    uint mipLevel = 0;
     /// TODO
-    Origin3D origin;
+    Origin3D origin = Origin3D.init;
     /// If set to @ref WGPUTextureAspect_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUTextureAspect_All.
-    TextureAspect aspect;
+    TextureAspect aspect = TextureAspect.undefined;
 }
 
 /// TODO
 extern(C) struct TextureBindingLayout {
     /// If set to @ref WGPUTextureSampleType_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUTextureSampleType_Float.
-    TextureSampleType sampleType;
+    TextureSampleType sampleType = TextureSampleType.undefined;
     /// If set to @ref WGPUTextureViewDimension_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUTextureViewDimension_2D.
-    TextureViewDimension viewDimension;
+    TextureViewDimension viewDimension = TextureViewDimension.undefined;
     /// TODO
-    bool multisampled;
+    bool multisampled = false;
 }
 
 /// Note: While Compatibility Mode is optional to implement, this extension
@@ -2178,7 +2178,7 @@ extern(C) struct TextureBindingLayout {
 /// feature).
 extern(C) struct TextureBindingViewDimension {
     /// TODO
-    TextureViewDimension textureBindingViewDimension;
+    TextureViewDimension textureBindingViewDimension = TextureViewDimension.undefined;
 }
 
 /// When accessed by a shader, the red/green/blue/alpha channels are replaced by
@@ -2189,79 +2189,79 @@ extern(C) struct TextureComponentSwizzle {
     /// The value that replaces the red channel in the shader. If set to @ref
     /// WGPUComponentSwizzle_Undefined, [defaults](@ref SentinelValues) to @ref
     /// WGPUComponentSwizzle_R.
-    ComponentSwizzle r;
+    ComponentSwizzle r = ComponentSwizzle.undefined;
     /// The value that replaces the green channel in the shader. If set to @ref
     /// WGPUComponentSwizzle_Undefined, [defaults](@ref SentinelValues) to @ref
     /// WGPUComponentSwizzle_G.
-    ComponentSwizzle g;
+    ComponentSwizzle g = ComponentSwizzle.undefined;
     /// The value that replaces the blue channel in the shader. If set to @ref
     /// WGPUComponentSwizzle_Undefined, [defaults](@ref SentinelValues) to @ref
     /// WGPUComponentSwizzle_B.
-    ComponentSwizzle b;
+    ComponentSwizzle b = ComponentSwizzle.undefined;
     /// The value that replaces the alpha channel in the shader. If set to @ref
     /// WGPUComponentSwizzle_Undefined, [defaults](@ref SentinelValues) to @ref
     /// WGPUComponentSwizzle_A.
-    ComponentSwizzle a;
+    ComponentSwizzle a = ComponentSwizzle.undefined;
 }
 
 /// TODO
 extern(C) struct TextureComponentSwizzleDescriptor {
     /// TODO
-    TextureComponentSwizzle swizzle;
+    TextureComponentSwizzle swizzle = TextureComponentSwizzle.init;
 }
 
 /// TODO
 extern(C) struct TextureDescriptor {
     /// TODO
-    StringView label;
+    StringView label = StringView.init;
     /// TODO
-    TextureUsage usage;
+    TextureUsage usage = TextureUsage.none;
     /// If set to @ref WGPUTextureDimension_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUTextureDimension_2D.
-    TextureDimension dimension;
+    TextureDimension dimension = TextureDimension.undefined;
     /// TODO
-    Extent3D size;
+    Extent3D size = Extent3D.init;
     /// TODO
-    TextureFormat format;
+    TextureFormat format = TextureFormat.undefined;
     /// TODO
-    uint mipLevelCount;
+    uint mipLevelCount = 1;
     /// TODO
-    uint sampleCount;
+    uint sampleCount = 1;
     /// TODO
-    const(TextureFormat)[] viewFormats;
+    const(TextureFormat)[] viewFormats = null;
 }
 
 /// TODO
 extern(C) struct TextureViewDescriptor {
     /// TODO
-    StringView label;
+    StringView label = StringView.init;
     /// TODO
-    TextureFormat format;
+    TextureFormat format = TextureFormat.undefined;
     /// TODO
-    TextureViewDimension dimension;
+    TextureViewDimension dimension = TextureViewDimension.undefined;
     /// TODO
-    uint baseMipLevel;
+    uint baseMipLevel = 0;
     /// TODO
-    uint mipLevelCount;
+    uint mipLevelCount = MIP_LEVEL_COUNT_UNDEFINED;
     /// TODO
-    uint baseArrayLayer;
+    uint baseArrayLayer = 0;
     /// TODO
-    uint arrayLayerCount;
+    uint arrayLayerCount = ARRAY_LAYER_COUNT_UNDEFINED;
     /// If set to @ref WGPUTextureAspect_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUTextureAspect_All.
-    TextureAspect aspect;
+    TextureAspect aspect = TextureAspect.undefined;
     /// TODO
-    TextureUsage usage;
+    TextureUsage usage = TextureUsage.none;
 }
 
 /// TODO
 extern(C) struct VertexAttribute {
     /// TODO
-    VertexFormat format;
+    VertexFormat format = cast(VertexFormat)0;
     /// TODO
-    ulong offset;
+    ulong offset = 0;
     /// TODO
-    uint shaderLocation;
+    uint shaderLocation = 0;
 }
 
 /// If `attributes` is empty *and* `stepMode` is @ref
@@ -2276,23 +2276,23 @@ extern(C) struct VertexAttribute {
 /// [defaults](@ref SentinelValues) to @ref WGPUVertexStepMode_Vertex.
 extern(C) struct VertexBufferLayout {
     /// TODO
-    VertexStepMode stepMode;
+    VertexStepMode stepMode = VertexStepMode.undefined;
     /// TODO
-    ulong arrayStride;
+    ulong arrayStride = 0;
     /// TODO
-    const(VertexAttribute)[] attributes;
+    const(VertexAttribute)[] attributes = null;
 }
 
 /// TODO
 extern(C) struct VertexState {
     /// TODO
-    ShaderModule module_;
+    ShaderModule module_ = ShaderModule.init;
     /// TODO
-    StringView entryPoint;
+    StringView entryPoint = StringView.init;
     /// TODO
-    const(ConstantEntry)[] constants;
+    const(ConstantEntry)[] constants = null;
     /// TODO
-    const(VertexBufferLayout)[] buffers;
+    const(VertexBufferLayout)[] buffers = null;
 }
 
 
