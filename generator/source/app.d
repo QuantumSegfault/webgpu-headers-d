@@ -457,7 +457,7 @@ void main()
         import std.conv : to;
 
         outFile.writeln(struct_.doc.toDocBlock);
-        outFile.writeln("extern(C) struct " ~ identifierMap["struct." ~ struct_.name] ~ " {");
+        outFile.writeln("struct " ~ identifierMap["struct." ~ struct_.name] ~ " {");
         foreach (ref member; struct_.members) {
             enforce(member.passedWithOwnership.isNull);
             enforce(!member.optional || member.pointer || member.type.startsWith("object."));
