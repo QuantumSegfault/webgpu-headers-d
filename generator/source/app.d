@@ -228,9 +228,11 @@ string escapeIdentifier(return scope string str)
         return "_" ~ str;
     }
 
+    // `self` is not technically not a keyword, but we reserve for use by methods
     switch (str) {
         static foreach (keyword; AliasSeq!(
-                "null", "auto", "false", "true", "float", "uint", "module"
+                "null", "auto", "false", "true", "float", "uint", "module",
+                "self"
             )) {
             case keyword:
                 return keyword ~ "_";
@@ -289,9 +291,11 @@ string toDType(string type, TypeLocation loc, string pointer, const scope string
     import std.string : startsWith;
 
     if (type.startsWith("array\\u003c")) {
+        enforce(loc != TypeLocation.ret);
         enforce(pointer == "mutable" || pointer == "immutable");
-        auto innerType = toDType(type[11 .. $ - 6], loc, null, identifierMap);
-        return (pointer == "immutable" ? ("const(" ~ innerType ~ ")") : innerType) ~ "[]";
+        auto innerType = toDType(type[11 .. $ - 6], TypeLocation.field, null, identifierMap);
+        return (loc == TypeLocation.param ? "scope " : "") ~ (pointer == "immutable" ? (
+                "const(" ~ innerType ~ ")") : innerType) ~ "[]";
     }
 
     string result;
@@ -299,7 +303,8 @@ string toDType(string type, TypeLocation loc, string pointer, const scope string
         case "out_string":
         case "string_with_default_empty":
         case "nullable_string":
-            result = loc == TypeLocation.field ? "StringView" : "const(char)[]";
+            result = loc == TypeLocation.param ? "scope StringView" : "StringView";
+            enforce(loc != TypeLocation.ret);
             break;
         case "uint16":
             result = "ushort";
@@ -334,7 +339,8 @@ string toDType(string type, TypeLocation loc, string pointer, const scope string
     }
 
     if (type.startsWith("object.")) {
-        result = identifierMap[type] ~ ".Handle";
+        result = (loc == TypeLocation.param ? "scope " : "") ~ identifierMap[type] ~ (
+            loc == TypeLocation.ret ? ".Uniq" : ".Handle");
     }
 
     if (!result) {
@@ -343,10 +349,17 @@ string toDType(string type, TypeLocation loc, string pointer, const scope string
 
     if (result) {
         if (pointer) {
-            if (pointer == "immutable")
-                return "const(" ~ result ~ ")*";
-            else
-                return result ~ "*";
+            if (loc == TypeLocation.param && result != "void") {
+                if (pointer == "immutable")
+                    return "scope ref const " ~ result;
+                else
+                    return "scope ref " ~ result;
+            } else {
+                if (pointer == "immutable")
+                    return "const(" ~ result ~ ")*";
+                else
+                    return result ~ "*";
+            }
         }
         return result;
     }
@@ -433,7 +446,7 @@ void main()
                 .escapeIdentifier;
             if (entry.valueCombination.isNull) {
                 if (i == 0) {
-                    assert(entry.name == "none");
+                    enforce(entry.name == "none");
 
                     outFile.writeln("    enum none = typeof(this).init;");
                 } else {
@@ -607,9 +620,83 @@ void main()
     outFile.writeln();
 
     foreach (ref object; api.objects) {
+        import std.string : startsWith, replace;
+
+        string objIdent = identifierMap["object." ~ object.name];
         outFile.writeln(object.doc.toDocBlock);
-        outFile.writeln("alias " ~ identifierMap["object." ~ object.name] ~ " = " ~ "WebGPUObject!\"" ~ identifierMap["object." ~ object
-                .name] ~ "\";");
+        outFile.writeln(
+            "alias " ~ objIdent ~ " = " ~ "WebGPUObject!\"" ~ objIdent ~ "\";");
+
+        outFile.writeln();
+
+        foreach (ref method; object.methods) {
+            outFile.writeln(method.doc.toDocBlock);
+
+            string dRetType = "void";
+            bool returnsObject = false;
+
+            if (!method.returns.isNull) {
+                auto ret = method.returns.get;
+                if (ret.type.startsWith("object."))
+                    returnsObject = true;
+                dRetType = ret.type.toDType(TypeLocation.ret, ret.pointer, identifierMap);
+            }
+
+            string[] cArgs;
+            string[] dArgs;
+            string[] callArgs;
+
+            cArgs ~= objIdent ~ ".Handle";
+            dArgs ~= "scope " ~ objIdent ~ ".Handle self";
+            callArgs ~= "self";
+
+            foreach (ref arg; method.args) {
+                string argName = arg.name.snakeToCamel(false).escapeIdentifier;
+
+                dArgs ~= arg.type.toDType(TypeLocation.param, arg.pointer, identifierMap) ~ " " ~ argName;
+
+                if (arg.type.startsWith("array\\u003c")) {
+                    enforce(arg.pointer == "mutable" || arg.pointer == "immutable");
+
+                    cArgs ~= "size_t";
+                    cArgs ~= arg.type[11 .. $ - 6].toDType(TypeLocation.field, arg.pointer, identifierMap);
+
+                    callArgs ~= argName ~ ".length";
+                    callArgs ~= argName ~ ".ptr";
+                } else {
+                    cArgs ~= arg.type.toDType(TypeLocation.field, arg.pointer, identifierMap);
+                    callArgs ~= (arg.pointer ? "&" : "") ~ argName;
+                }
+            }
+
+            string dMethodName = method.name.snakeToCamel(false).escapeIdentifier;
+            string cMethodName = "wgpu" ~ objIdent ~ method.name.snakeToCamel(true);
+
+            outFile.writefln!"%s %s(%(%r, %)) @trusted nothrow @nogc {"(
+                dRetType,
+                dMethodName,
+                dArgs
+            );
+
+            if (returnsObject) {
+                outFile.writefln!"    return %s(%s(%(%r, %)));"(dRetType, cMethodName, callArgs);
+            } else if (dRetType == "void") {
+                outFile.writefln!"    %s(%(%r, %));"(cMethodName, callArgs);
+            } else {
+                outFile.writefln!"    return %s(%(%r, %));"(cMethodName, callArgs);
+            }
+
+            outFile.writeln("}");
+            
+            outFile.writefln!"private extern(C) %s %s(%(%r, %)) nothrow @nogc;"(
+                returnsObject ? dRetType.replace(".Uniq", ".Handle") : dRetType,
+                cMethodName,
+                cArgs
+            );
+
+            outFile.writeln();
+        }
+        outFile.writeln();
         outFile.writeln();
     }
 }

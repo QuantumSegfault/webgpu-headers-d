@@ -2300,29 +2300,481 @@ struct VertexState {
 alias Adapter = WebGPUObject!"Adapter";
 
 /// TODO
+Status getLimits(scope Adapter.Handle self, scope ref Limits limits) @trusted nothrow @nogc {
+    return wgpuAdapterGetLimits(self, &limits);
+}
+private extern(C) Status wgpuAdapterGetLimits(Adapter.Handle, Limits*) nothrow @nogc;
+
+/// TODO
+bool hasFeature(scope Adapter.Handle self, FeatureName feature) @trusted nothrow @nogc {
+    return wgpuAdapterHasFeature(self, feature);
+}
+private extern(C) bool wgpuAdapterHasFeature(Adapter.Handle, FeatureName) nothrow @nogc;
+
+/// Get the list of @ref WGPUFeatureName values supported by the adapter.
+void getFeatures(scope Adapter.Handle self, scope ref SupportedFeatures features) @trusted nothrow @nogc {
+    wgpuAdapterGetFeatures(self, &features);
+}
+private extern(C) void wgpuAdapterGetFeatures(Adapter.Handle, SupportedFeatures*) nothrow @nogc;
+
+/// TODO
+Status getInfo(scope Adapter.Handle self, scope ref AdapterInfo info) @trusted nothrow @nogc {
+    return wgpuAdapterGetInfo(self, &info);
+}
+private extern(C) Status wgpuAdapterGetInfo(Adapter.Handle, AdapterInfo*) nothrow @nogc;
+
+/// TODO
+void requestDevice(scope Adapter.Handle self, scope ref const DeviceDescriptor descriptor) @trusted nothrow @nogc {
+    wgpuAdapterRequestDevice(self, &descriptor);
+}
+private extern(C) void wgpuAdapterRequestDevice(Adapter.Handle, const(DeviceDescriptor)*) nothrow @nogc;
+
+
+
+/// TODO
 alias BindGroup = WebGPUObject!"BindGroup";
+
+/// TODO
+void setLabel(scope BindGroup.Handle self, scope StringView label) @trusted nothrow @nogc {
+    wgpuBindGroupSetLabel(self, label);
+}
+private extern(C) void wgpuBindGroupSetLabel(BindGroup.Handle, StringView) nothrow @nogc;
+
+
 
 /// TODO
 alias BindGroupLayout = WebGPUObject!"BindGroupLayout";
 
 /// TODO
+void setLabel(scope BindGroupLayout.Handle self, scope StringView label) @trusted nothrow @nogc {
+    wgpuBindGroupLayoutSetLabel(self, label);
+}
+private extern(C) void wgpuBindGroupLayoutSetLabel(BindGroupLayout.Handle, StringView) nothrow @nogc;
+
+
+
+/// TODO
 alias Buffer = WebGPUObject!"Buffer";
+
+/// TODO
+void mapAsync(scope Buffer.Handle self, MapMode mode, size_t offset, size_t size) @trusted nothrow @nogc {
+    wgpuBufferMapAsync(self, mode, offset, size);
+}
+private extern(C) void wgpuBufferMapAsync(Buffer.Handle, MapMode, size_t, size_t) nothrow @nogc;
+
+/// Returns a mutable pointer to beginning of the mapped range. See @ref
+/// MappedRangeBehavior for error conditions and guarantees. This function is
+/// safe to call inside spontaneous callbacks (see @ref CallbackReentrancy). In
+/// Wasm, if `memcpy`ing into this range, prefer using @ref
+/// wgpuBufferWriteMappedRange instead for better performance.
+void* getMappedRange(scope Buffer.Handle self, size_t offset, size_t size) @trusted nothrow @nogc {
+    return wgpuBufferGetMappedRange(self, offset, size);
+}
+private extern(C) void* wgpuBufferGetMappedRange(Buffer.Handle, size_t, size_t) nothrow @nogc;
+
+/// Returns a const pointer to beginning of the mapped range. It must not be
+/// written; writing to this range causes undefined behavior. See @ref
+/// MappedRangeBehavior for error conditions and guarantees. This function is
+/// safe to call inside spontaneous callbacks (see @ref CallbackReentrancy). In
+/// Wasm, if `memcpy`ing from this range, prefer using @ref
+/// wgpuBufferReadMappedRange instead for better performance.
+const(void)* getConstMappedRange(scope Buffer.Handle self, size_t offset, size_t size) @trusted nothrow @nogc {
+    return wgpuBufferGetConstMappedRange(self, offset, size);
+}
+private extern(C) const(void)* wgpuBufferGetConstMappedRange(Buffer.Handle, size_t, size_t) nothrow @nogc;
+
+/// Copies a range of data from the buffer mapping into the provided destination
+/// pointer. See @ref MappedRangeBehavior for error conditions and guarantees.
+/// This function is safe to call inside spontaneous callbacks (see @ref
+/// CallbackReentrancy). In Wasm, this is more efficient than copying from a
+/// mapped range into a `malloc`'d range.
+Status readMappedRange(scope Buffer.Handle self, size_t offset, void* data, size_t size) @trusted nothrow @nogc {
+    return wgpuBufferReadMappedRange(self, offset, &data, size);
+}
+private extern(C) Status wgpuBufferReadMappedRange(Buffer.Handle, size_t, void*, size_t) nothrow @nogc;
+
+/// Copies a range of data from the provided source pointer into the buffer
+/// mapping. See @ref MappedRangeBehavior for error conditions and guarantees.
+/// This function is safe to call inside spontaneous callbacks (see @ref
+/// CallbackReentrancy). In Wasm, this is more efficient than copying from a
+/// `malloc`'d range into a mapped range.
+Status writeMappedRange(scope Buffer.Handle self, size_t offset, const(void)* data, size_t size) @trusted nothrow @nogc {
+    return wgpuBufferWriteMappedRange(self, offset, &data, size);
+}
+private extern(C) Status wgpuBufferWriteMappedRange(Buffer.Handle, size_t, const(void)*, size_t) nothrow @nogc;
+
+/// TODO
+void setLabel(scope Buffer.Handle self, scope StringView label) @trusted nothrow @nogc {
+    wgpuBufferSetLabel(self, label);
+}
+private extern(C) void wgpuBufferSetLabel(Buffer.Handle, StringView) nothrow @nogc;
+
+/// TODO
+BufferUsage getUsage(scope Buffer.Handle self) @trusted nothrow @nogc {
+    return wgpuBufferGetUsage(self);
+}
+private extern(C) BufferUsage wgpuBufferGetUsage(Buffer.Handle) nothrow @nogc;
+
+/// TODO
+ulong getSize(scope Buffer.Handle self) @trusted nothrow @nogc {
+    return wgpuBufferGetSize(self);
+}
+private extern(C) ulong wgpuBufferGetSize(Buffer.Handle) nothrow @nogc;
+
+/// TODO
+BufferMapState getMapState(scope Buffer.Handle self) @trusted nothrow @nogc {
+    return wgpuBufferGetMapState(self);
+}
+private extern(C) BufferMapState wgpuBufferGetMapState(Buffer.Handle) nothrow @nogc;
+
+/// TODO
+void unmap(scope Buffer.Handle self) @trusted nothrow @nogc {
+    wgpuBufferUnmap(self);
+}
+private extern(C) void wgpuBufferUnmap(Buffer.Handle) nothrow @nogc;
+
+/// TODO
+void destroy(scope Buffer.Handle self) @trusted nothrow @nogc {
+    wgpuBufferDestroy(self);
+}
+private extern(C) void wgpuBufferDestroy(Buffer.Handle) nothrow @nogc;
+
+
 
 /// TODO
 alias CommandBuffer = WebGPUObject!"CommandBuffer";
 
 /// TODO
+void setLabel(scope CommandBuffer.Handle self, scope StringView label) @trusted nothrow @nogc {
+    wgpuCommandBufferSetLabel(self, label);
+}
+private extern(C) void wgpuCommandBufferSetLabel(CommandBuffer.Handle, StringView) nothrow @nogc;
+
+
+
+/// TODO
 alias CommandEncoder = WebGPUObject!"CommandEncoder";
+
+/// TODO
+CommandBuffer.Uniq finish(scope CommandEncoder.Handle self, scope ref const CommandBufferDescriptor descriptor) @trusted nothrow @nogc {
+    return CommandBuffer.Uniq(wgpuCommandEncoderFinish(self, &descriptor));
+}
+private extern(C) CommandBuffer.Handle wgpuCommandEncoderFinish(CommandEncoder.Handle, const(CommandBufferDescriptor)*) nothrow @nogc;
+
+/// TODO
+ComputePassEncoder.Uniq beginComputePass(scope CommandEncoder.Handle self, scope ref const ComputePassDescriptor descriptor) @trusted nothrow @nogc {
+    return ComputePassEncoder.Uniq(wgpuCommandEncoderBeginComputePass(self, &descriptor));
+}
+private extern(C) ComputePassEncoder.Handle wgpuCommandEncoderBeginComputePass(CommandEncoder.Handle, const(ComputePassDescriptor)*) nothrow @nogc;
+
+/// TODO
+RenderPassEncoder.Uniq beginRenderPass(scope CommandEncoder.Handle self, scope ref const RenderPassDescriptor descriptor) @trusted nothrow @nogc {
+    return RenderPassEncoder.Uniq(wgpuCommandEncoderBeginRenderPass(self, &descriptor));
+}
+private extern(C) RenderPassEncoder.Handle wgpuCommandEncoderBeginRenderPass(CommandEncoder.Handle, const(RenderPassDescriptor)*) nothrow @nogc;
+
+/// TODO
+void copyBufferToBuffer(scope CommandEncoder.Handle self, scope Buffer.Handle source, ulong sourceOffset, scope Buffer.Handle destination, ulong destinationOffset, ulong size) @trusted nothrow @nogc {
+    wgpuCommandEncoderCopyBufferToBuffer(self, source, sourceOffset, destination, destinationOffset, size);
+}
+private extern(C) void wgpuCommandEncoderCopyBufferToBuffer(CommandEncoder.Handle, Buffer.Handle, ulong, Buffer.Handle, ulong, ulong) nothrow @nogc;
+
+/// TODO
+void copyBufferToTexture(scope CommandEncoder.Handle self, scope ref const TexelCopyBufferInfo source, scope ref const TexelCopyTextureInfo destination, scope ref const Extent3D copySize) @trusted nothrow @nogc {
+    wgpuCommandEncoderCopyBufferToTexture(self, &source, &destination, &copySize);
+}
+private extern(C) void wgpuCommandEncoderCopyBufferToTexture(CommandEncoder.Handle, const(TexelCopyBufferInfo)*, const(TexelCopyTextureInfo)*, const(Extent3D)*) nothrow @nogc;
+
+/// TODO
+void copyTextureToBuffer(scope CommandEncoder.Handle self, scope ref const TexelCopyTextureInfo source, scope ref const TexelCopyBufferInfo destination, scope ref const Extent3D copySize) @trusted nothrow @nogc {
+    wgpuCommandEncoderCopyTextureToBuffer(self, &source, &destination, &copySize);
+}
+private extern(C) void wgpuCommandEncoderCopyTextureToBuffer(CommandEncoder.Handle, const(TexelCopyTextureInfo)*, const(TexelCopyBufferInfo)*, const(Extent3D)*) nothrow @nogc;
+
+/// TODO
+void copyTextureToTexture(scope CommandEncoder.Handle self, scope ref const TexelCopyTextureInfo source, scope ref const TexelCopyTextureInfo destination, scope ref const Extent3D copySize) @trusted nothrow @nogc {
+    wgpuCommandEncoderCopyTextureToTexture(self, &source, &destination, &copySize);
+}
+private extern(C) void wgpuCommandEncoderCopyTextureToTexture(CommandEncoder.Handle, const(TexelCopyTextureInfo)*, const(TexelCopyTextureInfo)*, const(Extent3D)*) nothrow @nogc;
+
+/// TODO
+void clearBuffer(scope CommandEncoder.Handle self, scope Buffer.Handle buffer, ulong offset, ulong size) @trusted nothrow @nogc {
+    wgpuCommandEncoderClearBuffer(self, buffer, offset, size);
+}
+private extern(C) void wgpuCommandEncoderClearBuffer(CommandEncoder.Handle, Buffer.Handle, ulong, ulong) nothrow @nogc;
+
+/// TODO
+void insertDebugMarker(scope CommandEncoder.Handle self, scope StringView markerLabel) @trusted nothrow @nogc {
+    wgpuCommandEncoderInsertDebugMarker(self, markerLabel);
+}
+private extern(C) void wgpuCommandEncoderInsertDebugMarker(CommandEncoder.Handle, StringView) nothrow @nogc;
+
+/// TODO
+void popDebugGroup(scope CommandEncoder.Handle self) @trusted nothrow @nogc {
+    wgpuCommandEncoderPopDebugGroup(self);
+}
+private extern(C) void wgpuCommandEncoderPopDebugGroup(CommandEncoder.Handle) nothrow @nogc;
+
+/// TODO
+void pushDebugGroup(scope CommandEncoder.Handle self, scope StringView groupLabel) @trusted nothrow @nogc {
+    wgpuCommandEncoderPushDebugGroup(self, groupLabel);
+}
+private extern(C) void wgpuCommandEncoderPushDebugGroup(CommandEncoder.Handle, StringView) nothrow @nogc;
+
+/// TODO
+void resolveQuerySet(scope CommandEncoder.Handle self, scope QuerySet.Handle querySet, uint firstQuery, uint queryCount, scope Buffer.Handle destination, ulong destinationOffset) @trusted nothrow @nogc {
+    wgpuCommandEncoderResolveQuerySet(self, querySet, firstQuery, queryCount, destination, destinationOffset);
+}
+private extern(C) void wgpuCommandEncoderResolveQuerySet(CommandEncoder.Handle, QuerySet.Handle, uint, uint, Buffer.Handle, ulong) nothrow @nogc;
+
+/// TODO
+void writeTimestamp(scope CommandEncoder.Handle self, scope QuerySet.Handle querySet, uint queryIndex) @trusted nothrow @nogc {
+    wgpuCommandEncoderWriteTimestamp(self, querySet, queryIndex);
+}
+private extern(C) void wgpuCommandEncoderWriteTimestamp(CommandEncoder.Handle, QuerySet.Handle, uint) nothrow @nogc;
+
+/// TODO
+void setLabel(scope CommandEncoder.Handle self, scope StringView label) @trusted nothrow @nogc {
+    wgpuCommandEncoderSetLabel(self, label);
+}
+private extern(C) void wgpuCommandEncoderSetLabel(CommandEncoder.Handle, StringView) nothrow @nogc;
+
+
 
 /// TODO
 alias ComputePassEncoder = WebGPUObject!"ComputePassEncoder";
 
 /// TODO
+void insertDebugMarker(scope ComputePassEncoder.Handle self, scope StringView markerLabel) @trusted nothrow @nogc {
+    wgpuComputePassEncoderInsertDebugMarker(self, markerLabel);
+}
+private extern(C) void wgpuComputePassEncoderInsertDebugMarker(ComputePassEncoder.Handle, StringView) nothrow @nogc;
+
+/// TODO
+void popDebugGroup(scope ComputePassEncoder.Handle self) @trusted nothrow @nogc {
+    wgpuComputePassEncoderPopDebugGroup(self);
+}
+private extern(C) void wgpuComputePassEncoderPopDebugGroup(ComputePassEncoder.Handle) nothrow @nogc;
+
+/// TODO
+void pushDebugGroup(scope ComputePassEncoder.Handle self, scope StringView groupLabel) @trusted nothrow @nogc {
+    wgpuComputePassEncoderPushDebugGroup(self, groupLabel);
+}
+private extern(C) void wgpuComputePassEncoderPushDebugGroup(ComputePassEncoder.Handle, StringView) nothrow @nogc;
+
+/// TODO
+void setPipeline(scope ComputePassEncoder.Handle self, scope ComputePipeline.Handle pipeline) @trusted nothrow @nogc {
+    wgpuComputePassEncoderSetPipeline(self, pipeline);
+}
+private extern(C) void wgpuComputePassEncoderSetPipeline(ComputePassEncoder.Handle, ComputePipeline.Handle) nothrow @nogc;
+
+/// TODO
+void setBindGroup(scope ComputePassEncoder.Handle self, uint groupIndex, scope BindGroup.Handle group, scope const(uint)[] dynamicOffsets) @trusted nothrow @nogc {
+    wgpuComputePassEncoderSetBindGroup(self, groupIndex, group, dynamicOffsets.length, dynamicOffsets.ptr);
+}
+private extern(C) void wgpuComputePassEncoderSetBindGroup(ComputePassEncoder.Handle, uint, BindGroup.Handle, size_t, const(uint)*) nothrow @nogc;
+
+/// TODO
+void setImmediates(scope ComputePassEncoder.Handle self, uint offset, const(void)* data, size_t size) @trusted nothrow @nogc {
+    wgpuComputePassEncoderSetImmediates(self, offset, &data, size);
+}
+private extern(C) void wgpuComputePassEncoderSetImmediates(ComputePassEncoder.Handle, uint, const(void)*, size_t) nothrow @nogc;
+
+/// TODO
+void dispatchWorkgroups(scope ComputePassEncoder.Handle self, uint workgroupCountX, uint workgroupCountY, uint workgroupCountZ) @trusted nothrow @nogc {
+    wgpuComputePassEncoderDispatchWorkgroups(self, workgroupCountX, workgroupCountY, workgroupCountZ);
+}
+private extern(C) void wgpuComputePassEncoderDispatchWorkgroups(ComputePassEncoder.Handle, uint, uint, uint) nothrow @nogc;
+
+/// TODO
+void dispatchWorkgroupsIndirect(scope ComputePassEncoder.Handle self, scope Buffer.Handle indirectBuffer, ulong indirectOffset) @trusted nothrow @nogc {
+    wgpuComputePassEncoderDispatchWorkgroupsIndirect(self, indirectBuffer, indirectOffset);
+}
+private extern(C) void wgpuComputePassEncoderDispatchWorkgroupsIndirect(ComputePassEncoder.Handle, Buffer.Handle, ulong) nothrow @nogc;
+
+/// TODO
+void end(scope ComputePassEncoder.Handle self) @trusted nothrow @nogc {
+    wgpuComputePassEncoderEnd(self);
+}
+private extern(C) void wgpuComputePassEncoderEnd(ComputePassEncoder.Handle) nothrow @nogc;
+
+/// TODO
+void setLabel(scope ComputePassEncoder.Handle self, scope StringView label) @trusted nothrow @nogc {
+    wgpuComputePassEncoderSetLabel(self, label);
+}
+private extern(C) void wgpuComputePassEncoderSetLabel(ComputePassEncoder.Handle, StringView) nothrow @nogc;
+
+
+
+/// TODO
 alias ComputePipeline = WebGPUObject!"ComputePipeline";
+
+/// TODO
+BindGroupLayout.Uniq getBindGroupLayout(scope ComputePipeline.Handle self, uint groupIndex) @trusted nothrow @nogc {
+    return BindGroupLayout.Uniq(wgpuComputePipelineGetBindGroupLayout(self, groupIndex));
+}
+private extern(C) BindGroupLayout.Handle wgpuComputePipelineGetBindGroupLayout(ComputePipeline.Handle, uint) nothrow @nogc;
+
+/// TODO
+void setLabel(scope ComputePipeline.Handle self, scope StringView label) @trusted nothrow @nogc {
+    wgpuComputePipelineSetLabel(self, label);
+}
+private extern(C) void wgpuComputePipelineSetLabel(ComputePipeline.Handle, StringView) nothrow @nogc;
+
+
 
 /// TODO Releasing the last ref to a `WGPUDevice` also calls @ref
 /// wgpuDeviceDestroy. For more info, see @ref DeviceRelease.
 alias Device = WebGPUObject!"Device";
+
+/// TODO
+BindGroup.Uniq createBindGroup(scope Device.Handle self, scope ref const BindGroupDescriptor descriptor) @trusted nothrow @nogc {
+    return BindGroup.Uniq(wgpuDeviceCreateBindGroup(self, &descriptor));
+}
+private extern(C) BindGroup.Handle wgpuDeviceCreateBindGroup(Device.Handle, const(BindGroupDescriptor)*) nothrow @nogc;
+
+/// TODO
+BindGroupLayout.Uniq createBindGroupLayout(scope Device.Handle self, scope ref const BindGroupLayoutDescriptor descriptor) @trusted nothrow @nogc {
+    return BindGroupLayout.Uniq(wgpuDeviceCreateBindGroupLayout(self, &descriptor));
+}
+private extern(C) BindGroupLayout.Handle wgpuDeviceCreateBindGroupLayout(Device.Handle, const(BindGroupLayoutDescriptor)*) nothrow @nogc;
+
+/// TODO If @ref WGPUBufferDescriptor::mappedAtCreation is `true` and the
+/// mapping allocation fails, returns `NULL`.
+Buffer.Uniq createBuffer(scope Device.Handle self, scope ref const BufferDescriptor descriptor) @trusted nothrow @nogc {
+    return Buffer.Uniq(wgpuDeviceCreateBuffer(self, &descriptor));
+}
+private extern(C) Buffer.Handle wgpuDeviceCreateBuffer(Device.Handle, const(BufferDescriptor)*) nothrow @nogc;
+
+/// TODO
+CommandEncoder.Uniq createCommandEncoder(scope Device.Handle self, scope ref const CommandEncoderDescriptor descriptor) @trusted nothrow @nogc {
+    return CommandEncoder.Uniq(wgpuDeviceCreateCommandEncoder(self, &descriptor));
+}
+private extern(C) CommandEncoder.Handle wgpuDeviceCreateCommandEncoder(Device.Handle, const(CommandEncoderDescriptor)*) nothrow @nogc;
+
+/// TODO
+ComputePipeline.Uniq createComputePipeline(scope Device.Handle self, scope ref const ComputePipelineDescriptor descriptor) @trusted nothrow @nogc {
+    return ComputePipeline.Uniq(wgpuDeviceCreateComputePipeline(self, &descriptor));
+}
+private extern(C) ComputePipeline.Handle wgpuDeviceCreateComputePipeline(Device.Handle, const(ComputePipelineDescriptor)*) nothrow @nogc;
+
+/// TODO
+void createComputePipelineAsync(scope Device.Handle self, scope ref const ComputePipelineDescriptor descriptor) @trusted nothrow @nogc {
+    wgpuDeviceCreateComputePipelineAsync(self, &descriptor);
+}
+private extern(C) void wgpuDeviceCreateComputePipelineAsync(Device.Handle, const(ComputePipelineDescriptor)*) nothrow @nogc;
+
+/// TODO
+PipelineLayout.Uniq createPipelineLayout(scope Device.Handle self, scope ref const PipelineLayoutDescriptor descriptor) @trusted nothrow @nogc {
+    return PipelineLayout.Uniq(wgpuDeviceCreatePipelineLayout(self, &descriptor));
+}
+private extern(C) PipelineLayout.Handle wgpuDeviceCreatePipelineLayout(Device.Handle, const(PipelineLayoutDescriptor)*) nothrow @nogc;
+
+/// TODO
+QuerySet.Uniq createQuerySet(scope Device.Handle self, scope ref const QuerySetDescriptor descriptor) @trusted nothrow @nogc {
+    return QuerySet.Uniq(wgpuDeviceCreateQuerySet(self, &descriptor));
+}
+private extern(C) QuerySet.Handle wgpuDeviceCreateQuerySet(Device.Handle, const(QuerySetDescriptor)*) nothrow @nogc;
+
+/// TODO
+void createRenderPipelineAsync(scope Device.Handle self, scope ref const RenderPipelineDescriptor descriptor) @trusted nothrow @nogc {
+    wgpuDeviceCreateRenderPipelineAsync(self, &descriptor);
+}
+private extern(C) void wgpuDeviceCreateRenderPipelineAsync(Device.Handle, const(RenderPipelineDescriptor)*) nothrow @nogc;
+
+/// TODO
+RenderBundleEncoder.Uniq createRenderBundleEncoder(scope Device.Handle self, scope ref const RenderBundleEncoderDescriptor descriptor) @trusted nothrow @nogc {
+    return RenderBundleEncoder.Uniq(wgpuDeviceCreateRenderBundleEncoder(self, &descriptor));
+}
+private extern(C) RenderBundleEncoder.Handle wgpuDeviceCreateRenderBundleEncoder(Device.Handle, const(RenderBundleEncoderDescriptor)*) nothrow @nogc;
+
+/// TODO
+RenderPipeline.Uniq createRenderPipeline(scope Device.Handle self, scope ref const RenderPipelineDescriptor descriptor) @trusted nothrow @nogc {
+    return RenderPipeline.Uniq(wgpuDeviceCreateRenderPipeline(self, &descriptor));
+}
+private extern(C) RenderPipeline.Handle wgpuDeviceCreateRenderPipeline(Device.Handle, const(RenderPipelineDescriptor)*) nothrow @nogc;
+
+/// TODO
+Sampler.Uniq createSampler(scope Device.Handle self, scope ref const SamplerDescriptor descriptor) @trusted nothrow @nogc {
+    return Sampler.Uniq(wgpuDeviceCreateSampler(self, &descriptor));
+}
+private extern(C) Sampler.Handle wgpuDeviceCreateSampler(Device.Handle, const(SamplerDescriptor)*) nothrow @nogc;
+
+/// TODO
+ShaderModule.Uniq createShaderModule(scope Device.Handle self, scope ref const ShaderModuleDescriptor descriptor) @trusted nothrow @nogc {
+    return ShaderModule.Uniq(wgpuDeviceCreateShaderModule(self, &descriptor));
+}
+private extern(C) ShaderModule.Handle wgpuDeviceCreateShaderModule(Device.Handle, const(ShaderModuleDescriptor)*) nothrow @nogc;
+
+/// TODO
+Texture.Uniq createTexture(scope Device.Handle self, scope ref const TextureDescriptor descriptor) @trusted nothrow @nogc {
+    return Texture.Uniq(wgpuDeviceCreateTexture(self, &descriptor));
+}
+private extern(C) Texture.Handle wgpuDeviceCreateTexture(Device.Handle, const(TextureDescriptor)*) nothrow @nogc;
+
+/// TODO
+void destroy(scope Device.Handle self) @trusted nothrow @nogc {
+    wgpuDeviceDestroy(self);
+}
+private extern(C) void wgpuDeviceDestroy(Device.Handle) nothrow @nogc;
+
+/// 
+Future getLostFuture(scope Device.Handle self) @trusted nothrow @nogc {
+    return wgpuDeviceGetLostFuture(self);
+}
+private extern(C) Future wgpuDeviceGetLostFuture(Device.Handle) nothrow @nogc;
+
+/// TODO
+Status getLimits(scope Device.Handle self, scope ref Limits limits) @trusted nothrow @nogc {
+    return wgpuDeviceGetLimits(self, &limits);
+}
+private extern(C) Status wgpuDeviceGetLimits(Device.Handle, Limits*) nothrow @nogc;
+
+/// TODO
+bool hasFeature(scope Device.Handle self, FeatureName feature) @trusted nothrow @nogc {
+    return wgpuDeviceHasFeature(self, feature);
+}
+private extern(C) bool wgpuDeviceHasFeature(Device.Handle, FeatureName) nothrow @nogc;
+
+/// Get the list of @ref WGPUFeatureName values supported by the device.
+void getFeatures(scope Device.Handle self, scope ref SupportedFeatures features) @trusted nothrow @nogc {
+    wgpuDeviceGetFeatures(self, &features);
+}
+private extern(C) void wgpuDeviceGetFeatures(Device.Handle, SupportedFeatures*) nothrow @nogc;
+
+/// TODO
+Status getAdapterInfo(scope Device.Handle self, scope ref AdapterInfo adapterInfo) @trusted nothrow @nogc {
+    return wgpuDeviceGetAdapterInfo(self, &adapterInfo);
+}
+private extern(C) Status wgpuDeviceGetAdapterInfo(Device.Handle, AdapterInfo*) nothrow @nogc;
+
+/// TODO
+Queue.Uniq getQueue(scope Device.Handle self) @trusted nothrow @nogc {
+    return Queue.Uniq(wgpuDeviceGetQueue(self));
+}
+private extern(C) Queue.Handle wgpuDeviceGetQueue(Device.Handle) nothrow @nogc;
+
+/// Pushes an error scope to the current thread's error scope stack. See @ref
+/// ErrorScopes.
+void pushErrorScope(scope Device.Handle self, ErrorFilter filter) @trusted nothrow @nogc {
+    wgpuDevicePushErrorScope(self, filter);
+}
+private extern(C) void wgpuDevicePushErrorScope(Device.Handle, ErrorFilter) nothrow @nogc;
+
+/// Pops an error scope to the current thread's error scope stack,
+/// asynchronously returning the result. See @ref ErrorScopes.
+void popErrorScope(scope Device.Handle self) @trusted nothrow @nogc {
+    wgpuDevicePopErrorScope(self);
+}
+private extern(C) void wgpuDevicePopErrorScope(Device.Handle) nothrow @nogc;
+
+/// TODO
+void setLabel(scope Device.Handle self, scope StringView label) @trusted nothrow @nogc {
+    wgpuDeviceSetLabel(self, label);
+}
+private extern(C) void wgpuDeviceSetLabel(Device.Handle, StringView) nothrow @nogc;
+
+
 
 /// A sampleable 2D texture that may perform 0-copy YUV sampling internally.
 /// Creation of @ref WGPUExternalTexture is extremely implementation-dependent
@@ -2330,42 +2782,548 @@ alias Device = WebGPUObject!"Device";
 alias ExternalTexture = WebGPUObject!"ExternalTexture";
 
 /// TODO
+void setLabel(scope ExternalTexture.Handle self, scope StringView label) @trusted nothrow @nogc {
+    wgpuExternalTextureSetLabel(self, label);
+}
+private extern(C) void wgpuExternalTextureSetLabel(ExternalTexture.Handle, StringView) nothrow @nogc;
+
+
+
+/// TODO
 alias Instance = WebGPUObject!"Instance";
+
+/// Creates a @ref WGPUSurface, see @ref Surface-Creation for more details.
+Surface.Uniq createSurface(scope Instance.Handle self, scope ref const SurfaceDescriptor descriptor) @trusted nothrow @nogc {
+    return Surface.Uniq(wgpuInstanceCreateSurface(self, &descriptor));
+}
+private extern(C) Surface.Handle wgpuInstanceCreateSurface(Instance.Handle, const(SurfaceDescriptor)*) nothrow @nogc;
+
+/// Get the list of @ref WGPUWGSLLanguageFeatureName values supported by the
+/// instance.
+void getWGSLLanguageFeatures(scope Instance.Handle self, scope ref SupportedWGSLLanguageFeatures features) @trusted nothrow @nogc {
+    wgpuInstanceGetWGSLLanguageFeatures(self, &features);
+}
+private extern(C) void wgpuInstanceGetWGSLLanguageFeatures(Instance.Handle, SupportedWGSLLanguageFeatures*) nothrow @nogc;
+
+/// TODO
+bool hasWGSLLanguageFeature(scope Instance.Handle self, WGSLLanguageFeatureName feature) @trusted nothrow @nogc {
+    return wgpuInstanceHasWGSLLanguageFeature(self, feature);
+}
+private extern(C) bool wgpuInstanceHasWGSLLanguageFeature(Instance.Handle, WGSLLanguageFeatureName) nothrow @nogc;
+
+/// Processes asynchronous events on this `WGPUInstance`, calling any callbacks
+/// for asynchronous operations created with @ref
+/// WGPUCallbackMode_AllowProcessEvents. See @ref Process-Events for more
+/// information.
+void processEvents(scope Instance.Handle self) @trusted nothrow @nogc {
+    wgpuInstanceProcessEvents(self);
+}
+private extern(C) void wgpuInstanceProcessEvents(Instance.Handle) nothrow @nogc;
+
+/// TODO
+void requestAdapter(scope Instance.Handle self, scope ref const RequestAdapterOptions options) @trusted nothrow @nogc {
+    wgpuInstanceRequestAdapter(self, &options);
+}
+private extern(C) void wgpuInstanceRequestAdapter(Instance.Handle, const(RequestAdapterOptions)*) nothrow @nogc;
+
+/// Wait for at least one WGPUFuture in `futures` to complete, and call
+/// callbacks of the respective completed asynchronous operations. See @ref
+/// Wait-Any for more information.
+WaitStatus waitAny(scope Instance.Handle self, size_t futureCount, scope ref FutureWaitInfo futures, ulong timeoutNS) @trusted nothrow @nogc {
+    return wgpuInstanceWaitAny(self, futureCount, &futures, timeoutNS);
+}
+private extern(C) WaitStatus wgpuInstanceWaitAny(Instance.Handle, size_t, FutureWaitInfo*, ulong) nothrow @nogc;
+
+
 
 /// TODO
 alias PipelineLayout = WebGPUObject!"PipelineLayout";
 
 /// TODO
+void setLabel(scope PipelineLayout.Handle self, scope StringView label) @trusted nothrow @nogc {
+    wgpuPipelineLayoutSetLabel(self, label);
+}
+private extern(C) void wgpuPipelineLayoutSetLabel(PipelineLayout.Handle, StringView) nothrow @nogc;
+
+
+
+/// TODO
 alias QuerySet = WebGPUObject!"QuerySet";
+
+/// TODO
+void setLabel(scope QuerySet.Handle self, scope StringView label) @trusted nothrow @nogc {
+    wgpuQuerySetSetLabel(self, label);
+}
+private extern(C) void wgpuQuerySetSetLabel(QuerySet.Handle, StringView) nothrow @nogc;
+
+/// TODO
+QueryType getType(scope QuerySet.Handle self) @trusted nothrow @nogc {
+    return wgpuQuerySetGetType(self);
+}
+private extern(C) QueryType wgpuQuerySetGetType(QuerySet.Handle) nothrow @nogc;
+
+/// TODO
+uint getCount(scope QuerySet.Handle self) @trusted nothrow @nogc {
+    return wgpuQuerySetGetCount(self);
+}
+private extern(C) uint wgpuQuerySetGetCount(QuerySet.Handle) nothrow @nogc;
+
+/// TODO
+void destroy(scope QuerySet.Handle self) @trusted nothrow @nogc {
+    wgpuQuerySetDestroy(self);
+}
+private extern(C) void wgpuQuerySetDestroy(QuerySet.Handle) nothrow @nogc;
+
+
 
 /// TODO
 alias Queue = WebGPUObject!"Queue";
 
 /// TODO
+void submit(scope Queue.Handle self, scope const(CommandBuffer.Handle)[] commands) @trusted nothrow @nogc {
+    wgpuQueueSubmit(self, commands.length, commands.ptr);
+}
+private extern(C) void wgpuQueueSubmit(Queue.Handle, size_t, const(CommandBuffer.Handle)*) nothrow @nogc;
+
+/// TODO
+void onSubmittedWorkDone(scope Queue.Handle self) @trusted nothrow @nogc {
+    wgpuQueueOnSubmittedWorkDone(self);
+}
+private extern(C) void wgpuQueueOnSubmittedWorkDone(Queue.Handle) nothrow @nogc;
+
+/// Produces a @ref DeviceError both content-timeline (`size` alignment) and
+/// device-timeline errors defined by the WebGPU specification.
+void writeBuffer(scope Queue.Handle self, scope Buffer.Handle buffer, ulong bufferOffset, const(void)* data, size_t size) @trusted nothrow @nogc {
+    wgpuQueueWriteBuffer(self, buffer, bufferOffset, &data, size);
+}
+private extern(C) void wgpuQueueWriteBuffer(Queue.Handle, Buffer.Handle, ulong, const(void)*, size_t) nothrow @nogc;
+
+/// TODO
+void writeTexture(scope Queue.Handle self, scope ref const TexelCopyTextureInfo destination, const(void)* data, size_t dataSize, scope ref const TexelCopyBufferLayout dataLayout, scope ref const Extent3D writeSize) @trusted nothrow @nogc {
+    wgpuQueueWriteTexture(self, &destination, &data, dataSize, &dataLayout, &writeSize);
+}
+private extern(C) void wgpuQueueWriteTexture(Queue.Handle, const(TexelCopyTextureInfo)*, const(void)*, size_t, const(TexelCopyBufferLayout)*, const(Extent3D)*) nothrow @nogc;
+
+/// TODO
+void setLabel(scope Queue.Handle self, scope StringView label) @trusted nothrow @nogc {
+    wgpuQueueSetLabel(self, label);
+}
+private extern(C) void wgpuQueueSetLabel(Queue.Handle, StringView) nothrow @nogc;
+
+
+
+/// TODO
 alias RenderBundle = WebGPUObject!"RenderBundle";
+
+/// TODO
+void setLabel(scope RenderBundle.Handle self, scope StringView label) @trusted nothrow @nogc {
+    wgpuRenderBundleSetLabel(self, label);
+}
+private extern(C) void wgpuRenderBundleSetLabel(RenderBundle.Handle, StringView) nothrow @nogc;
+
+
 
 /// TODO
 alias RenderBundleEncoder = WebGPUObject!"RenderBundleEncoder";
 
 /// TODO
+void setPipeline(scope RenderBundleEncoder.Handle self, scope RenderPipeline.Handle pipeline) @trusted nothrow @nogc {
+    wgpuRenderBundleEncoderSetPipeline(self, pipeline);
+}
+private extern(C) void wgpuRenderBundleEncoderSetPipeline(RenderBundleEncoder.Handle, RenderPipeline.Handle) nothrow @nogc;
+
+/// TODO
+void setBindGroup(scope RenderBundleEncoder.Handle self, uint groupIndex, scope BindGroup.Handle group, scope const(uint)[] dynamicOffsets) @trusted nothrow @nogc {
+    wgpuRenderBundleEncoderSetBindGroup(self, groupIndex, group, dynamicOffsets.length, dynamicOffsets.ptr);
+}
+private extern(C) void wgpuRenderBundleEncoderSetBindGroup(RenderBundleEncoder.Handle, uint, BindGroup.Handle, size_t, const(uint)*) nothrow @nogc;
+
+/// TODO
+void setImmediates(scope RenderBundleEncoder.Handle self, uint offset, const(void)* data, size_t size) @trusted nothrow @nogc {
+    wgpuRenderBundleEncoderSetImmediates(self, offset, &data, size);
+}
+private extern(C) void wgpuRenderBundleEncoderSetImmediates(RenderBundleEncoder.Handle, uint, const(void)*, size_t) nothrow @nogc;
+
+/// TODO
+void draw(scope RenderBundleEncoder.Handle self, uint vertexCount, uint instanceCount, uint firstVertex, uint firstInstance) @trusted nothrow @nogc {
+    wgpuRenderBundleEncoderDraw(self, vertexCount, instanceCount, firstVertex, firstInstance);
+}
+private extern(C) void wgpuRenderBundleEncoderDraw(RenderBundleEncoder.Handle, uint, uint, uint, uint) nothrow @nogc;
+
+/// TODO
+void drawIndexed(scope RenderBundleEncoder.Handle self, uint indexCount, uint instanceCount, uint firstIndex, int baseVertex, uint firstInstance) @trusted nothrow @nogc {
+    wgpuRenderBundleEncoderDrawIndexed(self, indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
+}
+private extern(C) void wgpuRenderBundleEncoderDrawIndexed(RenderBundleEncoder.Handle, uint, uint, uint, int, uint) nothrow @nogc;
+
+/// TODO
+void drawIndirect(scope RenderBundleEncoder.Handle self, scope Buffer.Handle indirectBuffer, ulong indirectOffset) @trusted nothrow @nogc {
+    wgpuRenderBundleEncoderDrawIndirect(self, indirectBuffer, indirectOffset);
+}
+private extern(C) void wgpuRenderBundleEncoderDrawIndirect(RenderBundleEncoder.Handle, Buffer.Handle, ulong) nothrow @nogc;
+
+/// TODO
+void drawIndexedIndirect(scope RenderBundleEncoder.Handle self, scope Buffer.Handle indirectBuffer, ulong indirectOffset) @trusted nothrow @nogc {
+    wgpuRenderBundleEncoderDrawIndexedIndirect(self, indirectBuffer, indirectOffset);
+}
+private extern(C) void wgpuRenderBundleEncoderDrawIndexedIndirect(RenderBundleEncoder.Handle, Buffer.Handle, ulong) nothrow @nogc;
+
+/// TODO
+void insertDebugMarker(scope RenderBundleEncoder.Handle self, scope StringView markerLabel) @trusted nothrow @nogc {
+    wgpuRenderBundleEncoderInsertDebugMarker(self, markerLabel);
+}
+private extern(C) void wgpuRenderBundleEncoderInsertDebugMarker(RenderBundleEncoder.Handle, StringView) nothrow @nogc;
+
+/// TODO
+void popDebugGroup(scope RenderBundleEncoder.Handle self) @trusted nothrow @nogc {
+    wgpuRenderBundleEncoderPopDebugGroup(self);
+}
+private extern(C) void wgpuRenderBundleEncoderPopDebugGroup(RenderBundleEncoder.Handle) nothrow @nogc;
+
+/// TODO
+void pushDebugGroup(scope RenderBundleEncoder.Handle self, scope StringView groupLabel) @trusted nothrow @nogc {
+    wgpuRenderBundleEncoderPushDebugGroup(self, groupLabel);
+}
+private extern(C) void wgpuRenderBundleEncoderPushDebugGroup(RenderBundleEncoder.Handle, StringView) nothrow @nogc;
+
+/// TODO
+void setVertexBuffer(scope RenderBundleEncoder.Handle self, uint slot, scope Buffer.Handle buffer, ulong offset, ulong size) @trusted nothrow @nogc {
+    wgpuRenderBundleEncoderSetVertexBuffer(self, slot, buffer, offset, size);
+}
+private extern(C) void wgpuRenderBundleEncoderSetVertexBuffer(RenderBundleEncoder.Handle, uint, Buffer.Handle, ulong, ulong) nothrow @nogc;
+
+/// TODO
+void setIndexBuffer(scope RenderBundleEncoder.Handle self, scope Buffer.Handle buffer, IndexFormat format, ulong offset, ulong size) @trusted nothrow @nogc {
+    wgpuRenderBundleEncoderSetIndexBuffer(self, buffer, format, offset, size);
+}
+private extern(C) void wgpuRenderBundleEncoderSetIndexBuffer(RenderBundleEncoder.Handle, Buffer.Handle, IndexFormat, ulong, ulong) nothrow @nogc;
+
+/// TODO
+RenderBundle.Uniq finish(scope RenderBundleEncoder.Handle self, scope ref const RenderBundleDescriptor descriptor) @trusted nothrow @nogc {
+    return RenderBundle.Uniq(wgpuRenderBundleEncoderFinish(self, &descriptor));
+}
+private extern(C) RenderBundle.Handle wgpuRenderBundleEncoderFinish(RenderBundleEncoder.Handle, const(RenderBundleDescriptor)*) nothrow @nogc;
+
+/// TODO
+void setLabel(scope RenderBundleEncoder.Handle self, scope StringView label) @trusted nothrow @nogc {
+    wgpuRenderBundleEncoderSetLabel(self, label);
+}
+private extern(C) void wgpuRenderBundleEncoderSetLabel(RenderBundleEncoder.Handle, StringView) nothrow @nogc;
+
+
+
+/// TODO
 alias RenderPassEncoder = WebGPUObject!"RenderPassEncoder";
+
+/// TODO
+void setPipeline(scope RenderPassEncoder.Handle self, scope RenderPipeline.Handle pipeline) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderSetPipeline(self, pipeline);
+}
+private extern(C) void wgpuRenderPassEncoderSetPipeline(RenderPassEncoder.Handle, RenderPipeline.Handle) nothrow @nogc;
+
+/// TODO
+void setBindGroup(scope RenderPassEncoder.Handle self, uint groupIndex, scope BindGroup.Handle group, scope const(uint)[] dynamicOffsets) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderSetBindGroup(self, groupIndex, group, dynamicOffsets.length, dynamicOffsets.ptr);
+}
+private extern(C) void wgpuRenderPassEncoderSetBindGroup(RenderPassEncoder.Handle, uint, BindGroup.Handle, size_t, const(uint)*) nothrow @nogc;
+
+/// TODO
+void setImmediates(scope RenderPassEncoder.Handle self, uint offset, const(void)* data, size_t size) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderSetImmediates(self, offset, &data, size);
+}
+private extern(C) void wgpuRenderPassEncoderSetImmediates(RenderPassEncoder.Handle, uint, const(void)*, size_t) nothrow @nogc;
+
+/// TODO
+void draw(scope RenderPassEncoder.Handle self, uint vertexCount, uint instanceCount, uint firstVertex, uint firstInstance) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderDraw(self, vertexCount, instanceCount, firstVertex, firstInstance);
+}
+private extern(C) void wgpuRenderPassEncoderDraw(RenderPassEncoder.Handle, uint, uint, uint, uint) nothrow @nogc;
+
+/// TODO
+void drawIndexed(scope RenderPassEncoder.Handle self, uint indexCount, uint instanceCount, uint firstIndex, int baseVertex, uint firstInstance) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderDrawIndexed(self, indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
+}
+private extern(C) void wgpuRenderPassEncoderDrawIndexed(RenderPassEncoder.Handle, uint, uint, uint, int, uint) nothrow @nogc;
+
+/// TODO
+void drawIndirect(scope RenderPassEncoder.Handle self, scope Buffer.Handle indirectBuffer, ulong indirectOffset) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderDrawIndirect(self, indirectBuffer, indirectOffset);
+}
+private extern(C) void wgpuRenderPassEncoderDrawIndirect(RenderPassEncoder.Handle, Buffer.Handle, ulong) nothrow @nogc;
+
+/// TODO
+void drawIndexedIndirect(scope RenderPassEncoder.Handle self, scope Buffer.Handle indirectBuffer, ulong indirectOffset) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderDrawIndexedIndirect(self, indirectBuffer, indirectOffset);
+}
+private extern(C) void wgpuRenderPassEncoderDrawIndexedIndirect(RenderPassEncoder.Handle, Buffer.Handle, ulong) nothrow @nogc;
+
+/// TODO
+void executeBundles(scope RenderPassEncoder.Handle self, scope const(RenderBundle.Handle)[] bundles) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderExecuteBundles(self, bundles.length, bundles.ptr);
+}
+private extern(C) void wgpuRenderPassEncoderExecuteBundles(RenderPassEncoder.Handle, size_t, const(RenderBundle.Handle)*) nothrow @nogc;
+
+/// TODO
+void insertDebugMarker(scope RenderPassEncoder.Handle self, scope StringView markerLabel) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderInsertDebugMarker(self, markerLabel);
+}
+private extern(C) void wgpuRenderPassEncoderInsertDebugMarker(RenderPassEncoder.Handle, StringView) nothrow @nogc;
+
+/// TODO
+void popDebugGroup(scope RenderPassEncoder.Handle self) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderPopDebugGroup(self);
+}
+private extern(C) void wgpuRenderPassEncoderPopDebugGroup(RenderPassEncoder.Handle) nothrow @nogc;
+
+/// TODO
+void pushDebugGroup(scope RenderPassEncoder.Handle self, scope StringView groupLabel) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderPushDebugGroup(self, groupLabel);
+}
+private extern(C) void wgpuRenderPassEncoderPushDebugGroup(RenderPassEncoder.Handle, StringView) nothrow @nogc;
+
+/// TODO
+void setStencilReference(scope RenderPassEncoder.Handle self, uint reference) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderSetStencilReference(self, reference);
+}
+private extern(C) void wgpuRenderPassEncoderSetStencilReference(RenderPassEncoder.Handle, uint) nothrow @nogc;
+
+/// TODO
+void setBlendConstant(scope RenderPassEncoder.Handle self, scope ref const Color color) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderSetBlendConstant(self, &color);
+}
+private extern(C) void wgpuRenderPassEncoderSetBlendConstant(RenderPassEncoder.Handle, const(Color)*) nothrow @nogc;
+
+/// TODO If any argument is non-finite, produces a @ref
+/// NonFiniteFloatValueError.
+void setViewport(scope RenderPassEncoder.Handle self, float x, float y, float width, float height, float minDepth, float maxDepth) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderSetViewport(self, x, y, width, height, minDepth, maxDepth);
+}
+private extern(C) void wgpuRenderPassEncoderSetViewport(RenderPassEncoder.Handle, float, float, float, float, float, float) nothrow @nogc;
+
+/// TODO
+void setScissorRect(scope RenderPassEncoder.Handle self, uint x, uint y, uint width, uint height) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderSetScissorRect(self, x, y, width, height);
+}
+private extern(C) void wgpuRenderPassEncoderSetScissorRect(RenderPassEncoder.Handle, uint, uint, uint, uint) nothrow @nogc;
+
+/// TODO
+void setVertexBuffer(scope RenderPassEncoder.Handle self, uint slot, scope Buffer.Handle buffer, ulong offset, ulong size) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderSetVertexBuffer(self, slot, buffer, offset, size);
+}
+private extern(C) void wgpuRenderPassEncoderSetVertexBuffer(RenderPassEncoder.Handle, uint, Buffer.Handle, ulong, ulong) nothrow @nogc;
+
+/// TODO
+void setIndexBuffer(scope RenderPassEncoder.Handle self, scope Buffer.Handle buffer, IndexFormat format, ulong offset, ulong size) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderSetIndexBuffer(self, buffer, format, offset, size);
+}
+private extern(C) void wgpuRenderPassEncoderSetIndexBuffer(RenderPassEncoder.Handle, Buffer.Handle, IndexFormat, ulong, ulong) nothrow @nogc;
+
+/// TODO
+void beginOcclusionQuery(scope RenderPassEncoder.Handle self, uint queryIndex) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderBeginOcclusionQuery(self, queryIndex);
+}
+private extern(C) void wgpuRenderPassEncoderBeginOcclusionQuery(RenderPassEncoder.Handle, uint) nothrow @nogc;
+
+/// TODO
+void endOcclusionQuery(scope RenderPassEncoder.Handle self) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderEndOcclusionQuery(self);
+}
+private extern(C) void wgpuRenderPassEncoderEndOcclusionQuery(RenderPassEncoder.Handle) nothrow @nogc;
+
+/// TODO
+void end(scope RenderPassEncoder.Handle self) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderEnd(self);
+}
+private extern(C) void wgpuRenderPassEncoderEnd(RenderPassEncoder.Handle) nothrow @nogc;
+
+/// TODO
+void setLabel(scope RenderPassEncoder.Handle self, scope StringView label) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderSetLabel(self, label);
+}
+private extern(C) void wgpuRenderPassEncoderSetLabel(RenderPassEncoder.Handle, StringView) nothrow @nogc;
+
+
 
 /// TODO
 alias RenderPipeline = WebGPUObject!"RenderPipeline";
 
 /// TODO
+BindGroupLayout.Uniq getBindGroupLayout(scope RenderPipeline.Handle self, uint groupIndex) @trusted nothrow @nogc {
+    return BindGroupLayout.Uniq(wgpuRenderPipelineGetBindGroupLayout(self, groupIndex));
+}
+private extern(C) BindGroupLayout.Handle wgpuRenderPipelineGetBindGroupLayout(RenderPipeline.Handle, uint) nothrow @nogc;
+
+/// TODO
+void setLabel(scope RenderPipeline.Handle self, scope StringView label) @trusted nothrow @nogc {
+    wgpuRenderPipelineSetLabel(self, label);
+}
+private extern(C) void wgpuRenderPipelineSetLabel(RenderPipeline.Handle, StringView) nothrow @nogc;
+
+
+
+/// TODO
 alias Sampler = WebGPUObject!"Sampler";
 
 /// TODO
+void setLabel(scope Sampler.Handle self, scope StringView label) @trusted nothrow @nogc {
+    wgpuSamplerSetLabel(self, label);
+}
+private extern(C) void wgpuSamplerSetLabel(Sampler.Handle, StringView) nothrow @nogc;
+
+
+
+/// TODO
 alias ShaderModule = WebGPUObject!"ShaderModule";
+
+/// TODO
+void getCompilationInfo(scope ShaderModule.Handle self) @trusted nothrow @nogc {
+    wgpuShaderModuleGetCompilationInfo(self);
+}
+private extern(C) void wgpuShaderModuleGetCompilationInfo(ShaderModule.Handle) nothrow @nogc;
+
+/// TODO
+void setLabel(scope ShaderModule.Handle self, scope StringView label) @trusted nothrow @nogc {
+    wgpuShaderModuleSetLabel(self, label);
+}
+private extern(C) void wgpuShaderModuleSetLabel(ShaderModule.Handle, StringView) nothrow @nogc;
+
+
 
 /// An object used to continuously present image data to the user, see @ref
 /// Surfaces for more details.
 alias Surface = WebGPUObject!"Surface";
 
+/// Configures parameters for rendering to `surface`. Produces a @ref
+/// DeviceError for all content-timeline errors defined by the WebGPU
+/// specification. See @ref Surface-Configuration for more details.
+void configure(scope Surface.Handle self, scope ref const SurfaceConfiguration config) @trusted nothrow @nogc {
+    wgpuSurfaceConfigure(self, &config);
+}
+private extern(C) void wgpuSurfaceConfigure(Surface.Handle, const(SurfaceConfiguration)*) nothrow @nogc;
+
+/// Provides information on how `adapter` is able to use `surface`. See @ref
+/// Surface-Capabilities for more details.
+Status getCapabilities(scope Surface.Handle self, scope Adapter.Handle adapter, scope ref SurfaceCapabilities capabilities) @trusted nothrow @nogc {
+    return wgpuSurfaceGetCapabilities(self, adapter, &capabilities);
+}
+private extern(C) Status wgpuSurfaceGetCapabilities(Surface.Handle, Adapter.Handle, SurfaceCapabilities*) nothrow @nogc;
+
+/// Returns the @ref WGPUTexture to render to `surface` this frame along with
+/// metadata on the frame. Returns `NULL` and @ref
+/// WGPUSurfaceGetCurrentTextureStatus_Error if the surface is not configured.
+/// See @ref Surface-Presenting for more details.
+void getCurrentTexture(scope Surface.Handle self, scope ref SurfaceTexture surfaceTexture) @trusted nothrow @nogc {
+    wgpuSurfaceGetCurrentTexture(self, &surfaceTexture);
+}
+private extern(C) void wgpuSurfaceGetCurrentTexture(Surface.Handle, SurfaceTexture*) nothrow @nogc;
+
+/// Shows `surface`'s current texture to the user. See @ref Surface-Presenting
+/// for more details.
+Status present(scope Surface.Handle self) @trusted nothrow @nogc {
+    return wgpuSurfacePresent(self);
+}
+private extern(C) Status wgpuSurfacePresent(Surface.Handle) nothrow @nogc;
+
+/// Removes the configuration for `surface`. See @ref Surface-Configuration for
+/// more details.
+void unconfigure(scope Surface.Handle self) @trusted nothrow @nogc {
+    wgpuSurfaceUnconfigure(self);
+}
+private extern(C) void wgpuSurfaceUnconfigure(Surface.Handle) nothrow @nogc;
+
+/// Modifies the label used to refer to `surface`.
+void setLabel(scope Surface.Handle self, scope StringView label) @trusted nothrow @nogc {
+    wgpuSurfaceSetLabel(self, label);
+}
+private extern(C) void wgpuSurfaceSetLabel(Surface.Handle, StringView) nothrow @nogc;
+
+
+
 /// TODO
 alias Texture = WebGPUObject!"Texture";
 
 /// TODO
+TextureView.Uniq createView(scope Texture.Handle self, scope ref const TextureViewDescriptor descriptor) @trusted nothrow @nogc {
+    return TextureView.Uniq(wgpuTextureCreateView(self, &descriptor));
+}
+private extern(C) TextureView.Handle wgpuTextureCreateView(Texture.Handle, const(TextureViewDescriptor)*) nothrow @nogc;
+
+/// TODO
+void setLabel(scope Texture.Handle self, scope StringView label) @trusted nothrow @nogc {
+    wgpuTextureSetLabel(self, label);
+}
+private extern(C) void wgpuTextureSetLabel(Texture.Handle, StringView) nothrow @nogc;
+
+/// TODO
+uint getWidth(scope Texture.Handle self) @trusted nothrow @nogc {
+    return wgpuTextureGetWidth(self);
+}
+private extern(C) uint wgpuTextureGetWidth(Texture.Handle) nothrow @nogc;
+
+/// TODO
+uint getHeight(scope Texture.Handle self) @trusted nothrow @nogc {
+    return wgpuTextureGetHeight(self);
+}
+private extern(C) uint wgpuTextureGetHeight(Texture.Handle) nothrow @nogc;
+
+/// TODO
+uint getDepthOrArrayLayers(scope Texture.Handle self) @trusted nothrow @nogc {
+    return wgpuTextureGetDepthOrArrayLayers(self);
+}
+private extern(C) uint wgpuTextureGetDepthOrArrayLayers(Texture.Handle) nothrow @nogc;
+
+/// TODO
+uint getMipLevelCount(scope Texture.Handle self) @trusted nothrow @nogc {
+    return wgpuTextureGetMipLevelCount(self);
+}
+private extern(C) uint wgpuTextureGetMipLevelCount(Texture.Handle) nothrow @nogc;
+
+/// TODO
+uint getSampleCount(scope Texture.Handle self) @trusted nothrow @nogc {
+    return wgpuTextureGetSampleCount(self);
+}
+private extern(C) uint wgpuTextureGetSampleCount(Texture.Handle) nothrow @nogc;
+
+/// TODO
+TextureDimension getDimension(scope Texture.Handle self) @trusted nothrow @nogc {
+    return wgpuTextureGetDimension(self);
+}
+private extern(C) TextureDimension wgpuTextureGetDimension(Texture.Handle) nothrow @nogc;
+
+/// TODO
+TextureViewDimension getTextureBindingViewDimension(scope Texture.Handle self) @trusted nothrow @nogc {
+    return wgpuTextureGetTextureBindingViewDimension(self);
+}
+private extern(C) TextureViewDimension wgpuTextureGetTextureBindingViewDimension(Texture.Handle) nothrow @nogc;
+
+/// TODO
+TextureFormat getFormat(scope Texture.Handle self) @trusted nothrow @nogc {
+    return wgpuTextureGetFormat(self);
+}
+private extern(C) TextureFormat wgpuTextureGetFormat(Texture.Handle) nothrow @nogc;
+
+/// TODO
+TextureUsage getUsage(scope Texture.Handle self) @trusted nothrow @nogc {
+    return wgpuTextureGetUsage(self);
+}
+private extern(C) TextureUsage wgpuTextureGetUsage(Texture.Handle) nothrow @nogc;
+
+/// TODO
+void destroy(scope Texture.Handle self) @trusted nothrow @nogc {
+    wgpuTextureDestroy(self);
+}
+private extern(C) void wgpuTextureDestroy(Texture.Handle) nothrow @nogc;
+
+
+
+/// TODO
 alias TextureView = WebGPUObject!"TextureView";
+
+/// TODO
+void setLabel(scope TextureView.Handle self, scope StringView label) @trusted nothrow @nogc {
+    wgpuTextureViewSetLabel(self, label);
+}
+private extern(C) void wgpuTextureViewSetLabel(TextureView.Handle, StringView) nothrow @nogc;
+
+
 
