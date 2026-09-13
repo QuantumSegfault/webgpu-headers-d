@@ -367,6 +367,79 @@ string toDType(string type, TypeLocation loc, string pointer, const scope string
     return result;
 }
 
+void writeFunction(const ref API.Function func, string objIdent, File outFile, string[string] identifierMap)
+{
+    import std.string : startsWith, replace;
+
+    outFile.writeln(func.doc.toDocBlock);
+
+    string dRetType = "void";
+    bool returnsObject = false;
+
+    if (!func.returns.isNull) {
+        auto ret = func.returns.get;
+        if (ret.type.startsWith("object."))
+            returnsObject = true;
+        dRetType = ret.type.toDType(TypeLocation.ret, ret.pointer, identifierMap);
+    }
+
+    string[] cArgs;
+    string[] dArgs;
+    string[] callArgs;
+
+    if (objIdent) {
+        cArgs ~= objIdent ~ ".Handle";
+        dArgs ~= "scope " ~ objIdent ~ ".Handle self";
+        callArgs ~= "self";
+    }
+
+    foreach (ref arg; func.args) {
+        string argName = arg.name.snakeToCamel(false).escapeIdentifier;
+
+        dArgs ~= arg.type.toDType(TypeLocation.param, arg.pointer, identifierMap) ~ " " ~ argName;
+
+        if (arg.type.startsWith("array\\u003c")) {
+            enforce(arg.pointer == "mutable" || arg.pointer == "immutable");
+
+            cArgs ~= "size_t";
+            cArgs ~= arg.type[11 .. $ - 6].toDType(TypeLocation.field, arg.pointer, identifierMap);
+
+            callArgs ~= argName ~ ".length";
+            callArgs ~= argName ~ ".ptr";
+        } else {
+            cArgs ~= arg.type.toDType(TypeLocation.field, arg.pointer, identifierMap);
+            callArgs ~= (arg.pointer ? "&" : "") ~ argName;
+        }
+    }
+
+    string dFuncName = func.name.snakeToCamel(false).escapeIdentifier;
+    string cFuncName = "wgpu" ~ objIdent ~ func.name.snakeToCamel(true);
+
+    outFile.writefln!"%s %s(%(%r, %)) @trusted nothrow @nogc {"(
+        dRetType,
+        dFuncName,
+        dArgs
+    );
+
+    if (returnsObject) {
+        outFile.writefln!"    return %s(%s(%(%r, %)));"(dRetType, cFuncName, callArgs);
+    } else if (dRetType == "void") {
+        outFile.writefln!"    %s(%(%r, %));"(cFuncName, callArgs);
+    } else {
+        outFile.writefln!"    return %s(%(%r, %));"(cFuncName, callArgs);
+    }
+
+    outFile.writeln("}");
+
+    outFile.writefln!"private extern(C) %s %s(%(%r, %)) nothrow @nogc;"(
+        returnsObject ? dRetType.replace(".Uniq", ".Handle") : dRetType,
+        cFuncName,
+        cArgs
+    );
+
+    outFile.writeln();
+}
+
 void main()
 {
     API api = FileIopipe("generator/webgpu-headers/webgpu.json").refCounted
@@ -473,7 +546,7 @@ void main()
     outFile.writeln();
 
     foreach (ref func; api.functions) {
-        outFile.writeln("void " ~ func.name.snakeToCamel(false).escapeIdentifier ~ "() {}");
+        writeFunction(func, null, outFile, identifierMap);
     }
 
     outFile.writeln();
@@ -620,8 +693,6 @@ void main()
     outFile.writeln();
 
     foreach (ref object; api.objects) {
-        import std.string : startsWith, replace;
-
         string objIdent = identifierMap["object." ~ object.name];
         outFile.writeln(object.doc.toDocBlock);
         outFile.writeln(
@@ -630,71 +701,7 @@ void main()
         outFile.writeln();
 
         foreach (ref method; object.methods) {
-            outFile.writeln(method.doc.toDocBlock);
-
-            string dRetType = "void";
-            bool returnsObject = false;
-
-            if (!method.returns.isNull) {
-                auto ret = method.returns.get;
-                if (ret.type.startsWith("object."))
-                    returnsObject = true;
-                dRetType = ret.type.toDType(TypeLocation.ret, ret.pointer, identifierMap);
-            }
-
-            string[] cArgs;
-            string[] dArgs;
-            string[] callArgs;
-
-            cArgs ~= objIdent ~ ".Handle";
-            dArgs ~= "scope " ~ objIdent ~ ".Handle self";
-            callArgs ~= "self";
-
-            foreach (ref arg; method.args) {
-                string argName = arg.name.snakeToCamel(false).escapeIdentifier;
-
-                dArgs ~= arg.type.toDType(TypeLocation.param, arg.pointer, identifierMap) ~ " " ~ argName;
-
-                if (arg.type.startsWith("array\\u003c")) {
-                    enforce(arg.pointer == "mutable" || arg.pointer == "immutable");
-
-                    cArgs ~= "size_t";
-                    cArgs ~= arg.type[11 .. $ - 6].toDType(TypeLocation.field, arg.pointer, identifierMap);
-
-                    callArgs ~= argName ~ ".length";
-                    callArgs ~= argName ~ ".ptr";
-                } else {
-                    cArgs ~= arg.type.toDType(TypeLocation.field, arg.pointer, identifierMap);
-                    callArgs ~= (arg.pointer ? "&" : "") ~ argName;
-                }
-            }
-
-            string dMethodName = method.name.snakeToCamel(false).escapeIdentifier;
-            string cMethodName = "wgpu" ~ objIdent ~ method.name.snakeToCamel(true);
-
-            outFile.writefln!"%s %s(%(%r, %)) @trusted nothrow @nogc {"(
-                dRetType,
-                dMethodName,
-                dArgs
-            );
-
-            if (returnsObject) {
-                outFile.writefln!"    return %s(%s(%(%r, %)));"(dRetType, cMethodName, callArgs);
-            } else if (dRetType == "void") {
-                outFile.writefln!"    %s(%(%r, %));"(cMethodName, callArgs);
-            } else {
-                outFile.writefln!"    return %s(%(%r, %));"(cMethodName, callArgs);
-            }
-
-            outFile.writeln("}");
-            
-            outFile.writefln!"private extern(C) %s %s(%(%r, %)) nothrow @nogc;"(
-                returnsObject ? dRetType.replace(".Uniq", ".Handle") : dRetType,
-                cMethodName,
-                cArgs
-            );
-
-            outFile.writeln();
+            writeFunction(method, objIdent, outFile, identifierMap);
         }
         outFile.writeln();
         outFile.writeln();

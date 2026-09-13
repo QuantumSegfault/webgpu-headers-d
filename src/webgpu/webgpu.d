@@ -1248,10 +1248,32 @@ struct RequestAdapterCallback {}
 struct RequestDeviceCallback {}
 struct UncapturedErrorCallback {}
 
-void createInstance() {}
-void getInstanceFeatures() {}
-void getInstanceLimits() {}
-void hasInstanceFeature() {}
+/// Create a WGPUInstance
+Instance.Uniq createInstance(scope ref const InstanceDescriptor descriptor) @trusted nothrow @nogc {
+    return Instance.Uniq(wgpuCreateInstance(&descriptor));
+}
+private extern(C) Instance.Handle wgpuCreateInstance(const(InstanceDescriptor)*) nothrow @nogc;
+
+/// Get the list of @ref WGPUInstanceFeatureName values supported by the
+/// instance.
+void getInstanceFeatures(scope ref SupportedInstanceFeatures features) @trusted nothrow @nogc {
+    wgpuGetInstanceFeatures(&features);
+}
+private extern(C) void wgpuGetInstanceFeatures(SupportedInstanceFeatures*) nothrow @nogc;
+
+/// Get the limits supported by the instance.
+Status getInstanceLimits(scope ref InstanceLimits limits) @trusted nothrow @nogc {
+    return wgpuGetInstanceLimits(&limits);
+}
+private extern(C) Status wgpuGetInstanceLimits(InstanceLimits*) nothrow @nogc;
+
+/// Check whether a particular @ref WGPUInstanceFeatureName is supported by the
+/// instance.
+bool hasInstanceFeature(InstanceFeatureName feature) @trusted nothrow @nogc {
+    return wgpuHasInstanceFeature(feature);
+}
+private extern(C) bool wgpuHasInstanceFeature(InstanceFeatureName) nothrow @nogc;
+
 
 /// TODO
 struct AdapterInfo {
