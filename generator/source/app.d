@@ -36,16 +36,16 @@ struct API {
             } else if (start == JSONToken.String) {
                 auto str = tokenizer.deserialize!string;
                 switch (str) {
-                case "usize_max":
-                    return Value64(Tag.usizeMax, 0);
-                case "uint32_max":
-                    return Value64(Tag.uint32Max, 0);
-                case "uint64_max":
-                    return Value64(Tag.uint64Max, 0);
-                case "nan":
-                    return Value64(Tag.nan, 0);
-                default:
-                    throw new Exception(format("Error: unknown Value64: %s", str));
+                    case "usize_max":
+                        return Value64(Tag.usizeMax, 0);
+                    case "uint32_max":
+                        return Value64(Tag.uint32Max, 0);
+                    case "uint64_max":
+                        return Value64(Tag.uint64Max, 0);
+                    case "nan":
+                        return Value64(Tag.nan, 0);
+                    default:
+                        throw new Exception(format("Error: unknown Value64: %s", str));
                 }
             } else {
                 throw new Exception(format("Error: expected Number or String, got %s", start));
@@ -158,7 +158,7 @@ struct API {
             @(.optional) @alternateName("passed_with_ownership")
             Nullable!bool passedWithOwnership;
             @(.optional)
-            Nullable!string pointer;
+            string pointer;
         }
 
         @optional
@@ -232,11 +232,11 @@ string escapeIdentifier(return scope string str)
         static foreach (keyword; AliasSeq!(
                 "null", "auto", "false", "true", "float", "uint", "module"
             )) {
-    case keyword:
-            return keyword ~ "_";
+            case keyword:
+                return keyword ~ "_";
         }
-    default:
-        return str;
+        default:
+            return str;
     }
 }
 
@@ -245,16 +245,16 @@ string asDCode(in API.Value64 value)
     import std.conv : to;
 
     final switch (value.tag) with (API.Value64.Tag) {
-    case integer:
-        return to!string(value.value);
-    case usizeMax:
-        return "size_t.max";
-    case uint32Max:
-        return "uint.max";
-    case uint64Max:
-        return "ulong.max";
-    case nan:
-        return "float.nan";
+        case integer:
+            return to!string(value.value);
+        case usizeMax:
+            return "size_t.max";
+        case uint32Max:
+            return "uint.max";
+        case uint64Max:
+            return "ulong.max";
+        case nan:
+            return "float.nan";
     }
 }
 
@@ -296,41 +296,41 @@ string toDType(string type, TypeLocation loc, string pointer, const scope string
 
     string result;
     switch (type) {
-    case "out_string":
-    case "string_with_default_empty":
-    case "nullable_string":
-        result = loc == TypeLocation.field ? "StringView" : "const(char)[]";
-        break;
-    case "uint16":
-        result = "ushort";
-        break;
-    case "int32":
-        result = "int";
-        break;
-    case "uint32":
-        result = "uint";
-        break;
-    case "uint64":
-        result = "ulong";
-        break;
-    case "usize":
-        result = "size_t";
-        break;
-    case "bool":
-        result = "bool";
-        break;
-    case "float32":
-    case "nullable_float32":
-        result = "float";
-        break;
-    case "float64_supertype":
-        result = "double";
-        break;
-    case "c_void":
-        result = "void";
-        break;
-    default:
-        break;
+        case "out_string":
+        case "string_with_default_empty":
+        case "nullable_string":
+            result = loc == TypeLocation.field ? "StringView" : "const(char)[]";
+            break;
+        case "uint16":
+            result = "ushort";
+            break;
+        case "int32":
+            result = "int";
+            break;
+        case "uint32":
+            result = "uint";
+            break;
+        case "uint64":
+            result = "ulong";
+            break;
+        case "usize":
+            result = "size_t";
+            break;
+        case "bool":
+            result = "bool";
+            break;
+        case "float32":
+        case "nullable_float32":
+            result = "float";
+            break;
+        case "float64_supertype":
+            result = "double";
+            break;
+        case "c_void":
+            result = "void";
+            break;
+        default:
+            break;
     }
 
     if (type.startsWith("object.")) {
