@@ -228,11 +228,11 @@ string escapeIdentifier(return scope string str)
         return "_" ~ str;
     }
 
-    // `self` is not technically not a keyword, but we reserve for use by methods
+    // `dg` and `self` are not keywords, but we reserve them for the codegen
     switch (str) {
         static foreach (keyword; AliasSeq!(
                 "null", "auto", "false", "true", "float", "uint", "module",
-                "self"
+                "self", "dg"
             )) {
             case keyword:
                 return keyword ~ "_";
@@ -342,7 +342,7 @@ string toDType(string type, TypeLocation loc, string pointer, const scope string
     }
 
     if (type.startsWith("object.")) {
-        result = (loc == TypeLocation.dParam ? "scope " : "") ~ identifierMap[type] ~ (
+        result = ((loc == TypeLocation.dParam && !pointer) ? "scope " : "") ~ identifierMap[type] ~ (
             loc == TypeLocation.dRet ? ".Uniq" : ".Handle");
     }
 
@@ -549,7 +549,78 @@ void main()
     outFile.writeln();
 
     foreach (ref callback; api.callbacks) {
-        outFile.writeln("struct " ~ identifierMap["callback." ~ callback.name] ~ " {}");
+        import std.range : chain, only, zip;
+        import std.algorithm.iteration : map;
+        import std.string : startsWith;
+
+        auto callbackIdent = identifierMap["callback." ~ callback.name];
+
+        string[] cArgs;
+        string[] cArgNames;
+        string[] dArgs;
+        string[] callArgs;
+
+        foreach (ref arg; callback.args) {
+            enforce(arg.default_.isNull);
+
+            string argName = arg.name.snakeToCamel(false).escapeIdentifier;
+
+            dArgs ~= arg.type.toDType(TypeLocation.dParam, arg.pointer, identifierMap) ~ " " ~ argName;
+
+            if (arg.type.startsWith("array\\u003c")) {
+                enforce(arg.pointer == "mutable" || arg.pointer == "immutable");
+
+                cArgs ~= "size_t";
+                cArgNames ~= argName ~ "Count";
+                cArgs ~= arg.type.toDType(TypeLocation.cParam, arg.pointer, identifierMap);
+                cArgNames ~= argName ~ "Ptr";
+
+                callArgs ~= argName ~ "Ptr[0.." ~ argName ~ "Count]";
+            } else {
+                cArgs ~= arg.type.toDType(TypeLocation.cParam, arg.pointer, identifierMap);
+                cArgNames ~= argName;
+                callArgs ~= (arg.pointer ? "*" : "") ~ argName;
+            }
+        }
+
+        outFile.writeln(callback.doc.toDocBlock);
+
+        outFile.writefln!"alias %s = CallbackInfo!(%(%r, %));"(
+            callbackIdent,
+            only(callback.style == API.Callback.Style.callback_mode ? "true" : "false").chain(
+                cArgs));
+
+        outFile.writeln("/// ditto");
+
+        outFile.writefln!"alias %sDelegate = void delegate(%(%r, %));"(
+            callbackIdent,
+            dArgs
+        );
+
+        outFile.writeln("/// ditto");
+
+        outFile.writefln!"alias %sFunc = extern(C) void function(%(%r, %));"(
+            callbackIdent,
+            zip(cArgs, cArgNames)
+                .map!"a[0] ~ ' ' ~ a[1]".chain(
+                    only("void* userdata1", "void* userdata2"))
+        );
+
+        outFile.writeln("/// ditto");
+
+        outFile.writefln!"private extern(C) void %s(%(%r, %)) {"(
+            "invoke" ~ callbackIdent,
+            zip(cArgs, cArgNames)
+                .map!"a[0] ~ ' ' ~ a[1]".chain(
+                    only("void* userdata1", "void* userdata2"))
+        );
+        outFile.writeln("    " ~ callbackIdent ~ "Delegate dg;");
+        outFile.writeln("    dg.funcptr = userdata1;");
+        outFile.writeln("    dg.ptr = userdata2;");
+
+        outFile.writefln!"    dg(%(%r, %));"(callArgs);
+        outFile.writeln("}");
+        outFile.writeln("");
     }
 
     outFile.writeln();

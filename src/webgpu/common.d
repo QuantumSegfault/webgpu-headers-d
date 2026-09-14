@@ -1,6 +1,6 @@
 module webgpu.common;
 
-import webgpu.webgpu : SType;
+import webgpu.webgpu : SType, CallbackMode;
 
 struct Bool {
     private uint value;
@@ -208,5 +208,27 @@ template asUniq(R) if (isWebGPUObject!(__traits(parent, R))) {
         r.handle = null;
 
         return T.Uniq(handle);
+    }
+}
+
+struct CallbackInfo(bool withMode, alias invokeDelegate, Args...) {
+    import std.traits : Parameters;
+
+    alias Callback = extern (C) void function(Args);
+    alias Delegate = Parameters!invokeDelegate[0];
+
+    ChainedStruct* nextInChain;
+    static if (withMode) {
+        CallbackMode mode = cast(CallbackMode)0;
+    }
+    Callback callback;
+    void* userdata1;
+    void* userdata2;
+
+    void setDelegate(Delegate dg) @trusted @nogc nothrow
+    {
+        callback = &invokeDelegate;
+        userdata1 = dg.funcptr;
+        userdata2 = dg.ptr;
     }
 }

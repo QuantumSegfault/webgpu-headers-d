@@ -1237,16 +1237,146 @@ struct TextureUsage {
 }
 
 
-struct BufferMapCallback {}
-struct CompilationInfoCallback {}
-struct CreateComputePipelineAsyncCallback {}
-struct CreateRenderPipelineAsyncCallback {}
-struct DeviceLostCallback {}
-struct PopErrorScopeCallback {}
-struct QueueWorkDoneCallback {}
-struct RequestAdapterCallback {}
-struct RequestDeviceCallback {}
-struct UncapturedErrorCallback {}
+/// TODO
+alias BufferMapCallback = CallbackInfo!(true, MapAsyncStatus, StringView);
+/// ditto
+alias BufferMapCallbackDelegate = void delegate(MapAsyncStatus status, scope StringView message);
+/// ditto
+alias BufferMapCallbackFunc = extern(C) void function(MapAsyncStatus status, StringView message, void* userdata1, void* userdata2);
+/// ditto
+private extern(C) void invokeBufferMapCallback(MapAsyncStatus status, StringView message, void* userdata1, void* userdata2) {
+    BufferMapCallbackDelegate dg;
+    dg.funcptr = userdata1;
+    dg.ptr = userdata2;
+    dg(status, message);
+}
+
+/// TODO
+alias CompilationInfoCallback = CallbackInfo!(true, CompilationInfoRequestStatus, const(CompilationInfo)*);
+/// ditto
+alias CompilationInfoCallbackDelegate = void delegate(CompilationInfoRequestStatus status, scope ref const CompilationInfo compilationInfo);
+/// ditto
+alias CompilationInfoCallbackFunc = extern(C) void function(CompilationInfoRequestStatus status, const(CompilationInfo)* compilationInfo, void* userdata1, void* userdata2);
+/// ditto
+private extern(C) void invokeCompilationInfoCallback(CompilationInfoRequestStatus status, const(CompilationInfo)* compilationInfo, void* userdata1, void* userdata2) {
+    CompilationInfoCallbackDelegate dg;
+    dg.funcptr = userdata1;
+    dg.ptr = userdata2;
+    dg(status, *compilationInfo);
+}
+
+/// TODO
+alias CreateComputePipelineAsyncCallback = CallbackInfo!(true, CreatePipelineAsyncStatus, ComputePipeline.Handle, StringView);
+/// ditto
+alias CreateComputePipelineAsyncCallbackDelegate = void delegate(CreatePipelineAsyncStatus status, scope ComputePipeline.Handle pipeline, scope StringView message);
+/// ditto
+alias CreateComputePipelineAsyncCallbackFunc = extern(C) void function(CreatePipelineAsyncStatus status, ComputePipeline.Handle pipeline, StringView message, void* userdata1, void* userdata2);
+/// ditto
+private extern(C) void invokeCreateComputePipelineAsyncCallback(CreatePipelineAsyncStatus status, ComputePipeline.Handle pipeline, StringView message, void* userdata1, void* userdata2) {
+    CreateComputePipelineAsyncCallbackDelegate dg;
+    dg.funcptr = userdata1;
+    dg.ptr = userdata2;
+    dg(status, pipeline, message);
+}
+
+/// TODO
+alias CreateRenderPipelineAsyncCallback = CallbackInfo!(true, CreatePipelineAsyncStatus, RenderPipeline.Handle, StringView);
+/// ditto
+alias CreateRenderPipelineAsyncCallbackDelegate = void delegate(CreatePipelineAsyncStatus status, scope RenderPipeline.Handle pipeline, scope StringView message);
+/// ditto
+alias CreateRenderPipelineAsyncCallbackFunc = extern(C) void function(CreatePipelineAsyncStatus status, RenderPipeline.Handle pipeline, StringView message, void* userdata1, void* userdata2);
+/// ditto
+private extern(C) void invokeCreateRenderPipelineAsyncCallback(CreatePipelineAsyncStatus status, RenderPipeline.Handle pipeline, StringView message, void* userdata1, void* userdata2) {
+    CreateRenderPipelineAsyncCallbackDelegate dg;
+    dg.funcptr = userdata1;
+    dg.ptr = userdata2;
+    dg(status, pipeline, message);
+}
+
+/// TODO
+alias DeviceLostCallback = CallbackInfo!(true, const(Device.Handle)*, DeviceLostReason, StringView);
+/// ditto
+alias DeviceLostCallbackDelegate = void delegate(scope ref const Device.Handle device, DeviceLostReason reason, scope StringView message);
+/// ditto
+alias DeviceLostCallbackFunc = extern(C) void function(const(Device.Handle)* device, DeviceLostReason reason, StringView message, void* userdata1, void* userdata2);
+/// ditto
+private extern(C) void invokeDeviceLostCallback(const(Device.Handle)* device, DeviceLostReason reason, StringView message, void* userdata1, void* userdata2) {
+    DeviceLostCallbackDelegate dg;
+    dg.funcptr = userdata1;
+    dg.ptr = userdata2;
+    dg(*device, reason, message);
+}
+
+/// TODO
+alias PopErrorScopeCallback = CallbackInfo!(true, PopErrorScopeStatus, ErrorType, StringView);
+/// ditto
+alias PopErrorScopeCallbackDelegate = void delegate(PopErrorScopeStatus status, ErrorType type, scope StringView message);
+/// ditto
+alias PopErrorScopeCallbackFunc = extern(C) void function(PopErrorScopeStatus status, ErrorType type, StringView message, void* userdata1, void* userdata2);
+/// ditto
+private extern(C) void invokePopErrorScopeCallback(PopErrorScopeStatus status, ErrorType type, StringView message, void* userdata1, void* userdata2) {
+    PopErrorScopeCallbackDelegate dg;
+    dg.funcptr = userdata1;
+    dg.ptr = userdata2;
+    dg(status, type, message);
+}
+
+/// TODO
+alias QueueWorkDoneCallback = CallbackInfo!(true, QueueWorkDoneStatus, StringView);
+/// ditto
+alias QueueWorkDoneCallbackDelegate = void delegate(QueueWorkDoneStatus status, scope StringView message);
+/// ditto
+alias QueueWorkDoneCallbackFunc = extern(C) void function(QueueWorkDoneStatus status, StringView message, void* userdata1, void* userdata2);
+/// ditto
+private extern(C) void invokeQueueWorkDoneCallback(QueueWorkDoneStatus status, StringView message, void* userdata1, void* userdata2) {
+    QueueWorkDoneCallbackDelegate dg;
+    dg.funcptr = userdata1;
+    dg.ptr = userdata2;
+    dg(status, message);
+}
+
+/// TODO
+alias RequestAdapterCallback = CallbackInfo!(true, RequestAdapterStatus, Adapter.Handle, StringView);
+/// ditto
+alias RequestAdapterCallbackDelegate = void delegate(RequestAdapterStatus status, scope Adapter.Handle adapter, scope StringView message);
+/// ditto
+alias RequestAdapterCallbackFunc = extern(C) void function(RequestAdapterStatus status, Adapter.Handle adapter, StringView message, void* userdata1, void* userdata2);
+/// ditto
+private extern(C) void invokeRequestAdapterCallback(RequestAdapterStatus status, Adapter.Handle adapter, StringView message, void* userdata1, void* userdata2) {
+    RequestAdapterCallbackDelegate dg;
+    dg.funcptr = userdata1;
+    dg.ptr = userdata2;
+    dg(status, adapter, message);
+}
+
+/// TODO
+alias RequestDeviceCallback = CallbackInfo!(true, RequestDeviceStatus, Device.Handle, StringView);
+/// ditto
+alias RequestDeviceCallbackDelegate = void delegate(RequestDeviceStatus status, scope Device.Handle device, scope StringView message);
+/// ditto
+alias RequestDeviceCallbackFunc = extern(C) void function(RequestDeviceStatus status, Device.Handle device, StringView message, void* userdata1, void* userdata2);
+/// ditto
+private extern(C) void invokeRequestDeviceCallback(RequestDeviceStatus status, Device.Handle device, StringView message, void* userdata1, void* userdata2) {
+    RequestDeviceCallbackDelegate dg;
+    dg.funcptr = userdata1;
+    dg.ptr = userdata2;
+    dg(status, device, message);
+}
+
+/// TODO
+alias UncapturedErrorCallback = CallbackInfo!(false, const(Device.Handle)*, ErrorType, StringView);
+/// ditto
+alias UncapturedErrorCallbackDelegate = void delegate(scope ref const Device.Handle device, ErrorType type, scope StringView message);
+/// ditto
+alias UncapturedErrorCallbackFunc = extern(C) void function(const(Device.Handle)* device, ErrorType type, StringView message, void* userdata1, void* userdata2);
+/// ditto
+private extern(C) void invokeUncapturedErrorCallback(const(Device.Handle)* device, ErrorType type, StringView message, void* userdata1, void* userdata2) {
+    UncapturedErrorCallbackDelegate dg;
+    dg.funcptr = userdata1;
+    dg.ptr = userdata2;
+    dg(*device, type, message);
+}
+
 
 /// Create a WGPUInstance
 Instance.Uniq createInstance(scope ref const InstanceDescriptor descriptor) @trusted nothrow @nogc {
