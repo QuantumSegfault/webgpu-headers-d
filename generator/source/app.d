@@ -282,8 +282,10 @@ string toDocBlock(string doc, uint indent = 0)
 
 enum TypeLocation {
     field,
-    param,
-    ret
+    dParam,
+    cParam,
+    dRet,
+    cRet
 }
 
 string toDType(string type, TypeLocation loc, string pointer, const scope string[string] identifierMap)
@@ -291,11 +293,11 @@ string toDType(string type, TypeLocation loc, string pointer, const scope string
     import std.string : startsWith;
 
     if (type.startsWith("array\\u003c")) {
-        enforce(loc != TypeLocation.ret);
+        enforce(loc != TypeLocation.dRet && loc != TypeLocation.cRet);
         enforce(pointer == "mutable" || pointer == "immutable");
         auto innerType = toDType(type[11 .. $ - 6], TypeLocation.field, null, identifierMap);
-        return (loc == TypeLocation.param ? "scope " : "") ~ (pointer == "immutable" ? (
-                "const(" ~ innerType ~ ")") : innerType) ~ "[]";
+        return (loc == TypeLocation.dParam ? "scope " : "") ~ (pointer == "immutable" ? (
+                "const(" ~ innerType ~ ")") : innerType) ~ (loc == TypeLocation.cParam ? "*" : "[]");
     }
 
     string result;
@@ -303,8 +305,8 @@ string toDType(string type, TypeLocation loc, string pointer, const scope string
         case "out_string":
         case "string_with_default_empty":
         case "nullable_string":
-            result = loc == TypeLocation.param ? "scope StringView" : "StringView";
-            enforce(loc != TypeLocation.ret);
+            result = loc == TypeLocation.dParam ? "scope StringView" : "StringView";
+            enforce(loc != TypeLocation.dRet && loc != TypeLocation.cRet);
             break;
         case "uint16":
             result = "ushort";
@@ -322,7 +324,8 @@ string toDType(string type, TypeLocation loc, string pointer, const scope string
             result = "size_t";
             break;
         case "bool":
-            result = "bool";
+            result = (loc == TypeLocation.field) ? "Bool" : ((loc == TypeLocation.dParam || loc == TypeLocation
+                    .dRet) ? "bool" : "uint");
             break;
         case "float32":
         case "nullable_float32":
@@ -339,8 +342,8 @@ string toDType(string type, TypeLocation loc, string pointer, const scope string
     }
 
     if (type.startsWith("object.")) {
-        result = (loc == TypeLocation.param ? "scope " : "") ~ identifierMap[type] ~ (
-            loc == TypeLocation.ret ? ".Uniq" : ".Handle");
+        result = (loc == TypeLocation.dParam ? "scope " : "") ~ identifierMap[type] ~ (
+            loc == TypeLocation.dRet ? ".Uniq" : ".Handle");
     }
 
     if (!result) {
@@ -349,7 +352,7 @@ string toDType(string type, TypeLocation loc, string pointer, const scope string
 
     if (result) {
         if (pointer) {
-            if (loc == TypeLocation.param && result != "void") {
+            if (loc == TypeLocation.dParam && result != "void") {
                 if (pointer == "immutable")
                     return "scope ref const " ~ result;
                 else
@@ -374,13 +377,15 @@ void writeFunction(const ref API.Function func, string objIdent, File outFile, s
     outFile.writeln(func.doc.toDocBlock);
 
     string dRetType = "void";
+    string cRetType = "void";
     bool returnsObject = false;
 
     if (!func.returns.isNull) {
         auto ret = func.returns.get;
         if (ret.type.startsWith("object."))
             returnsObject = true;
-        dRetType = ret.type.toDType(TypeLocation.ret, ret.pointer, identifierMap);
+        dRetType = ret.type.toDType(TypeLocation.dRet, ret.pointer, identifierMap);
+        cRetType = ret.type.toDType(TypeLocation.cRet, ret.pointer, identifierMap);
     }
 
     string[] cArgs;
@@ -396,18 +401,18 @@ void writeFunction(const ref API.Function func, string objIdent, File outFile, s
     foreach (ref arg; func.args) {
         string argName = arg.name.snakeToCamel(false).escapeIdentifier;
 
-        dArgs ~= arg.type.toDType(TypeLocation.param, arg.pointer, identifierMap) ~ " " ~ argName;
+        dArgs ~= arg.type.toDType(TypeLocation.dParam, arg.pointer, identifierMap) ~ " " ~ argName;
 
         if (arg.type.startsWith("array\\u003c")) {
             enforce(arg.pointer == "mutable" || arg.pointer == "immutable");
 
             cArgs ~= "size_t";
-            cArgs ~= arg.type[11 .. $ - 6].toDType(TypeLocation.field, arg.pointer, identifierMap);
+            cArgs ~= arg.type.toDType(TypeLocation.cParam, arg.pointer, identifierMap);
 
             callArgs ~= argName ~ ".length";
             callArgs ~= argName ~ ".ptr";
         } else {
-            cArgs ~= arg.type.toDType(TypeLocation.field, arg.pointer, identifierMap);
+            cArgs ~= arg.type.toDType(TypeLocation.cParam, arg.pointer, identifierMap);
             callArgs ~= (arg.pointer ? "&" : "") ~ argName;
         }
     }
@@ -423,6 +428,8 @@ void writeFunction(const ref API.Function func, string objIdent, File outFile, s
 
     if (returnsObject) {
         outFile.writefln!"    return %s(%s(%(%r, %)));"(dRetType, cFuncName, callArgs);
+    } else if (dRetType == "bool") {
+        outFile.writefln!"    return %s(%(%r, %)) != 0;"(cFuncName, callArgs);
     } else if (dRetType == "void") {
         outFile.writefln!"    %s(%(%r, %));"(cFuncName, callArgs);
     } else {
@@ -432,7 +439,7 @@ void writeFunction(const ref API.Function func, string objIdent, File outFile, s
     outFile.writeln("}");
 
     outFile.writefln!"private extern(C) %s %s(%(%r, %)) nothrow @nogc;"(
-        returnsObject ? dRetType.replace(".Uniq", ".Handle") : dRetType,
+        cRetType,
         cFuncName,
         cArgs
     );

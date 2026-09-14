@@ -1270,9 +1270,9 @@ private extern(C) Status wgpuGetInstanceLimits(InstanceLimits*) nothrow @nogc;
 /// Check whether a particular @ref WGPUInstanceFeatureName is supported by the
 /// instance.
 bool hasInstanceFeature(InstanceFeatureName feature) @trusted nothrow @nogc {
-    return wgpuHasInstanceFeature(feature);
+    return wgpuHasInstanceFeature(feature) != 0;
 }
-private extern(C) bool wgpuHasInstanceFeature(InstanceFeatureName) nothrow @nogc;
+private extern(C) uint wgpuHasInstanceFeature(InstanceFeatureName) nothrow @nogc;
 
 
 /// TODO
@@ -1382,7 +1382,7 @@ struct BufferBindingLayout {
     /// SentinelValues) to @ref WGPUBufferBindingType_Uniform.
     BufferBindingType type = BufferBindingType.undefined;
     /// TODO
-    bool hasDynamicOffset = false;
+    Bool hasDynamicOffset = false;
     /// TODO
     ulong minBindingSize = 0;
 }
@@ -1399,7 +1399,7 @@ struct BufferDescriptor {
     /// thus be unmapped once its initial data has been written. @note Mapping
     /// at creation does **not** require the usage @ref
     /// WGPUBufferUsage_MapWrite.
-    bool mappedAtCreation = false;
+    Bool mappedAtCreation = false;
 }
 
 /// An RGBA color. Represents a `f32`, `i32`, or `u32` color using @ref
@@ -1608,7 +1608,7 @@ struct FutureWaitInfo {
     /// The future to wait on.
     Future future = Future.init;
     /// Whether or not the future completed.
-    bool completed = false;
+    Bool completed = false;
 }
 
 /// TODO
@@ -1701,7 +1701,7 @@ struct MultisampleState {
     /// TODO
     uint mask = 0xFFFFFFFF;
     /// TODO
-    bool alphaToCoverageEnabled = false;
+    Bool alphaToCoverageEnabled = false;
 }
 
 /// TODO
@@ -1748,7 +1748,7 @@ struct PrimitiveState {
     /// to @ref WGPUCullMode_None.
     CullMode cullMode = CullMode.undefined;
     /// TODO
-    bool unclippedDepth = false;
+    Bool unclippedDepth = false;
 }
 
 /// TODO
@@ -1784,9 +1784,9 @@ struct RenderBundleEncoderDescriptor {
     /// TODO
     uint sampleCount = 1;
     /// TODO
-    bool depthReadOnly = false;
+    Bool depthReadOnly = false;
     /// TODO
-    bool stencilReadOnly = false;
+    Bool stencilReadOnly = false;
 }
 
 /// TODO
@@ -1820,7 +1820,7 @@ struct RenderPassDepthStencilAttachment {
     /// infinite, produces a @ref NonFiniteFloatValueError.
     float depthClearValue = DEPTH_CLEAR_VALUE_UNDEFINED;
     /// TODO
-    bool depthReadOnly = false;
+    Bool depthReadOnly = false;
     /// TODO
     LoadOp stencilLoadOp = LoadOp.undefined;
     /// TODO
@@ -1828,7 +1828,7 @@ struct RenderPassDepthStencilAttachment {
     /// TODO
     uint stencilClearValue = 0;
     /// TODO
-    bool stencilReadOnly = false;
+    Bool stencilReadOnly = false;
 }
 
 /// TODO
@@ -1882,7 +1882,7 @@ struct RequestAdapterOptions {
     PowerPreference powerPreference = PowerPreference.undefined;
     /// If true, requires the adapter to be a "fallback" adapter as defined by
     /// the JS spec. If this is not possible, the request returns null.
-    bool forceFallbackAdapter = false;
+    Bool forceFallbackAdapter = false;
     /// If set, requires the adapter to have a particular backend type. If this
     /// is not possible, the request returns null.
     BackendType backendType = BackendType.undefined;
@@ -1895,7 +1895,7 @@ struct RequestAdapterOptions {
 /// interop (i.e. Wasm).
 struct RequestAdapterWebXROptions {
     /// Sets the `xrCompatible` option in the JS API.
-    bool xrCompatible = false;
+    Bool xrCompatible = false;
 }
 
 /// TODO
@@ -2191,7 +2191,7 @@ struct TextureBindingLayout {
     /// SentinelValues) to @ref WGPUTextureViewDimension_2D.
     TextureViewDimension viewDimension = TextureViewDimension.undefined;
     /// TODO
-    bool multisampled = false;
+    Bool multisampled = false;
 }
 
 /// Note: While Compatibility Mode is optional to implement, this extension
@@ -2329,9 +2329,9 @@ private extern(C) Status wgpuAdapterGetLimits(Adapter.Handle, Limits*) nothrow @
 
 /// TODO
 bool hasFeature(scope Adapter.Handle self, FeatureName feature) @trusted nothrow @nogc {
-    return wgpuAdapterHasFeature(self, feature);
+    return wgpuAdapterHasFeature(self, feature) != 0;
 }
-private extern(C) bool wgpuAdapterHasFeature(Adapter.Handle, FeatureName) nothrow @nogc;
+private extern(C) uint wgpuAdapterHasFeature(Adapter.Handle, FeatureName) nothrow @nogc;
 
 /// Get the list of @ref WGPUFeatureName values supported by the adapter.
 void getFeatures(scope Adapter.Handle self, scope ref SupportedFeatures features) @trusted nothrow @nogc {
@@ -2754,9 +2754,9 @@ private extern(C) Status wgpuDeviceGetLimits(Device.Handle, Limits*) nothrow @no
 
 /// TODO
 bool hasFeature(scope Device.Handle self, FeatureName feature) @trusted nothrow @nogc {
-    return wgpuDeviceHasFeature(self, feature);
+    return wgpuDeviceHasFeature(self, feature) != 0;
 }
-private extern(C) bool wgpuDeviceHasFeature(Device.Handle, FeatureName) nothrow @nogc;
+private extern(C) uint wgpuDeviceHasFeature(Device.Handle, FeatureName) nothrow @nogc;
 
 /// Get the list of @ref WGPUFeatureName values supported by the device.
 void getFeatures(scope Device.Handle self, scope ref SupportedFeatures features) @trusted nothrow @nogc {
@@ -2829,9 +2829,9 @@ private extern(C) void wgpuInstanceGetWGSLLanguageFeatures(Instance.Handle, Supp
 
 /// TODO
 bool hasWGSLLanguageFeature(scope Instance.Handle self, WGSLLanguageFeatureName feature) @trusted nothrow @nogc {
-    return wgpuInstanceHasWGSLLanguageFeature(self, feature);
+    return wgpuInstanceHasWGSLLanguageFeature(self, feature) != 0;
 }
-private extern(C) bool wgpuInstanceHasWGSLLanguageFeature(Instance.Handle, WGSLLanguageFeatureName) nothrow @nogc;
+private extern(C) uint wgpuInstanceHasWGSLLanguageFeature(Instance.Handle, WGSLLanguageFeatureName) nothrow @nogc;
 
 /// Processes asynchronous events on this `WGPUInstance`, calling any callbacks
 /// for asynchronous operations created with @ref

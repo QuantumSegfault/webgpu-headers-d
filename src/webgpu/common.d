@@ -1,5 +1,23 @@
 module webgpu.common;
 
+struct Bool {
+    private uint value;
+
+@safe nothrow @nogc:
+    this(bool v)
+    {
+        value = b ? 1 : 0;
+    }
+
+    void opAssign(bool v)
+    {
+        value = b ? 1 : 0;
+    }
+
+    alias asDBool this;
+    bool asDBool() const => value != 0;
+}
+
 package mixin template BitFlags() {
     alias F = typeof(this);
 
