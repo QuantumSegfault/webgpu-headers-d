@@ -1277,6 +1277,7 @@ private extern(C) uint wgpuHasInstanceFeature(InstanceFeatureName) nothrow @nogc
 
 /// TODO
 struct AdapterInfo {
+    ChainableStruct* nextInChain;
     /// TODO
     StringView vendor = StringView.init;
     /// TODO
@@ -1301,6 +1302,7 @@ struct AdapterInfo {
 
 /// TODO
 struct BindGroupDescriptor {
+    ChainableStruct* nextInChain;
     /// TODO
     StringView label = StringView.init;
     /// TODO
@@ -1311,6 +1313,7 @@ struct BindGroupDescriptor {
 
 /// TODO
 struct BindGroupEntry {
+    ChainableStruct* nextInChain;
     /// Binding index in the bind group.
     uint binding = 0;
     /// Set this if the binding is a buffer object. Otherwise must be null.
@@ -1331,6 +1334,7 @@ struct BindGroupEntry {
 
 /// TODO
 struct BindGroupLayoutDescriptor {
+    ChainableStruct* nextInChain;
     /// TODO
     StringView label = StringView.init;
     /// TODO
@@ -1339,6 +1343,7 @@ struct BindGroupLayoutDescriptor {
 
 /// TODO
 struct BindGroupLayoutEntry {
+    ChainableStruct* nextInChain;
     /// TODO
     uint binding = 0;
     /// TODO
@@ -1378,6 +1383,7 @@ struct BlendState {
 
 /// TODO
 struct BufferBindingLayout {
+    ChainableStruct* nextInChain;
     /// If set to @ref WGPUBufferBindingType_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUBufferBindingType_Uniform.
     BufferBindingType type = BufferBindingType.undefined;
@@ -1389,6 +1395,7 @@ struct BufferBindingLayout {
 
 /// TODO
 struct BufferDescriptor {
+    ChainableStruct* nextInChain;
     /// TODO
     StringView label = StringView.init;
     /// TODO
@@ -1418,6 +1425,7 @@ struct Color {
 
 /// TODO
 struct ColorTargetState {
+    ChainableStruct* nextInChain;
     /// The texture format of the target. If @ref WGPUTextureFormat_Undefined,
     /// indicates a "hole" in the parent @ref WGPUFragmentState `targets` array:
     /// the pipeline does not output a value at this `location`.
@@ -1430,12 +1438,14 @@ struct ColorTargetState {
 
 /// TODO
 struct CommandBufferDescriptor {
+    ChainableStruct* nextInChain;
     /// TODO
     StringView label = StringView.init;
 }
 
 /// TODO
 struct CommandEncoderDescriptor {
+    ChainableStruct* nextInChain;
     /// TODO
     StringView label = StringView.init;
 }
@@ -1444,6 +1454,7 @@ struct CommandEncoderDescriptor {
 /// struct is required to be supported (for both queries and requests) and
 /// behave as defined in the WebGPU spec.
 struct CompatibilityModeLimits {
+    ChainableStruct chain = { sType: SType.compatibilityModeLimits };
     /// TODO
     uint maxStorageBuffersInVertexStage = LIMIT_U32_UNDEFINED;
     /// TODO
@@ -1456,12 +1467,14 @@ struct CompatibilityModeLimits {
 
 /// TODO
 struct CompilationInfo {
+    ChainableStruct* nextInChain;
     /// TODO
     const(CompilationMessage)[] messages = null;
 }
 
 /// TODO
 struct CompilationMessage {
+    ChainableStruct* nextInChain;
     /// A @ref LocalizableHumanReadableMessageString.
     StringView message = StringView.init;
     /// Severity level of the message.
@@ -1481,6 +1494,7 @@ struct CompilationMessage {
 
 /// TODO
 struct ComputePassDescriptor {
+    ChainableStruct* nextInChain;
     /// TODO
     StringView label = StringView.init;
     /// TODO
@@ -1489,6 +1503,7 @@ struct ComputePassDescriptor {
 
 /// TODO
 struct ComputePipelineDescriptor {
+    ChainableStruct* nextInChain;
     /// TODO
     StringView label = StringView.init;
     /// TODO
@@ -1499,6 +1514,7 @@ struct ComputePipelineDescriptor {
 
 /// TODO
 struct ComputeState {
+    ChainableStruct* nextInChain;
     /// TODO
     ShaderModule.Handle module_ = ShaderModule.Handle.init;
     /// TODO
@@ -1509,6 +1525,7 @@ struct ComputeState {
 
 /// TODO
 struct ConstantEntry {
+    ChainableStruct* nextInChain;
     /// TODO
     StringView key = StringView.init;
     /// Represents a WGSL numeric or boolean value using @ref DoubleAsSupertype.
@@ -1518,6 +1535,7 @@ struct ConstantEntry {
 
 /// TODO
 struct DepthStencilState {
+    ChainableStruct* nextInChain;
     /// TODO
     TextureFormat format = TextureFormat.undefined;
     /// TODO
@@ -1542,6 +1560,7 @@ struct DepthStencilState {
 
 /// TODO
 struct DeviceDescriptor {
+    ChainableStruct* nextInChain;
     /// TODO
     StringView label = StringView.init;
     /// TODO
@@ -1575,6 +1594,7 @@ struct Extent3D {
 /// WGPUExternalTexture. This must have a corresponding @ref
 /// WGPUExternalTextureBindingLayout in the @ref WGPUBindGroupLayout.
 struct ExternalTextureBindingEntry {
+    ChainableStruct chain = { sType: SType.externalTextureBindingEntry };
     /// TODO
     ExternalTexture.Handle externalTexture = ExternalTexture.Handle.init;
 }
@@ -1582,10 +1602,12 @@ struct ExternalTextureBindingEntry {
 /// Chained in @ref WGPUBindGroupLayoutEntry to specify that the corresponding
 /// entries in an @ref WGPUBindGroup will contain an @ref WGPUExternalTexture.
 struct ExternalTextureBindingLayout {
+    ChainableStruct chain = { sType: SType.externalTextureBindingLayout };
 }
 
 /// TODO
 struct FragmentState {
+    ChainableStruct* nextInChain;
     /// TODO
     ShaderModule.Handle module_ = ShaderModule.Handle.init;
     /// TODO
@@ -1613,6 +1635,7 @@ struct FutureWaitInfo {
 
 /// TODO
 struct InstanceDescriptor {
+    ChainableStruct* nextInChain;
     /// TODO
     const(InstanceFeatureName)[] requiredFeatures = null;
     /// TODO
@@ -1621,6 +1644,7 @@ struct InstanceDescriptor {
 
 /// TODO
 struct InstanceLimits {
+    ChainableStruct* nextInChain;
     /// The maximum number @ref WGPUFutureWaitInfo supported in a call to
     /// ::wgpuInstanceWaitAny with `timeoutNS \u003e 0`.
     size_t timedWaitAnyMaxCount = 0;
@@ -1628,6 +1652,7 @@ struct InstanceLimits {
 
 /// TODO
 struct Limits {
+    ChainableStruct* nextInChain;
     /// TODO
     uint maxTextureDimension1D = LIMIT_U32_UNDEFINED;
     /// TODO
@@ -1696,6 +1721,7 @@ struct Limits {
 
 /// TODO
 struct MultisampleState {
+    ChainableStruct* nextInChain;
     /// TODO
     uint count = 1;
     /// TODO
@@ -1716,6 +1742,7 @@ struct Origin3D {
 
 /// TODO
 struct PassTimestampWrites {
+    ChainableStruct* nextInChain;
     /// Query set to write timestamps to.
     QuerySet.Handle querySet = QuerySet.Handle.init;
     /// TODO
@@ -1726,6 +1753,7 @@ struct PassTimestampWrites {
 
 /// TODO
 struct PipelineLayoutDescriptor {
+    ChainableStruct* nextInChain;
     /// TODO
     StringView label = StringView.init;
     /// TODO
@@ -1736,6 +1764,7 @@ struct PipelineLayoutDescriptor {
 
 /// TODO
 struct PrimitiveState {
+    ChainableStruct* nextInChain;
     /// If set to @ref WGPUPrimitiveTopology_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUPrimitiveTopology_TriangleList.
     PrimitiveTopology topology = PrimitiveTopology.undefined;
@@ -1753,6 +1782,7 @@ struct PrimitiveState {
 
 /// TODO
 struct QuerySetDescriptor {
+    ChainableStruct* nextInChain;
     /// TODO
     StringView label = StringView.init;
     /// TODO
@@ -1763,18 +1793,21 @@ struct QuerySetDescriptor {
 
 /// TODO
 struct QueueDescriptor {
+    ChainableStruct* nextInChain;
     /// TODO
     StringView label = StringView.init;
 }
 
 /// TODO
 struct RenderBundleDescriptor {
+    ChainableStruct* nextInChain;
     /// TODO
     StringView label = StringView.init;
 }
 
 /// TODO
 struct RenderBundleEncoderDescriptor {
+    ChainableStruct* nextInChain;
     /// TODO
     StringView label = StringView.init;
     /// TODO
@@ -1791,6 +1824,7 @@ struct RenderBundleEncoderDescriptor {
 
 /// TODO
 struct RenderPassColorAttachment {
+    ChainableStruct* nextInChain;
     /// If `NULL`, indicates a hole in the parent @ref
     /// WGPURenderPassDescriptor::colorAttachments array.
     TextureView.Handle view = TextureView.Handle.init;
@@ -1808,6 +1842,7 @@ struct RenderPassColorAttachment {
 
 /// TODO
 struct RenderPassDepthStencilAttachment {
+    ChainableStruct* nextInChain;
     /// TODO
     TextureView.Handle view = TextureView.Handle.init;
     /// TODO
@@ -1833,6 +1868,7 @@ struct RenderPassDepthStencilAttachment {
 
 /// TODO
 struct RenderPassDescriptor {
+    ChainableStruct* nextInChain;
     /// TODO
     StringView label = StringView.init;
     /// TODO
@@ -1847,12 +1883,14 @@ struct RenderPassDescriptor {
 
 /// TODO
 struct RenderPassMaxDrawCount {
+    ChainableStruct chain = { sType: SType.renderPassMaxDrawCount };
     /// TODO
     ulong maxDrawCount = 50000000;
 }
 
 /// TODO
 struct RenderPipelineDescriptor {
+    ChainableStruct* nextInChain;
     /// TODO
     StringView label = StringView.init;
     /// TODO
@@ -1871,6 +1909,7 @@ struct RenderPipelineDescriptor {
 
 /// TODO
 struct RequestAdapterOptions {
+    ChainableStruct* nextInChain;
     /// "Feature level" for the adapter request. If an adapter is returned, it
     /// must support the features and limits in the requested feature level. If
     /// set to @ref WGPUFeatureLevel_Undefined, [defaults](@ref SentinelValues)
@@ -1894,12 +1933,14 @@ struct RequestAdapterOptions {
 /// Extension providing requestAdapter options for implementations with WebXR
 /// interop (i.e. Wasm).
 struct RequestAdapterWebXROptions {
+    ChainableStruct chain = { sType: SType.requestAdapterWebXROptions };
     /// Sets the `xrCompatible` option in the JS API.
     Bool xrCompatible = false;
 }
 
 /// TODO
 struct SamplerBindingLayout {
+    ChainableStruct* nextInChain;
     /// If set to @ref WGPUSamplerBindingType_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUSamplerBindingType_Filtering.
     SamplerBindingType type = SamplerBindingType.undefined;
@@ -1907,6 +1948,7 @@ struct SamplerBindingLayout {
 
 /// TODO
 struct SamplerDescriptor {
+    ChainableStruct* nextInChain;
     /// TODO
     StringView label = StringView.init;
     /// If set to @ref WGPUAddressMode_Undefined, [defaults](@ref
@@ -1939,12 +1981,14 @@ struct SamplerDescriptor {
 
 /// TODO
 struct ShaderModuleDescriptor {
+    ChainableStruct* nextInChain;
     /// TODO
     StringView label = StringView.init;
 }
 
 /// TODO
 struct ShaderSourceSPIRV {
+    ChainableStruct chain = { sType: SType.shaderSourceSPIRV };
     /// TODO
     uint codeSize = 0;
     /// TODO
@@ -1953,6 +1997,7 @@ struct ShaderSourceSPIRV {
 
 /// TODO
 struct ShaderSourceWGSL {
+    ChainableStruct chain = { sType: SType.shaderSourceWGSL };
     /// TODO
     StringView code = StringView.init;
 }
@@ -1975,6 +2020,7 @@ struct StencilFaceState {
 
 /// TODO
 struct StorageTextureBindingLayout {
+    ChainableStruct* nextInChain;
     /// If set to @ref WGPUStorageTextureAccess_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUStorageTextureAccess_WriteOnly.
     StorageTextureAccess access = StorageTextureAccess.undefined;
@@ -2006,6 +2052,7 @@ struct SupportedWGSLLanguageFeatures {
 /// Filled by @ref wgpuSurfaceGetCapabilities with what's supported for @ref
 /// wgpuSurfaceConfigure for a pair of @ref WGPUSurface and @ref WGPUAdapter.
 struct SurfaceCapabilities {
+    ChainableStruct* nextInChain;
     /// The bit set of supported @ref WGPUTextureUsage bits. Guaranteed to
     /// contain @ref WGPUTextureUsage_RenderAttachment.
     TextureUsage usages = TextureUsage.none;
@@ -2023,6 +2070,7 @@ struct SurfaceCapabilities {
 
 /// Extension of @ref WGPUSurfaceConfiguration for color spaces and HDR.
 struct SurfaceColorManagement {
+    ChainableStruct chain = { sType: SType.surfaceColorManagement };
     /// TODO
     PredefinedColorSpace colorSpace = cast(PredefinedColorSpace)0;
     /// TODO
@@ -2033,6 +2081,7 @@ struct SurfaceColorManagement {
 /// will be rendered to and presented to the user. See @ref
 /// Surface-Configuration for more details.
 struct SurfaceConfiguration {
+    ChainableStruct* nextInChain;
     /// The @ref WGPUDevice to use to render to surface's textures.
     Device.Handle device = Device.Handle.init;
     /// The @ref WGPUTextureFormat of the surface's textures.
@@ -2063,6 +2112,7 @@ struct SurfaceConfiguration {
 /// of the `WGPUSurfaceSource*` in its chain. See @ref Surface-Creation for more
 /// details.
 struct SurfaceDescriptor {
+    ChainableStruct* nextInChain;
     /// Label used to refer to the object.
     StringView label = StringView.init;
 }
@@ -2071,6 +2121,7 @@ struct SurfaceDescriptor {
 /// an Android
 /// [`ANativeWindow`](https://developer.android.com/ndk/reference/group/a-native-window).
 struct SurfaceSourceAndroidNativeWindow {
+    ChainableStruct chain = { sType: SType.surfaceSourceAndroidNativeWindow };
     /// The pointer to the
     /// [`ANativeWindow`](https://developer.android.com/ndk/reference/group/a-native-window)
     /// that will be wrapped by the @ref WGPUSurface.
@@ -2080,6 +2131,7 @@ struct SurfaceSourceAndroidNativeWindow {
 /// Chained in @ref WGPUSurfaceDescriptor to make an @ref WGPUSurface wrapping a
 /// [`CAMetalLayer`](https://developer.apple.com/documentation/quartzcore/cametallayer?language=objc).
 struct SurfaceSourceMetalLayer {
+    ChainableStruct chain = { sType: SType.surfaceSourceMetalLayer };
     /// The pointer to the
     /// [`CAMetalLayer`](https://developer.apple.com/documentation/quartzcore/cametallayer?language=objc)
     /// that will be wrapped by the @ref WGPUSurface.
@@ -2090,6 +2142,7 @@ struct SurfaceSourceMetalLayer {
 /// [Wayland](https://wayland.freedesktop.org/)
 /// [`wl_surface`](https://wayland.freedesktop.org/docs/html/apa.html#protocol-spec-wl_surface).
 struct SurfaceSourceWaylandSurface {
+    ChainableStruct chain = { sType: SType.surfaceSourceWaylandSurface };
     /// A
     /// [`wl_display`](https://wayland.freedesktop.org/docs/html/apa.html#protocol-spec-wl_display)
     /// for this Wayland instance.
@@ -2104,6 +2157,7 @@ struct SurfaceSourceWaylandSurface {
 /// Windows
 /// [`HWND`](https://learn.microsoft.com/en-us/windows/apps/develop/ui-input/retrieve-hwnd).
 struct SurfaceSourceWindowsHWND {
+    ChainableStruct chain = { sType: SType.surfaceSourceWindowsHWND };
     /// The
     /// [`HINSTANCE`](https://learn.microsoft.com/en-us/windows/win32/learnwin32/winmain--the-application-entry-point)
     /// for this application. Most commonly `GetModuleHandle(nullptr)`.
@@ -2117,6 +2171,7 @@ struct SurfaceSourceWindowsHWND {
 /// Chained in @ref WGPUSurfaceDescriptor to make an @ref WGPUSurface wrapping
 /// an [XCB](https://xcb.freedesktop.org/) `xcb_window_t`.
 struct SurfaceSourceXCBWindow {
+    ChainableStruct chain = { sType: SType.surfaceSourceXCBWindow };
     /// The `xcb_connection_t` for the connection to the X server.
     void* connection = null;
     /// The `xcb_window_t` for the window that will be wrapped by the @ref
@@ -2128,6 +2183,7 @@ struct SurfaceSourceXCBWindow {
 /// an [Xlib](https://www.x.org/releases/current/doc/libX11/libX11/libX11.html)
 /// `Window`.
 struct SurfaceSourceXlibWindow {
+    ChainableStruct chain = { sType: SType.surfaceSourceXlibWindow };
     /// A pointer to the
     /// [`Display`](https://www.x.org/releases/current/doc/libX11/libX11/libX11.html#Opening_the_Display)
     /// connected to the X server.
@@ -2142,6 +2198,7 @@ struct SurfaceSourceXlibWindow {
 /// render to along with some metadata. See @ref Surface-Presenting for more
 /// details.
 struct SurfaceTexture {
+    ChainableStruct* nextInChain;
     /// The @ref WGPUTexture representing the frame that will be shown on the
     /// surface. It is @ref ReturnedWithOwnership from @ref
     /// wgpuSurfaceGetCurrentTexture.
@@ -2184,6 +2241,7 @@ struct TexelCopyTextureInfo {
 
 /// TODO
 struct TextureBindingLayout {
+    ChainableStruct* nextInChain;
     /// If set to @ref WGPUTextureSampleType_Undefined, [defaults](@ref
     /// SentinelValues) to @ref WGPUTextureSampleType_Float.
     TextureSampleType sampleType = TextureSampleType.undefined;
@@ -2199,6 +2257,7 @@ struct TextureBindingLayout {
 /// ignored on devices that have the @ref WGPUFeatureName_CoreFeaturesAndLimits
 /// feature).
 struct TextureBindingViewDimension {
+    ChainableStruct chain = { sType: SType.textureBindingViewDimension };
     /// TODO
     TextureViewDimension textureBindingViewDimension = TextureViewDimension.undefined;
 }
@@ -2228,12 +2287,14 @@ struct TextureComponentSwizzle {
 
 /// TODO
 struct TextureComponentSwizzleDescriptor {
+    ChainableStruct chain = { sType: SType.textureComponentSwizzleDescriptor };
     /// TODO
     TextureComponentSwizzle swizzle = TextureComponentSwizzle.init;
 }
 
 /// TODO
 struct TextureDescriptor {
+    ChainableStruct* nextInChain;
     /// TODO
     StringView label = StringView.init;
     /// TODO
@@ -2255,6 +2316,7 @@ struct TextureDescriptor {
 
 /// TODO
 struct TextureViewDescriptor {
+    ChainableStruct* nextInChain;
     /// TODO
     StringView label = StringView.init;
     /// TODO
@@ -2278,6 +2340,7 @@ struct TextureViewDescriptor {
 
 /// TODO
 struct VertexAttribute {
+    ChainableStruct* nextInChain;
     /// TODO
     VertexFormat format = cast(VertexFormat)0;
     /// TODO
@@ -2297,6 +2360,7 @@ struct VertexAttribute {
 /// WGPUVertexStepMode_Undefined but `attributes` is *not* empty, `stepMode`
 /// [defaults](@ref SentinelValues) to @ref WGPUVertexStepMode_Vertex.
 struct VertexBufferLayout {
+    ChainableStruct* nextInChain;
     /// TODO
     VertexStepMode stepMode = VertexStepMode.undefined;
     /// TODO
@@ -2307,6 +2371,7 @@ struct VertexBufferLayout {
 
 /// TODO
 struct VertexState {
+    ChainableStruct* nextInChain;
     /// TODO
     ShaderModule.Handle module_ = ShaderModule.Handle.init;
     /// TODO

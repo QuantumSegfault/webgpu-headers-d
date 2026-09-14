@@ -399,6 +399,8 @@ void writeFunction(const ref API.Function func, string objIdent, File outFile, s
     }
 
     foreach (ref arg; func.args) {
+        enforce(arg.default_.isNull);
+
         string argName = arg.name.snakeToCamel(false).escapeIdentifier;
 
         dArgs ~= arg.type.toDType(TypeLocation.dParam, arg.pointer, identifierMap) ~ " " ~ argName;
@@ -566,6 +568,18 @@ void main()
 
         outFile.writeln(struct_.doc.toDocBlock);
         outFile.writeln("struct " ~ identifierMap["struct." ~ struct_.name] ~ " {");
+        final switch (struct_.type) {
+            case API.Struct.Type.extensible:
+            case API.Struct.Type.extensible_callback_arg:
+                outFile.writeln("    ChainableStruct* nextInChain;");
+                break;
+            case API.Struct.Type.extension:
+                outFile.writeln("    ChainableStruct chain = { sType: SType." ~ struct_.name.snakeToCamel(false)
+                        .escapeIdentifier ~ " };");
+                break;
+            case API.Struct.Type.standalone:
+                break;
+        }
         foreach (ref member; struct_.members) {
             enforce(member.passedWithOwnership.isNull);
             enforce(!member.optional || member.pointer || member.type.startsWith("object."));

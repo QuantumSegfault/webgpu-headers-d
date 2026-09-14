@@ -1,5 +1,7 @@
 module webgpu.common;
 
+import webgpu.webgpu : SType;
+
 struct Bool {
     private uint value;
 
@@ -100,6 +102,11 @@ package enum ZeroInit(T) = () {
         return t;
     }
 }();
+
+struct ChainedStruct {
+    ChainedStruct* next;
+    SType sType;
+}
 
 template WebGPUObject(string ident) {
     package struct Impl;
