@@ -8,12 +8,12 @@ struct Bool {
 @safe nothrow @nogc:
     this(bool v)
     {
-        value = b ? 1 : 0;
+        value = v ? 1 : 0;
     }
 
     void opAssign(bool v)
     {
-        value = b ? 1 : 0;
+        value = v ? 1 : 0;
     }
 
     alias asDBool this;

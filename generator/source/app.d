@@ -591,7 +591,7 @@ void main()
                 initializer = "null";
             } else if (member.type.startsWith("enum.")) {
                 if (member.default_.isNull) {
-                    string enumName = member.type[5 .. $];
+                    immutable string enumName = member.type[5 .. $];
                     bool hasUndefined = false;
                     bool foundEnum = false;
                     foreach (ref e; api.enums) {
@@ -697,8 +697,10 @@ void main()
             } else {
                 enforce(member.default_.isNull);
 
-                enforce(member.type.startsWith("callback.") || member.type.startsWith("object.") || only("out_string", "string_with_default_empty", "nullable_string")
-                        .canFind(member.type));
+                enforce(member.type.startsWith("callback.") ||
+                        member.type.startsWith("object.") ||
+                        only("out_string", "string_with_default_empty", "nullable_string")
+                            .canFind(member.type));
                 initializer = member.type.toDType(TypeLocation.field, member.pointer, identifierMap) ~ ".init";
             }
 
