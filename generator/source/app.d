@@ -106,12 +106,15 @@ struct API {
             string doc;
             string name;
 
+            @optional Nullable!ulong value;
+
             @optional @alternateName("value_combination")
             Nullable!(string[]) valueCombination;
         }
 
         string doc;
         string name;
+        @optional string namespace;
         Entry[] entries;
     }
 
@@ -123,6 +126,7 @@ struct API {
 
         string doc;
         string name;
+        @optional string namespace;
         Style style;
         ParameterType[] args;
     }
@@ -137,19 +141,17 @@ struct API {
         struct Entry {
             string doc;
             string name;
+            @optional Nullable!ushort value;
         }
 
         string doc;
         string name;
+        @optional string namespace;
+        @optional bool extended;
         Nullable!Entry[] entries;
     }
 
     struct Function {
-        string doc;
-        string name;
-        @optional
-        ParameterType[] args;
-
         struct ReturnType {
             string doc;
             string type;
@@ -161,15 +163,20 @@ struct API {
             string pointer;
         }
 
-        @optional
-        Nullable!ReturnType returns;
-        @optional
-        string callback;
+        string doc;
+        string name;
+        @optional string namespace;
+
+        @optional ParameterType[] args;
+        @optional Nullable!ReturnType returns;
+        @optional string callback;
     }
 
     struct Object {
         string doc;
         string name;
+        @optional bool extended;
+
         Function[] methods;
     }
 
@@ -183,13 +190,13 @@ struct API {
 
         string doc;
         string name;
+        @optional string namespace;
+
         Type type;
-        @optional
-        string[] extends;
+        @optional string[] extends;
         @optional @alternateName("free_members")
         bool freeMembers;
-        @optional
-        ParameterType[] members;
+        @optional ParameterType[] members;
     }
 
     BitFlag[] bitflags;
@@ -451,353 +458,370 @@ void writeFunction(const ref API.Function func, string objIdent, File outFile, s
 
 void main()
 {
-    API api = FileIopipe("generator/webgpu-headers/webgpu.json").refCounted
-        .bufd
-        .assumeText.deserialize!API;
-
     string[string] identifierMap;
-    foreach (ref constant; api.constants) {
-        import std.string : toUpper;
+    {
+        API api = FileIopipe("generator/webgpu-headers/webgpu.json").refCounted
+            .bufd
+            .assumeText.deserialize!API;
 
-        identifierMap["constant." ~ constant.name] = constant.name.toUpper;
-    }
-    foreach (ref enum_; api.enums) {
-        identifierMap["enum." ~ enum_.name] = enum_.name.snakeToCamel(true);
-    }
-    foreach (ref bitflag; api.bitflags) {
-        identifierMap["bitflag." ~ bitflag.name] = bitflag.name.snakeToCamel(true);
-    }
-    foreach (ref callback; api.callbacks) {
-        identifierMap["callback." ~ callback.name] = callback.name.snakeToCamel(true) ~ "Callback";
-    }
-    foreach (ref struct_; api.structs) {
-        identifierMap["struct." ~ struct_.name] = struct_.name.snakeToCamel(true);
-    }
+        foreach (ref constant; api.constants) {
+            import std.string : toUpper;
 
-    foreach (ref object; api.objects) {
-        identifierMap["object." ~ object.name] = object.name.snakeToCamel(true);
-    }
-
-    auto outFile = File("src/webgpu/webgpu.d", "w");
-
-    outFile.writeln("module webgpu.webgpu;");
-    outFile.writeln();
-    outFile.writeln("import webgpu.common;");
-
-    outFile.writeln();
-
-    foreach (ref constant; api.constants) {
-        import std.string : toUpper;
-
-        outFile.writeln(constant.doc.toDocBlock);
-        outFile.writeln(
-            "enum " ~ identifierMap["constant." ~ constant.name] ~ " = " ~ constant
-                .value.asDCode ~ ";");
-    }
-
-    outFile.writeln();
-
-    foreach (ref enum_; api.enums) {
-        outFile.writeln(enum_.doc.toDocBlock);
-        outFile.writeln("enum " ~ identifierMap["enum." ~ enum_.name] ~ " : uint {");
-        foreach (i, ref entry; enum_.entries) {
-            if (entry.isNull)
-                continue;
-
-            outFile.writeln(entry.get.doc.toDocBlock(1));
-            outFile.writefln!"    %s = %d,"(entry.get.name.snakeToCamel(false)
-                    .escapeIdentifier, i);
+            identifierMap["constant." ~ constant.name] = constant.name.toUpper;
         }
-        outFile.writeln("}");
+        foreach (ref enum_; api.enums) {
+            identifierMap["enum." ~ enum_.name] = enum_.name.snakeToCamel(true);
+        }
+        foreach (ref bitflag; api.bitflags) {
+            identifierMap["bitflag." ~ bitflag.name] = bitflag.name.snakeToCamel(true);
+        }
+        foreach (ref callback; api.callbacks) {
+            identifierMap["callback." ~ callback.name] = callback.name.snakeToCamel(
+                true) ~ "Callback";
+        }
+        foreach (ref struct_; api.structs) {
+            identifierMap["struct." ~ struct_.name] = struct_.name.snakeToCamel(true);
+        }
+
+        foreach (ref object; api.objects) {
+            identifierMap["object." ~ object.name] = object.name.snakeToCamel(true);
+        }
+
+        auto outFile = File("src/webgpu/webgpu.d", "w");
+
+        outFile.writeln("module webgpu.webgpu;");
         outFile.writeln();
-    }
+        outFile.writeln("import webgpu.common;");
 
-    outFile.writeln();
-
-    foreach (ref bitflag; api.bitflags) {
-        import std.algorithm.iteration : map;
-        import std.string : join;
-
-        outFile.writeln(bitflag.doc.toDocBlock);
-        outFile.writeln("struct " ~ identifierMap["bitflag." ~ bitflag.name] ~ " {");
-        outFile.writeln("    mixin BitFlags!();");
         outFile.writeln();
-        foreach (i, ref entry; bitflag.entries) {
-            outFile.writeln(entry.doc.toDocBlock(1));
-            auto entryName = entry.name.snakeToCamel(false)
-                .escapeIdentifier;
-            if (entry.valueCombination.isNull) {
-                if (i == 0) {
-                    enforce(entry.name == "none");
 
-                    outFile.writeln("    enum none = typeof(this).init;");
+        foreach (ref constant; api.constants) {
+            import std.string : toUpper;
+
+            outFile.writeln(constant.doc.toDocBlock);
+            outFile.writeln(
+                "enum " ~ identifierMap["constant." ~ constant.name] ~ " = " ~ constant
+                    .value.asDCode ~ ";");
+        }
+
+        outFile.writeln();
+
+        foreach (ref enum_; api.enums) {
+            outFile.writeln(enum_.doc.toDocBlock);
+            outFile.writeln("enum " ~ identifierMap["enum." ~ enum_.name] ~ " : uint {");
+            foreach (i, ref entry; enum_.entries) {
+                if (entry.isNull)
+                    continue;
+
+                outFile.writeln(entry.get.doc.toDocBlock(1));
+                outFile.writefln!"    %s = %d,"(entry.get.name.snakeToCamel(false)
+                        .escapeIdentifier, i);
+            }
+            outFile.writeln("}");
+            outFile.writeln();
+        }
+
+        outFile.writeln();
+
+        foreach (ref bitflag; api.bitflags) {
+            import std.algorithm.iteration : map;
+            import std.string : join;
+
+            outFile.writeln(bitflag.doc.toDocBlock);
+            outFile.writeln("struct " ~ identifierMap["bitflag." ~ bitflag.name] ~ " {");
+            outFile.writeln("    mixin BitFlags!();");
+            outFile.writeln();
+            foreach (i, ref entry; bitflag.entries) {
+                outFile.writeln(entry.doc.toDocBlock(1));
+                auto entryName = entry.name.snakeToCamel(false)
+                    .escapeIdentifier;
+                if (entry.valueCombination.isNull) {
+                    if (i == 0) {
+                        enforce(entry.name == "none");
+
+                        outFile.writeln("    enum none = typeof(this).init;");
+                    } else {
+                        outFile.writefln!"    enum %s = typeof(this)[%d];"(entryName, i - 1);
+                    }
                 } else {
-                    outFile.writefln!"    enum %s = typeof(this)[%d];"(entryName, i - 1);
+                    outFile.writefln!"    enum %s = %s;"(
+                        entryName,
+                        entry.valueCombination.get.map!((n) => n.snakeToCamel(false)
+                            .escapeIdentifier).join(" | ")
+                    );
                 }
-            } else {
-                outFile.writefln!"    enum %s = %s;"(
-                    entryName,
-                    entry.valueCombination.get.map!((n) => n.snakeToCamel(false)
-                        .escapeIdentifier).join(" | ")
-                );
             }
+            outFile.writeln("}");
+            outFile.writeln();
         }
-        outFile.writeln("}");
+
         outFile.writeln();
-    }
 
-    outFile.writeln();
+        foreach (ref callback; api.callbacks) {
+            import std.range : chain, only, zip;
+            import std.algorithm.iteration : map;
+            import std.string : startsWith;
 
-    foreach (ref callback; api.callbacks) {
-        import std.range : chain, only, zip;
-        import std.algorithm.iteration : map;
-        import std.string : startsWith;
+            auto callbackIdent = identifierMap["callback." ~ callback.name];
 
-        auto callbackIdent = identifierMap["callback." ~ callback.name];
+            string[] cArgs;
+            string[] cArgNames;
+            string[] dArgs;
+            string[] callArgs;
 
-        string[] cArgs;
-        string[] cArgNames;
-        string[] dArgs;
-        string[] callArgs;
+            foreach (ref arg; callback.args) {
+                enforce(arg.default_.isNull);
 
-        foreach (ref arg; callback.args) {
-            enforce(arg.default_.isNull);
+                string argName = arg.name.snakeToCamel(false).escapeIdentifier;
 
-            string argName = arg.name.snakeToCamel(false).escapeIdentifier;
+                dArgs ~= arg.type.toDType(TypeLocation.dParam, arg.pointer, identifierMap) ~ " " ~ argName;
 
-            dArgs ~= arg.type.toDType(TypeLocation.dParam, arg.pointer, identifierMap) ~ " " ~ argName;
+                if (arg.type.startsWith("array\\u003c")) {
+                    enforce(arg.pointer == "mutable" || arg.pointer == "immutable");
 
-            if (arg.type.startsWith("array\\u003c")) {
-                enforce(arg.pointer == "mutable" || arg.pointer == "immutable");
+                    cArgs ~= "size_t";
+                    cArgNames ~= argName ~ "Count";
+                    cArgs ~= arg.type.toDType(TypeLocation.cParam, arg.pointer, identifierMap);
+                    cArgNames ~= argName ~ "Ptr";
 
-                cArgs ~= "size_t";
-                cArgNames ~= argName ~ "Count";
-                cArgs ~= arg.type.toDType(TypeLocation.cParam, arg.pointer, identifierMap);
-                cArgNames ~= argName ~ "Ptr";
-
-                callArgs ~= argName ~ "Ptr[0.." ~ argName ~ "Count]";
-            } else {
-                cArgs ~= arg.type.toDType(TypeLocation.cParam, arg.pointer, identifierMap);
-                cArgNames ~= argName;
-                callArgs ~= (arg.pointer ? "*" : "") ~ argName;
+                    callArgs ~= argName ~ "Ptr[0.." ~ argName ~ "Count]";
+                } else {
+                    cArgs ~= arg.type.toDType(TypeLocation.cParam, arg.pointer, identifierMap);
+                    cArgNames ~= argName;
+                    callArgs ~= (arg.pointer ? "*" : "") ~ argName;
+                }
             }
+
+            outFile.writeln(callback.doc.toDocBlock);
+
+            outFile.writefln!"alias %s = CallbackInfo!(%(%r, %));"(
+                callbackIdent,
+                only(callback.style == API.Callback.Style.callback_mode ? "true" : "false").chain(
+                    cArgs));
+
+            outFile.writeln("/// ditto");
+
+            outFile.writefln!"alias %sDelegate = void delegate(%(%r, %));"(
+                callbackIdent,
+                dArgs
+            );
+
+            outFile.writeln("/// ditto");
+
+            outFile.writefln!"alias %sFunc = extern(C) void function(%(%r, %));"(
+                callbackIdent,
+                zip(cArgs, cArgNames)
+                    .map!"a[0] ~ ' ' ~ a[1]".chain(
+                        only("void* userdata1", "void* userdata2"))
+            );
+
+            outFile.writeln("/// ditto");
+
+            outFile.writefln!"private extern(C) void %s(%(%r, %)) {"(
+                "invoke" ~ callbackIdent,
+                zip(cArgs, cArgNames)
+                    .map!"a[0] ~ ' ' ~ a[1]".chain(
+                        only("void* userdata1", "void* userdata2"))
+            );
+            outFile.writeln("    " ~ callbackIdent ~ "Delegate dg;");
+            outFile.writeln("    dg.funcptr = userdata1;");
+            outFile.writeln("    dg.ptr = userdata2;");
+
+            outFile.writefln!"    dg(%(%r, %));"(callArgs);
+            outFile.writeln("}");
+            outFile.writeln("");
         }
 
-        outFile.writeln(callback.doc.toDocBlock);
+        outFile.writeln();
 
-        outFile.writefln!"alias %s = CallbackInfo!(%(%r, %));"(
-            callbackIdent,
-            only(callback.style == API.Callback.Style.callback_mode ? "true" : "false").chain(
-                cArgs));
-
-        outFile.writeln("/// ditto");
-
-        outFile.writefln!"alias %sDelegate = void delegate(%(%r, %));"(
-            callbackIdent,
-            dArgs
-        );
-
-        outFile.writeln("/// ditto");
-
-        outFile.writefln!"alias %sFunc = extern(C) void function(%(%r, %));"(
-            callbackIdent,
-            zip(cArgs, cArgNames)
-                .map!"a[0] ~ ' ' ~ a[1]".chain(
-                    only("void* userdata1", "void* userdata2"))
-        );
-
-        outFile.writeln("/// ditto");
-
-        outFile.writefln!"private extern(C) void %s(%(%r, %)) {"(
-            "invoke" ~ callbackIdent,
-            zip(cArgs, cArgNames)
-                .map!"a[0] ~ ' ' ~ a[1]".chain(
-                    only("void* userdata1", "void* userdata2"))
-        );
-        outFile.writeln("    " ~ callbackIdent ~ "Delegate dg;");
-        outFile.writeln("    dg.funcptr = userdata1;");
-        outFile.writeln("    dg.ptr = userdata2;");
-
-        outFile.writefln!"    dg(%(%r, %));"(callArgs);
-        outFile.writeln("}");
-        outFile.writeln("");
-    }
-
-    outFile.writeln();
-
-    foreach (ref func; api.functions) {
-        writeFunction(func, null, outFile, identifierMap);
-    }
-
-    outFile.writeln();
-
-    foreach (ref struct_; api.structs) {
-        import std.string : startsWith;
-        import std.range : only;
-        import std.algorithm.searching : canFind;
-        import std.conv : to;
-
-        outFile.writeln(struct_.doc.toDocBlock);
-        outFile.writeln("struct " ~ identifierMap["struct." ~ struct_.name] ~ " {");
-        final switch (struct_.type) {
-            case API.Struct.Type.extensible:
-            case API.Struct.Type.extensible_callback_arg:
-                outFile.writeln("    ChainableStruct* nextInChain;");
-                break;
-            case API.Struct.Type.extension:
-                outFile.writeln("    ChainableStruct chain = { sType: SType." ~ struct_.name.snakeToCamel(false)
-                        .escapeIdentifier ~ " };");
-                break;
-            case API.Struct.Type.standalone:
-                break;
+        foreach (ref func; api.functions) {
+            writeFunction(func, null, outFile, identifierMap);
         }
-        foreach (ref member; struct_.members) {
-            enforce(member.passedWithOwnership.isNull);
-            enforce(!member.optional || member.pointer || member.type.startsWith("object."));
 
-            string initializer = "";
-            if (member.pointer) {
-                enforce(member.default_.isNull);
+        outFile.writeln();
 
-                initializer = "null";
-            } else if (member.type.startsWith("enum.")) {
-                if (member.default_.isNull) {
-                    immutable string enumName = member.type[5 .. $];
-                    bool hasUndefined = false;
-                    bool foundEnum = false;
-                    foreach (ref e; api.enums) {
-                        if (e.name == enumName) {
-                            foundEnum = true;
-                            foreach (ref entry; e.entries) {
-                                if (!entry.isNull && entry.get.name == "undefined") {
-                                    hasUndefined = true;
-                                    break;
+        foreach (ref struct_; api.structs) {
+            import std.string : startsWith;
+            import std.range : only;
+            import std.algorithm.searching : canFind;
+            import std.conv : to;
+
+            outFile.writeln(struct_.doc.toDocBlock);
+            outFile.writeln("struct " ~ identifierMap["struct." ~ struct_.name] ~ " {");
+            final switch (struct_.type) {
+                case API.Struct.Type.extensible:
+                case API.Struct.Type.extensible_callback_arg:
+                    outFile.writeln("    ChainableStruct* nextInChain;");
+                    break;
+                case API.Struct.Type.extension:
+                    outFile.writeln("    ChainableStruct chain = { sType: SType." ~ struct_.name.snakeToCamel(false)
+                            .escapeIdentifier ~ " };");
+                    break;
+                case API.Struct.Type.standalone:
+                    break;
+            }
+            foreach (ref member; struct_.members) {
+                enforce(member.passedWithOwnership.isNull);
+                enforce(!member.optional || member.pointer || member.type.startsWith("object."));
+
+                string initializer = "";
+                if (member.pointer) {
+                    enforce(member.default_.isNull);
+
+                    initializer = "null";
+                } else if (member.type.startsWith("enum.")) {
+                    if (member.default_.isNull) {
+                        immutable string enumName = member.type[5 .. $];
+                        bool hasUndefined = false;
+                        bool foundEnum = false;
+                        foreach (ref e; api.enums) {
+                            if (e.name == enumName) {
+                                foundEnum = true;
+                                foreach (ref entry; e.entries) {
+                                    if (!entry.isNull && entry.get.name == "undefined") {
+                                        hasUndefined = true;
+                                        break;
+                                    }
                                 }
+                                break;
                             }
-                            break;
+                        }
+                        enforce(foundEnum);
+
+                        if (hasUndefined) {
+                            initializer = identifierMap[member.type] ~ ".undefined";
+                        } else {
+                            initializer = "cast(" ~ identifierMap[member.type] ~ ")0";
+                        }
+                    } else {
+                        auto default_ = member.default_.get;
+                        enforce(default_.tag == API.ParameterType.Default.Tag.string);
+                        initializer = identifierMap[member.type] ~ "." ~ default_.str.snakeToCamel(false)
+                            .escapeIdentifier;
+                    }
+                } else if (member.type.startsWith("bitflag.")) {
+                    if (member.default_.isNull) {
+                        initializer = identifierMap[member.type] ~ ".none";
+                    } else {
+                        auto default_ = member.default_.get;
+                        enforce(default_.tag == API.ParameterType.Default.Tag.string);
+                        initializer = identifierMap[member.type] ~ "." ~ default_.str.snakeToCamel(false)
+                            .escapeIdentifier;
+                    }
+                } else if (only("uint16", "uint32", "uint64", "usize", "int32")
+                    .canFind(member.type)) {
+                    if (member.default_.isNull) {
+                        initializer = "0";
+                    } else {
+                        auto default_ = member.default_.get;
+
+                        enforce(default_.tag == API.ParameterType.Default.Tag.number || default_.tag == API
+                                .ParameterType.Default.Tag.string);
+
+                        if (
+                            default_.tag == API.ParameterType.Default.Tag.number) {
+                            initializer = (cast(long)default_.number).to!string;
+                        } else if (default_.tag == API.ParameterType.Default.Tag.string) {
+                            if (default_.str.startsWith("constant."))
+                                initializer = identifierMap[default_.str];
+                            else
+                                initializer = default_.str;
+                        } else {
+                            assert(0);
                         }
                     }
-                    enforce(foundEnum);
-
-                    if (hasUndefined) {
-                        initializer = identifierMap[member.type] ~ ".undefined";
+                } else if (only("float32", "nullable_float32", "float64", "float64_supertype").canFind(
+                        member.type)) {
+                    if (member.default_.isNull) {
+                        initializer = (member.type == "float32" || member.type == "nullable_float32") ? "0.0f"
+                            : "0.0";
                     } else {
-                        initializer = "cast(" ~ identifierMap[member.type] ~ ")0";
-                    }
-                } else {
-                    auto default_ = member.default_.get;
-                    enforce(default_.tag == API.ParameterType.Default.Tag.string);
-                    initializer = identifierMap[member.type] ~ "." ~ default_.str.snakeToCamel(false)
-                        .escapeIdentifier;
-                }
-            } else if (member.type.startsWith("bitflag.")) {
-                if (member.default_.isNull) {
-                    initializer = identifierMap[member.type] ~ ".none";
-                } else {
-                    auto default_ = member.default_.get;
-                    enforce(default_.tag == API.ParameterType.Default.Tag.string);
-                    initializer = identifierMap[member.type] ~ "." ~ default_.str.snakeToCamel(false)
-                        .escapeIdentifier;
-                }
-            } else if (only("uint16", "uint32", "uint64", "usize", "int32").canFind(member.type)) {
-                if (member.default_.isNull) {
-                    initializer = "0";
-                } else {
-                    auto default_ = member.default_.get;
+                        auto default_ = member.default_.get;
 
-                    enforce(default_.tag == API.ParameterType.Default.Tag.number || default_.tag == API
-                            .ParameterType.Default.Tag.string);
+                        enforce(default_.tag == API.ParameterType.Default.Tag.number || default_.tag == API
+                                .ParameterType.Default.Tag.string);
 
-                    if (
-                        default_.tag == API.ParameterType.Default.Tag.number) {
-                        initializer = (cast(long)default_.number).to!string;
-                    } else if (default_.tag == API.ParameterType.Default.Tag.string) {
-                        if (default_.str.startsWith("constant."))
+                        if (default_.tag == API.ParameterType.Default.Tag.number) {
+                            initializer = format("%.20g", default_.number);
+                            if (!initializer.canFind("."))
+                                initializer ~= ".0";
+
+                            if (member.type == "float32" || member.type == "nullable_float32")
+                                initializer ~= "f";
+                        } else if (default_.tag == API.ParameterType.Default.Tag.string) {
+                            enforce(default_.str.startsWith("constant."));
                             initializer = identifierMap[default_.str];
-                        else
-                            initializer = default_.str;
-                    } else {
-                        assert(0);
+                        } else {
+                            assert(0);
+                        }
                     }
-                }
-            } else if (only("float32", "nullable_float32", "float64", "float64_supertype").canFind(
-                    member.type)) {
-                if (member.default_.isNull) {
-                    initializer = (member.type == "float32" || member.type == "nullable_float32") ? "0.0f"
-                        : "0.0";
-                } else {
-                    auto default_ = member.default_.get;
-
-                    enforce(default_.tag == API.ParameterType.Default.Tag.number || default_.tag == API
-                            .ParameterType.Default.Tag.string);
-
-                    if (default_.tag == API.ParameterType.Default.Tag.number) {
-                        initializer = format("%.20g", default_.number);
-                        if (!initializer.canFind("."))
-                            initializer ~= ".0";
-
-                        if (member.type == "float32" || member.type == "nullable_float32")
-                            initializer ~= "f";
-                    } else if (default_.tag == API.ParameterType.Default.Tag.string) {
-                        enforce(default_.str.startsWith("constant."));
-                        initializer = identifierMap[default_.str];
+                } else if (member.type == "bool") {
+                    if (member.default_.isNull) {
+                        initializer = "false";
                     } else {
-                        assert(0);
+                        auto default_ = member.default_.get;
+
+                        enforce(default_.tag == API.ParameterType.Default.Tag.boolean);
+                        initializer = default_.boolean ? "true" : "false";
                     }
-                }
-            } else if (member.type == "bool") {
-                if (member.default_.isNull) {
-                    initializer = "false";
+                } else if (member.type.startsWith("struct.")) {
+                    if (member.default_.isNull) {
+                        initializer = identifierMap[member.type] ~ ".init";
+                    } else {
+                        auto default_ = member.default_.get;
+
+                        enforce(default_.tag == API.ParameterType.Default.Tag.string);
+                        enforce(default_.str == "zero");
+
+                        initializer = "ZeroInit!" ~ identifierMap[member.type];
+                    }
                 } else {
-                    auto default_ = member.default_.get;
+                    enforce(member.default_.isNull);
 
-                    enforce(default_.tag == API.ParameterType.Default.Tag.boolean);
-                    initializer = default_.boolean ? "true" : "false";
+                    enforce(member.type.startsWith("callback.") ||
+                            member.type.startsWith("object.") ||
+                            only("out_string", "string_with_default_empty", "nullable_string")
+                                .canFind(member.type));
+                    initializer = member.type.toDType(TypeLocation.field, member.pointer, identifierMap) ~ ".init";
                 }
-            } else if (member.type.startsWith("struct.")) {
-                if (member.default_.isNull) {
-                    initializer = identifierMap[member.type] ~ ".init";
-                } else {
-                    auto default_ = member.default_.get;
 
-                    enforce(default_.tag == API.ParameterType.Default.Tag.string);
-                    enforce(default_.str == "zero");
-
-                    initializer = "ZeroInit!" ~ identifierMap[member.type];
-                }
-            } else {
-                enforce(member.default_.isNull);
-
-                enforce(member.type.startsWith("callback.") ||
-                        member.type.startsWith("object.") ||
-                        only("out_string", "string_with_default_empty", "nullable_string")
-                            .canFind(member.type));
-                initializer = member.type.toDType(TypeLocation.field, member.pointer, identifierMap) ~ ".init";
+                outFile.writeln(member.doc.toDocBlock(1));
+                outFile.writefln!"    %s %s = %s;"(
+                    member.type.toDType(TypeLocation.field, member.pointer, identifierMap), member
+                        .name.snakeToCamel(false).escapeIdentifier, initializer);
             }
-
-            outFile.writeln(member.doc.toDocBlock(1));
-            outFile.writefln!"    %s %s = %s;"(
-                member.type.toDType(TypeLocation.field, member.pointer, identifierMap), member
-                    .name.snakeToCamel(false).escapeIdentifier, initializer);
+            outFile.writeln("}");
+            outFile.writeln();
         }
-        outFile.writeln("}");
+
         outFile.writeln();
+
+        foreach (ref object; api.objects) {
+            string objIdent = identifierMap["object." ~ object.name];
+            outFile.writeln(object.doc.toDocBlock);
+            outFile.writeln(
+                "alias " ~ objIdent ~ " = " ~ "WebGPUObject!\"" ~ objIdent ~ "\";");
+
+            outFile.writeln();
+
+            foreach (ref method; object.methods) {
+                writeFunction(method, objIdent, outFile, identifierMap);
+            }
+            outFile.writeln();
+            outFile.writeln();
+        }
     }
 
-    outFile.writeln();
+    {
+        API api = FileIopipe("generator/wgpu-native/ffi/wgpu.json").refCounted
+            .bufd
+            .assumeText.deserialize!API;
 
-    foreach (ref object; api.objects) {
-        string objIdent = identifierMap["object." ~ object.name];
-        outFile.writeln(object.doc.toDocBlock);
-        outFile.writeln(
-            "alias " ~ objIdent ~ " = " ~ "WebGPUObject!\"" ~ objIdent ~ "\";");
+        auto outFile = File("src/webgpu/wgpu.d", "w");
 
+        outFile.writeln("module webgpu.wgpu;");
         outFile.writeln();
-
-        foreach (ref method; object.methods) {
-            writeFunction(method, objIdent, outFile, identifierMap);
-        }
-        outFile.writeln();
-        outFile.writeln();
+        outFile.writeln("import webgpu.common;");
+        outFile.writeln("import webgpu.webgpu;");
     }
 }
