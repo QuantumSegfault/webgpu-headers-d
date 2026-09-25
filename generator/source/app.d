@@ -746,56 +746,92 @@ void writeObject(const ref API.Object object, ref File outFile, const scope stri
     outFile.writeln();
 }
 
+void processAPI(ref API api, ref File outFile, ref string[string] identifierMap, ref bool[string] enumHasUndefined)
+{
+    foreach (ref constant; api.constants) {
+        import std.string : toUpper;
+
+        enforce(!(("constant." ~ constant.name) in identifierMap));
+        identifierMap["constant." ~ constant.name] = constant.name.toUpper;
+    }
+    foreach (ref enum_; api.enums) {
+        enforce(((("enum." ~ enum_.name) in identifierMap) is null) == !enum_.extended);
+        identifierMap["enum." ~ enum_.name] = enum_.name.snakeToCamel(true);
+    }
+    foreach (ref bitflag; api.bitflags) {
+        enforce(!(("bitflag." ~ bitflag.name) in identifierMap));
+        identifierMap["bitflag." ~ bitflag.name] = bitflag.name.snakeToCamel(true);
+    }
+    foreach (ref callback; api.callbacks) {
+        enforce(!(("callback." ~ callback.name) in identifierMap));
+        identifierMap["callback." ~ callback.name] = callback.name.snakeToCamel(
+            true) ~ "Callback";
+    }
+    foreach (ref struct_; api.structs) {
+        enforce(!(("struct." ~ struct_.name) in identifierMap));
+        identifierMap["struct." ~ struct_.name] = struct_.name.snakeToCamel(true);
+    }
+
+    foreach (ref object; api.objects) {
+        enforce(((("object." ~ object.name) in identifierMap) is null) == !object.extended);
+        identifierMap["object." ~ object.name] = object.name.snakeToCamel(true);
+    }
+
+    foreach (ref enum_; api.enums) {
+        bool hasUndefined = false;
+        foreach (ref entry; enum_.entries) {
+            if (!entry.isNull && entry.get.name == "undefined") {
+                hasUndefined = true;
+                break;
+            }
+        }
+        enumHasUndefined["enum." ~ enum_.name] = hasUndefined;
+    }
+
+    foreach (ref constant; api.constants)
+        writeConstant(constant, outFile, identifierMap);
+
+    outFile.writeln();
+
+    foreach (ref enum_; api.enums)
+        writeEnum(enum_, outFile, identifierMap);
+
+    outFile.writeln();
+
+    foreach (ref bitflag; api.bitflags)
+        writeBitflag(bitflag, outFile, identifierMap);
+
+    outFile.writeln();
+
+    foreach (ref callback; api.callbacks)
+        writeCallback(callback, outFile, identifierMap);
+
+    outFile.writeln();
+
+    foreach (ref func; api.functions)
+        writeFunction(func, null, outFile, identifierMap);
+
+    outFile.writeln();
+
+    foreach (ref struct_; api.structs)
+        writeStruct(struct_, enumHasUndefined, outFile, identifierMap);
+
+    outFile.writeln();
+
+    foreach (ref object; api.objects)
+        writeObject(object, outFile, identifierMap);
+}
+
 void main()
 {
     string[string] identifierMap;
     bool[string] enumHasUndefined;
 
     {
+
         API api = FileIopipe("generator/webgpu-headers/webgpu.json").refCounted
             .bufd
             .assumeText.deserialize!API;
-
-        foreach (ref constant; api.constants) {
-            import std.string : toUpper;
-
-            enforce(!(("constant." ~ constant.name) in identifierMap));
-            identifierMap["constant." ~ constant.name] = constant.name.toUpper;
-        }
-        foreach (ref enum_; api.enums) {
-            enforce(((("enum." ~ enum_.name) in identifierMap) is null) == !enum_.extended);
-            identifierMap["enum." ~ enum_.name] = enum_.name.snakeToCamel(true);
-        }
-        foreach (ref bitflag; api.bitflags) {
-            enforce(!(("bitflag." ~ bitflag.name) in identifierMap));
-            identifierMap["bitflag." ~ bitflag.name] = bitflag.name.snakeToCamel(true);
-        }
-        foreach (ref callback; api.callbacks) {
-            enforce(!(("callback." ~ callback.name) in identifierMap));
-            identifierMap["callback." ~ callback.name] = callback.name.snakeToCamel(
-                true) ~ "Callback";
-        }
-        foreach (ref struct_; api.structs) {
-            enforce(!(("struct." ~ struct_.name) in identifierMap));
-            identifierMap["struct." ~ struct_.name] = struct_.name.snakeToCamel(true);
-        }
-
-        foreach (ref object; api.objects) {
-            enforce(((("object." ~ object.name) in identifierMap) is null) == !object.extended);
-            identifierMap["object." ~ object.name] = object.name.snakeToCamel(true);
-        }
-
-        bool foundEnum = false;
-        foreach (ref enum_; api.enums) {
-            bool hasUndefined = false;
-            foreach (ref entry; enum_.entries) {
-                if (!entry.isNull && entry.get.name == "undefined") {
-                    hasUndefined = true;
-                    break;
-                }
-            }
-            enumHasUndefined["enum." ~ enum_.name] = hasUndefined;
-        }
 
         auto outFile = File("src/webgpu/webgpu.d", "w");
 
@@ -805,38 +841,7 @@ void main()
 
         outFile.writeln();
 
-        foreach (ref constant; api.constants)
-            writeConstant(constant, outFile, identifierMap);
-
-        outFile.writeln();
-
-        foreach (ref enum_; api.enums)
-            writeEnum(enum_, outFile, identifierMap);
-
-        outFile.writeln();
-
-        foreach (ref bitflag; api.bitflags)
-            writeBitflag(bitflag, outFile, identifierMap);
-
-        outFile.writeln();
-
-        foreach (ref callback; api.callbacks)
-            writeCallback(callback, outFile, identifierMap);
-
-        outFile.writeln();
-
-        foreach (ref func; api.functions)
-            writeFunction(func, null, outFile, identifierMap);
-
-        outFile.writeln();
-
-        foreach (ref struct_; api.structs)
-            writeStruct(struct_, enumHasUndefined, outFile, identifierMap);
-
-        outFile.writeln();
-
-        foreach (ref object; api.objects)
-            writeObject(object, outFile, identifierMap);
+        processAPI(api, outFile, identifierMap, enumHasUndefined);
     }
 
     {
