@@ -501,7 +501,7 @@ enum PolygonMode : uint {
 /// FIXME: WGPUAddressMode =\u003e WGPUNativeAddressMode
 enum AddressMode : wegpu.webgpu.AddressMode {
     /// TODO
-    clampToBorder = cast(wegpu.webgpu.AddressMode)(0x0003_0000 | 0),
+    clampToBorder = cast(wegpu.webgpu.AddressMode)(0x0003_0000 | 4),
 }
 
 /// TODO
@@ -523,11 +523,11 @@ enum TextureFormat : wegpu.webgpu.TextureFormat {
     /// YUV 4:2:0 chroma subsampled format (NV12). Plane 0 contains R8Unorm
     /// luminance (Y), Plane 1 contains Rg8Unorm chrominance (UV) at half width
     /// and half height. Requires @ref WGPUNativeFeature_TextureFormatNv12.
-    nV12 = cast(wegpu.webgpu.TextureFormat)(0x0003_0000 | 0),
+    nV12 = cast(wegpu.webgpu.TextureFormat)(0x0003_0000 | 7),
     /// YUV 4:2:0 with 10 bits used from 16-bit channels (P010). Plane 0
     /// contains R16Unorm luminance (Y), Plane 1 contains Rg16Unorm chrominance
     /// (UV) at half width and half height.
-    p010 = cast(wegpu.webgpu.TextureFormat)(0x0003_0000 | 1),
+    p010 = cast(wegpu.webgpu.TextureFormat)(0x0003_0000 | 8),
 }
 
 
@@ -550,7 +550,7 @@ struct InstanceBackend {
     enum dX12 = typeof(this)[3];
     /// Browser WebGPU backend. Supported when targeting the web through
     /// WebAssembly.
-    enum browserWebGPU = typeof(this)[4];
+    enum browserWebGPU = typeof(this)(0x0000000000000020);
     /// Primary (first-tier) backends: Vulkan, Metal, DX12, and BrowserWebGPU.
     enum primary = vulkan | metal | dX12 | browserWebGPU;
     /// Secondary (second-tier) backends: GL.
@@ -614,19 +614,19 @@ struct InstanceFlag {
     /// Use the default flags for the current build configuration. In debug
     /// builds, this typically enables @ref WGPUInstanceFlag_Debug and @ref
     /// WGPUInstanceFlag_Validation.
-    enum default = typeof(this)[7];
+    enum default_ = typeof(this)(0x0000000001000000);
     /// Convenience alias that enables @ref WGPUInstanceFlag_Debug and @ref
     /// WGPUInstanceFlag_Validation.
-    enum debugging = typeof(this)[8];
+    enum debugging = typeof(this)(0x0000000002000000);
     /// Convenience alias that enables @ref WGPUInstanceFlag_Debug, @ref
     /// WGPUInstanceFlag_Validation, and @ref
     /// WGPUInstanceFlag_GPUBasedValidation.
-    enum advancedDebugging = typeof(this)[9];
+    enum advancedDebugging = typeof(this)(0x0000000004000000);
     /// Modify the flags based on environment variables. Flags with environment
     /// variable support (e.g. @c WGPU_DEBUG, @c WGPU_VALIDATION) will be read
     /// from the process environment and applied on top of the explicitly set
     /// flags.
-    enum withEnv = typeof(this)[10];
+    enum withEnv = typeof(this)(0x0000000008000000);
 }
 
 /// Describes how shader bound checks should be performed.

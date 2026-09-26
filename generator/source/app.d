@@ -13,6 +13,7 @@ import std.ascii : toUpper, isDigit;
 import std.stdio : writeln, File;
 import std.meta : AliasSeq;
 import std.exception : enforce;
+import core.time : to;
 
 @ignoreExtras
 struct API {
@@ -250,7 +251,7 @@ string escapeIdentifier(return scope string str)
     switch (str) {
         static foreach (keyword; AliasSeq!(
                 "null", "auto", "false", "true", "float", "uint", "module",
-                "debug",
+                "debug", "default",
 
                 "self", "dg"
             )) {
@@ -418,17 +419,23 @@ void writeEnum(const ref API.Enum enum_, ushort enumPrefix, ref File outFile, co
     auto enumIdent = identifierMap["enum." ~ enum_.name];
     auto extendedIdent = "wegpu.webgpu." ~ enumIdent;
     outFile.writeln("enum " ~ enumIdent ~ " : " ~ (enum_.extended ? extendedIdent : "uint") ~ " {");
+    enforce(enum_.entries.length < 65536);
     foreach (i, ref entry; enum_.entries) {
         if (entry.isNull)
             continue;
 
+        auto value = cast(ushort)i;
+
+        if (!entry.get.value.isNull)
+            value = entry.get.value.get;
+
         outFile.writeln(entry.get.doc.toDocBlock(1));
         if (enum_.extended) {
             outFile.writefln!"    %s = cast(%s)(0x%04X_0000 | %d),"(entry.get.name.snakeToCamel(false)
-                    .escapeIdentifier, extendedIdent, enumPrefix, i);
+                    .escapeIdentifier, extendedIdent, enumPrefix, value);
         } else {
             outFile.writefln!"    %s = %d,"(entry.get.name.snakeToCamel(false)
-                    .escapeIdentifier, i);
+                    .escapeIdentifier, value);
         }
     }
     outFile.writeln("}");
@@ -448,18 +455,23 @@ void writeBitflag(const ref API.BitFlag bitflag, ref File outFile, const scope s
         outFile.writeln(entry.doc.toDocBlock(1));
         auto entryName = entry.name.snakeToCamel(false)
             .escapeIdentifier;
-        if (entry.valueCombination.isNull) {
-            if (i == 0) {
-                outFile.writefln!"    enum %s = typeof(this).init;"(entryName);
-            } else {
-                outFile.writefln!"    enum %s = typeof(this)[%d];"(entryName, i - 1);
-            }
-        } else {
+
+        enforce(entry.valueCombination.isNull || entry.value.isNull);
+
+        if (!entry.valueCombination.isNull) {
             outFile.writefln!"    enum %s = %s;"(
                 entryName,
                 entry.valueCombination.get.map!((n) => n.snakeToCamel(false)
                     .escapeIdentifier).join(" | ")
             );
+        } else if (!entry.value.isNull) {
+            outFile.writefln!"    enum %s = typeof(this)(0x%016X);"(entryName, entry.value.get);
+        } else {
+            if (i == 0) {
+                outFile.writefln!"    enum %s = typeof(this).init;"(entryName);
+            } else {
+                outFile.writefln!"    enum %s = typeof(this)[%d];"(entryName, i - 1);
+            }
         }
     }
     outFile.writeln("}");
