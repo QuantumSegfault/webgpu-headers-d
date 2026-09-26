@@ -1004,8 +1004,7 @@ struct SamplerDescriptorExtras {
 }
 
 
-/// TODO
-alias Instance = WebGPUObject!"Instance";
+// `Instance` extensions
 
 /// TODO
 size_t enumerateAdapters(scope Instance.Handle self, scope ref const InstanceEnumerateAdapterOptions options, scope ref Adapter.Handle adapters) @trusted nothrow @nogc {
@@ -1015,8 +1014,7 @@ private extern(C) size_t wgpuInstanceEnumerateAdapters(Instance.Handle, const(In
 
 
 
-/// TODO
-alias Queue = WebGPUObject!"Queue";
+// `Queue` extensions
 
 /// TODO
 SubmissionIndex submitForIndex(scope Queue.Handle self, scope const(CommandBuffer.Handle)[] commands) @trusted nothrow @nogc {
@@ -1042,8 +1040,7 @@ private extern(C) void* wgpuQueueGetNativeMetalCommandQueue(Queue.Handle) nothro
 
 
 
-/// TODO
-alias Device = WebGPUObject!"Device";
+// `Device` extensions
 
 /// Returns true if the queue is empty, or false if there are more queue
 /// submissions still in flight.
@@ -1089,8 +1086,7 @@ private extern(C) ShaderModule.Handle wgpuDeviceCreateShaderModuleTrusted(Device
 
 
 
-/// TODO
-alias Texture = WebGPUObject!"Texture";
+// `Texture` extensions
 
 /// Returns the backend-native `id\u003cMTLTexture\u003e` as an opaque pointer.
 /// The returned pointer is borrowed and remains valid only while `texture` is
@@ -1104,8 +1100,7 @@ private extern(C) void* wgpuTextureGetNativeMetalTexture(Texture.Handle) nothrow
 
 
 
-/// TODO
-alias RenderPassEncoder = WebGPUObject!"RenderPassEncoder";
+// `RenderPassEncoder` extensions
 
 /// TODO
 void multiDrawIndirect(scope RenderPassEncoder.Handle self, scope Buffer.Handle buffer, ulong offset, uint count) @trusted nothrow @nogc {
@@ -1151,8 +1146,7 @@ private extern(C) void wgpuRenderPassEncoderWriteTimestamp(RenderPassEncoder.Han
 
 
 
-/// TODO
-alias ComputePassEncoder = WebGPUObject!"ComputePassEncoder";
+// `ComputePassEncoder` extensions
 
 /// TODO
 void beginPipelineStatisticsQuery(scope ComputePassEncoder.Handle self, scope QuerySet.Handle querySet, uint queryIndex) @trusted nothrow @nogc {
@@ -1174,8 +1168,7 @@ private extern(C) void wgpuComputePassEncoderWriteTimestamp(ComputePassEncoder.H
 
 
 
-/// TODO
-alias CommandEncoder = WebGPUObject!"CommandEncoder";
+// `CommandEncoder` extensions
 
 /// TODO
 void clearTexture(scope CommandEncoder.Handle self, scope Texture.Handle texture, scope ref const ImageSubresourceRange range) @trusted nothrow @nogc {

@@ -754,12 +754,15 @@ void writeStruct(const ref API.Struct struct_, const scope bool[string] enumHasU
 
 void writeObject(const ref API.Object object, ref File outFile, const scope string[string] identifierMap)
 {
-    // TODO: object extensions (declares new methods only)
-
     string objIdent = identifierMap["object." ~ object.name];
-    outFile.writeln(object.doc.toDocBlock);
-    outFile.writeln(
-        "alias " ~ objIdent ~ " = " ~ "WebGPUObject!\"" ~ objIdent ~ "\";");
+
+    if (!object.extended) {
+        outFile.writeln(object.doc.toDocBlock);
+        outFile.writeln(
+            "alias " ~ objIdent ~ " = " ~ "WebGPUObject!\"" ~ objIdent ~ "\";");
+    } else {
+        outFile.writeln("// `" ~ objIdent ~ "` extensions");
+    }
 
     outFile.writeln();
 
