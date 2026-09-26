@@ -315,6 +315,9 @@ string toDType(string type, TypeLocation loc, string pointer, const scope string
             result = loc == TypeLocation.dParam ? "scope StringView" : "StringView";
             enforce(loc != TypeLocation.dRet && loc != TypeLocation.cRet);
             break;
+        case "uint8":
+            result = "ubyte";
+            break;
         case "uint16":
             result = "ushort";
             break;
@@ -418,9 +421,7 @@ void writeBitflag(const ref API.BitFlag bitflag, ref File outFile, const scope s
             .escapeIdentifier;
         if (entry.valueCombination.isNull) {
             if (i == 0) {
-                enforce(entry.name == "none");
-
-                outFile.writeln("    enum none = typeof(this).init;");
+                outFile.writefln!"    enum %s = typeof(this).init;"(entryName);
             } else {
                 outFile.writefln!"    enum %s = typeof(this)[%d];"(entryName, i - 1);
             }
@@ -637,14 +638,14 @@ void writeStruct(const ref API.Struct struct_, const scope bool[string] enumHasU
             }
         } else if (member.type.startsWith("bitflag.")) {
             if (member.default_.isNull) {
-                initializer = identifierMap[member.type] ~ ".none";
+                initializer = identifierMap[member.type] ~ ".init";
             } else {
                 auto default_ = member.default_.get;
                 enforce(default_.tag == API.ParameterType.Default.Tag.string);
                 initializer = identifierMap[member.type] ~ "." ~ default_.str.snakeToCamel(false)
                     .escapeIdentifier;
             }
-        } else if (only("uint16", "uint32", "uint64", "usize", "int32")
+        } else if (only("uint8", "uint16", "uint32", "uint64", "usize", "int32")
             .canFind(member.type)) {
             if (member.default_.isNull) {
                 initializer = "0";
@@ -855,5 +856,7 @@ void main()
         outFile.writeln();
         outFile.writeln("import webgpu.common;");
         outFile.writeln("import webgpu.webgpu;");
+
+        processAPI(api, outFile, identifierMap, enumHasUndefined);
     }
 }

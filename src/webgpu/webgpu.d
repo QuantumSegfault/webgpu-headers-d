@@ -2185,7 +2185,7 @@ struct SurfaceCapabilities {
     ChainableStruct* nextInChain;
     /// The bit set of supported @ref WGPUTextureUsage bits. Guaranteed to
     /// contain @ref WGPUTextureUsage_RenderAttachment.
-    TextureUsage usages = TextureUsage.none;
+    TextureUsage usages = TextureUsage.init;
     /// A list of supported @ref WGPUTextureFormat values, in order of
     /// preference.
     const(TextureFormat)[] formats = null;
