@@ -3,6 +3,12 @@ module webgpu.wgpu;
 import webgpu.common;
 import webgpu.webgpu;
 
+/// Identifier for a particular call to @ref wgpuQueueSubmitForIndex. Can be
+/// passed to @ref wgpuDevicePoll to block until a particular submission has
+/// finished execution. This type is unique to wgpu-native; there is no analogue
+/// in the WebGPU specification.
+alias SubmissionIndex = ulong;
+
 /// TODO
 enum SType : uint {
     /// Identifies @ref WGPUDeviceExtras.
@@ -1013,3 +1019,169 @@ private extern(C) size_t wgpuInstanceEnumerateAdapters(Instance.Handle, const(In
 alias Queue = WebGPUObject!"Queue";
 
 /// TODO
+SubmissionIndex submitForIndex(scope Queue.Handle self, scope const(CommandBuffer.Handle)[] commands) @trusted nothrow @nogc {
+    return wgpuQueueSubmitForIndex(self, commands.length, commands.ptr);
+}
+private extern(C) SubmissionIndex wgpuQueueSubmitForIndex(Queue.Handle, size_t, const(CommandBuffer.Handle)*) nothrow @nogc;
+
+/// TODO
+float getTimestampPeriod(scope Queue.Handle self) @trusted nothrow @nogc {
+    return wgpuQueueGetTimestampPeriod(self);
+}
+private extern(C) float wgpuQueueGetTimestampPeriod(Queue.Handle) nothrow @nogc;
+
+/// Returns the backend-native `id\u003cMTLCommandQueue\u003e` as an opaque
+/// pointer. The returned pointer is borrowed and remains valid only while
+/// `queue` is alive. Ownership is retained by wgpu-native; callers must not
+/// release or destroy it. Returns NULL when the active backend is not Metal or
+/// when the handle is unavailable.
+void* getNativeMetalCommandQueue(scope Queue.Handle self) @trusted nothrow @nogc {
+    return wgpuQueueGetNativeMetalCommandQueue(self);
+}
+private extern(C) void* wgpuQueueGetNativeMetalCommandQueue(Queue.Handle) nothrow @nogc;
+
+
+
+/// TODO
+alias Device = WebGPUObject!"Device";
+
+/// Returns true if the queue is empty, or false if there are more queue
+/// submissions still in flight.
+bool poll(scope Device.Handle self, bool wait, scope ref const SubmissionIndex submissionIndex) @trusted nothrow @nogc {
+    return wgpuDevicePoll(self, wait, &submissionIndex) != 0;
+}
+private extern(C) uint wgpuDevicePoll(Device.Handle, uint, const(SubmissionIndex)*) nothrow @nogc;
+
+/// TODO
+ShaderModule.Uniq createShaderModuleSpirV(scope Device.Handle self, scope ref const ShaderModuleDescriptorSpirV descriptor) @trusted nothrow @nogc {
+    return ShaderModule.Uniq(wgpuDeviceCreateShaderModuleSpirV(self, &descriptor));
+}
+private extern(C) ShaderModule.Handle wgpuDeviceCreateShaderModuleSpirV(Device.Handle, const(ShaderModuleDescriptorSpirV)*) nothrow @nogc;
+
+/// Returns the backend-native `id\u003cMTLDevice\u003e` as an opaque pointer.
+/// The returned pointer is borrowed and remains valid only while `device` is
+/// alive. Ownership is retained by wgpu-native; callers must not release or
+/// destroy it. Returns NULL when the active backend is not Metal or when the
+/// handle is unavailable.
+void* getNativeMetalDevice(scope Device.Handle self) @trusted nothrow @nogc {
+    return wgpuDeviceGetNativeMetalDevice(self);
+}
+private extern(C) void* wgpuDeviceGetNativeMetalDevice(Device.Handle) nothrow @nogc;
+
+/// Returns true if the capture was successfully started, or false if it failed
+/// to start or is not supported on the current platform.
+bool startGraphicsDebuggerCapture(scope Device.Handle self) @trusted nothrow @nogc {
+    return wgpuDeviceStartGraphicsDebuggerCapture(self) != 0;
+}
+private extern(C) uint wgpuDeviceStartGraphicsDebuggerCapture(Device.Handle) nothrow @nogc;
+
+/// TODO
+void stopGraphicsDebuggerCapture(scope Device.Handle self) @trusted nothrow @nogc {
+    wgpuDeviceStopGraphicsDebuggerCapture(self);
+}
+private extern(C) void wgpuDeviceStopGraphicsDebuggerCapture(Device.Handle) nothrow @nogc;
+
+/// TODO
+ShaderModule.Uniq createShaderModuleTrusted(scope Device.Handle self, scope ref const ShaderModuleDescriptor descriptor, ShaderRuntimeChecks runtimeChecks) @trusted nothrow @nogc {
+    return ShaderModule.Uniq(wgpuDeviceCreateShaderModuleTrusted(self, &descriptor, runtimeChecks));
+}
+private extern(C) ShaderModule.Handle wgpuDeviceCreateShaderModuleTrusted(Device.Handle, const(ShaderModuleDescriptor)*, ShaderRuntimeChecks) nothrow @nogc;
+
+
+
+/// TODO
+alias Texture = WebGPUObject!"Texture";
+
+/// Returns the backend-native `id\u003cMTLTexture\u003e` as an opaque pointer.
+/// The returned pointer is borrowed and remains valid only while `texture` is
+/// alive. Ownership is retained by wgpu-native; callers must not release or
+/// destroy it. Returns NULL when the active backend is not Metal or when the
+/// handle is unavailable.
+void* getNativeMetalTexture(scope Texture.Handle self) @trusted nothrow @nogc {
+    return wgpuTextureGetNativeMetalTexture(self);
+}
+private extern(C) void* wgpuTextureGetNativeMetalTexture(Texture.Handle) nothrow @nogc;
+
+
+
+/// TODO
+alias RenderPassEncoder = WebGPUObject!"RenderPassEncoder";
+
+/// TODO
+void multiDrawIndirect(scope RenderPassEncoder.Handle self, scope Buffer.Handle buffer, ulong offset, uint count) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderMultiDrawIndirect(self, buffer, offset, count);
+}
+private extern(C) void wgpuRenderPassEncoderMultiDrawIndirect(RenderPassEncoder.Handle, Buffer.Handle, ulong, uint) nothrow @nogc;
+
+/// TODO
+void multiDrawIndexedIndirect(scope RenderPassEncoder.Handle self, scope Buffer.Handle buffer, ulong offset, uint count) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderMultiDrawIndexedIndirect(self, buffer, offset, count);
+}
+private extern(C) void wgpuRenderPassEncoderMultiDrawIndexedIndirect(RenderPassEncoder.Handle, Buffer.Handle, ulong, uint) nothrow @nogc;
+
+/// TODO
+void multiDrawIndirectCount(scope RenderPassEncoder.Handle self, scope Buffer.Handle buffer, ulong offset, scope Buffer.Handle countBuffer, ulong countBufferOffset, uint maxCount) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderMultiDrawIndirectCount(self, buffer, offset, countBuffer, countBufferOffset, maxCount);
+}
+private extern(C) void wgpuRenderPassEncoderMultiDrawIndirectCount(RenderPassEncoder.Handle, Buffer.Handle, ulong, Buffer.Handle, ulong, uint) nothrow @nogc;
+
+/// TODO
+void multiDrawIndexedIndirectCount(scope RenderPassEncoder.Handle self, scope Buffer.Handle buffer, ulong offset, scope Buffer.Handle countBuffer, ulong countBufferOffset, uint maxCount) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderMultiDrawIndexedIndirectCount(self, buffer, offset, countBuffer, countBufferOffset, maxCount);
+}
+private extern(C) void wgpuRenderPassEncoderMultiDrawIndexedIndirectCount(RenderPassEncoder.Handle, Buffer.Handle, ulong, Buffer.Handle, ulong, uint) nothrow @nogc;
+
+/// TODO
+void beginPipelineStatisticsQuery(scope RenderPassEncoder.Handle self, scope QuerySet.Handle querySet, uint queryIndex) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderBeginPipelineStatisticsQuery(self, querySet, queryIndex);
+}
+private extern(C) void wgpuRenderPassEncoderBeginPipelineStatisticsQuery(RenderPassEncoder.Handle, QuerySet.Handle, uint) nothrow @nogc;
+
+/// TODO
+void endPipelineStatisticsQuery(scope RenderPassEncoder.Handle self) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderEndPipelineStatisticsQuery(self);
+}
+private extern(C) void wgpuRenderPassEncoderEndPipelineStatisticsQuery(RenderPassEncoder.Handle) nothrow @nogc;
+
+/// TODO
+void writeTimestamp(scope RenderPassEncoder.Handle self, scope QuerySet.Handle querySet, uint queryIndex) @trusted nothrow @nogc {
+    wgpuRenderPassEncoderWriteTimestamp(self, querySet, queryIndex);
+}
+private extern(C) void wgpuRenderPassEncoderWriteTimestamp(RenderPassEncoder.Handle, QuerySet.Handle, uint) nothrow @nogc;
+
+
+
+/// TODO
+alias ComputePassEncoder = WebGPUObject!"ComputePassEncoder";
+
+/// TODO
+void beginPipelineStatisticsQuery(scope ComputePassEncoder.Handle self, scope QuerySet.Handle querySet, uint queryIndex) @trusted nothrow @nogc {
+    wgpuComputePassEncoderBeginPipelineStatisticsQuery(self, querySet, queryIndex);
+}
+private extern(C) void wgpuComputePassEncoderBeginPipelineStatisticsQuery(ComputePassEncoder.Handle, QuerySet.Handle, uint) nothrow @nogc;
+
+/// TODO
+void endPipelineStatisticsQuery(scope ComputePassEncoder.Handle self) @trusted nothrow @nogc {
+    wgpuComputePassEncoderEndPipelineStatisticsQuery(self);
+}
+private extern(C) void wgpuComputePassEncoderEndPipelineStatisticsQuery(ComputePassEncoder.Handle) nothrow @nogc;
+
+/// TODO
+void writeTimestamp(scope ComputePassEncoder.Handle self, scope QuerySet.Handle querySet, uint queryIndex) @trusted nothrow @nogc {
+    wgpuComputePassEncoderWriteTimestamp(self, querySet, queryIndex);
+}
+private extern(C) void wgpuComputePassEncoderWriteTimestamp(ComputePassEncoder.Handle, QuerySet.Handle, uint) nothrow @nogc;
+
+
+
+/// TODO
+alias CommandEncoder = WebGPUObject!"CommandEncoder";
+
+/// TODO
+void clearTexture(scope CommandEncoder.Handle self, scope Texture.Handle texture, scope ref const ImageSubresourceRange range) @trusted nothrow @nogc {
+    wgpuCommandEncoderClearTexture(self, texture, &range);
+}
+private extern(C) void wgpuCommandEncoderClearTexture(CommandEncoder.Handle, Texture.Handle, const(ImageSubresourceRange)*) nothrow @nogc;
+
+
+

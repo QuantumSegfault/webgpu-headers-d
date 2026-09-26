@@ -36,6 +36,7 @@ enum WHOLE_MAP_SIZE = size_t.max;
 /// SentinelValues and the places that use this sentinel value.
 enum WHOLE_SIZE = ulong.max;
 
+
 /// TODO
 enum AdapterType : uint {
     /// TODO

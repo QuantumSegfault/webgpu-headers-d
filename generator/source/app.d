@@ -137,6 +137,14 @@ struct API {
         Value64 value;
     }
 
+    struct Typedef {
+        string doc;
+        string name;
+        @optional string namespace;
+
+        string type;
+    }
+
     struct Enum {
         struct Entry {
             string doc;
@@ -199,13 +207,14 @@ struct API {
         @optional ParameterType[] members;
     }
 
+    Constant[] constants;
+    Typedef[] typedefs;
+    Enum[] enums;
     BitFlag[] bitflags;
     Callback[] callbacks;
-    Constant[] constants;
-    Enum[] enums;
     Function[] functions;
-    Object[] objects;
     Struct[] structs;
+    Object[] objects;
 }
 
 string snakeToCamel(const scope char[] str, bool upperFirst)
@@ -390,8 +399,18 @@ void writeConstant(const ref API.Constant constant, ref File outFile, const scop
             .value.asDCode ~ ";");
 }
 
+void writeTypedef(const ref API.Typedef typedef_, ref File outFile, const scope string[string] identifierMap)
+{
+    outFile.writeln(typedef_.doc.toDocBlock);
+    outFile.writeln(
+        "alias " ~ identifierMap["typedef." ~ typedef_.name] ~ " = " ~ toDType(
+            typedef_.type, TypeLocation.field, null, identifierMap) ~ ";");
+}
+
 void writeEnum(const ref API.Enum enum_, ref File outFile, const scope string[string] identifierMap)
 {
+    // TODO: enum extensions
+
     outFile.writeln(enum_.doc.toDocBlock);
     outFile.writeln("enum " ~ identifierMap["enum." ~ enum_.name] ~ " : uint {");
     foreach (i, ref entry; enum_.entries) {
@@ -540,6 +559,8 @@ void writeFunction(const ref API.Function func, string objIdent, File outFile, c
         dArgs ~= "scope " ~ objIdent ~ ".Handle self";
         callArgs ~= "self";
     }
+
+    // TODO: functions that have a callback attached
 
     foreach (ref arg; func.args) {
         enforce(arg.default_.isNull);
@@ -733,6 +754,8 @@ void writeStruct(const ref API.Struct struct_, const scope bool[string] enumHasU
 
 void writeObject(const ref API.Object object, ref File outFile, const scope string[string] identifierMap)
 {
+    // TODO: object extensions (declares new methods only)
+
     string objIdent = identifierMap["object." ~ object.name];
     outFile.writeln(object.doc.toDocBlock);
     outFile.writeln(
@@ -755,6 +778,12 @@ void processAPI(ref API api, ref File outFile, ref string[string] identifierMap,
         enforce(!(("constant." ~ constant.name) in identifierMap));
         identifierMap["constant." ~ constant.name] = constant.name.toUpper;
     }
+
+    foreach (ref typedef_; api.typedefs) {
+        enforce(!(("typedef." ~ typedef_.name) in identifierMap));
+        identifierMap["typedef." ~ typedef_.name] = typedef_.name.snakeToCamel(true);
+    }
+
     foreach (ref enum_; api.enums) {
         enforce(((("enum." ~ enum_.name) in identifierMap) is null) == !enum_.extended);
         identifierMap["enum." ~ enum_.name] = enum_.name.snakeToCamel(true);
@@ -791,6 +820,11 @@ void processAPI(ref API api, ref File outFile, ref string[string] identifierMap,
 
     foreach (ref constant; api.constants)
         writeConstant(constant, outFile, identifierMap);
+
+    outFile.writeln();
+
+    foreach (ref typedef_; api.typedefs)
+        writeTypedef(typedef_, outFile, identifierMap);
 
     outFile.writeln();
 
