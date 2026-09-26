@@ -207,6 +207,8 @@ struct API {
         @optional ParameterType[] members;
     }
 
+    @alternateName("enum_prefix") ushort enumPrefix;
+
     Constant[] constants;
     Typedef[] typedefs;
     Enum[] enums;
@@ -248,6 +250,8 @@ string escapeIdentifier(return scope string str)
     switch (str) {
         static foreach (keyword; AliasSeq!(
                 "null", "auto", "false", "true", "float", "uint", "module",
+                "debug",
+
                 "self", "dg"
             )) {
             case keyword:
@@ -407,19 +411,25 @@ void writeTypedef(const ref API.Typedef typedef_, ref File outFile, const scope 
             typedef_.type, TypeLocation.field, null, identifierMap) ~ ";");
 }
 
-void writeEnum(const ref API.Enum enum_, ref File outFile, const scope string[string] identifierMap)
+void writeEnum(const ref API.Enum enum_, ushort enumPrefix, ref File outFile, const scope string[string] identifierMap)
 {
-    // TODO: enum extensions
-
     outFile.writeln(enum_.doc.toDocBlock);
-    outFile.writeln("enum " ~ identifierMap["enum." ~ enum_.name] ~ " : uint {");
+
+    auto enumIdent = identifierMap["enum." ~ enum_.name];
+    auto extendedIdent = "wegpu.webgpu." ~ enumIdent;
+    outFile.writeln("enum " ~ enumIdent ~ " : " ~ (enum_.extended ? extendedIdent : "uint") ~ " {");
     foreach (i, ref entry; enum_.entries) {
         if (entry.isNull)
             continue;
 
         outFile.writeln(entry.get.doc.toDocBlock(1));
-        outFile.writefln!"    %s = %d,"(entry.get.name.snakeToCamel(false)
-                .escapeIdentifier, i);
+        if (enum_.extended) {
+            outFile.writefln!"    %s = cast(%s)(0x%04X_0000 | %d),"(entry.get.name.snakeToCamel(false)
+                    .escapeIdentifier, extendedIdent, enumPrefix, i);
+        } else {
+            outFile.writefln!"    %s = %d,"(entry.get.name.snakeToCamel(false)
+                    .escapeIdentifier, i);
+        }
     }
     outFile.writeln("}");
     outFile.writeln();
@@ -832,7 +842,7 @@ void processAPI(ref API api, ref File outFile, ref string[string] identifierMap,
     outFile.writeln();
 
     foreach (ref enum_; api.enums)
-        writeEnum(enum_, outFile, identifierMap);
+        writeEnum(enum_, api.enumPrefix, outFile, identifierMap);
 
     outFile.writeln();
 
