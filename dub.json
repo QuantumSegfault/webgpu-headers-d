@@ -4,6 +4,7 @@
     "authors": ["Demetrius Kanios"],
     "copyright": "Copyright © 2026, Demetrius Kanios",
     "name": "webgpu-headers-d",
+    "targetType": "sourceLibrary",
     "importPaths": ["src"],
     "subPackages": ["generator"]
 }
