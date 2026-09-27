@@ -599,7 +599,7 @@ void writeFunction(const ref API.Function func, string objIdent, File outFile, c
             callArgs ~= argName ~ ".ptr";
         } else {
             cArgs ~= arg.type.toDType(TypeLocation.cParam, arg.pointer, identifierMap);
-            callArgs ~= (arg.pointer ? "&" : "") ~ argName;
+            callArgs ~= (arg.pointer && arg.type != "c_void" ? "&" : "") ~ argName;
         }
     }
 

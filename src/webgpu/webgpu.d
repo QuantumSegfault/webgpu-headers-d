@@ -2607,7 +2607,7 @@ private extern(C) const(void)* wgpuBufferGetConstMappedRange(Buffer.Handle, size
 /// CallbackReentrancy). In Wasm, this is more efficient than copying from a
 /// mapped range into a `malloc`'d range.
 Status readMappedRange(scope Buffer.Handle self, size_t offset, void* data, size_t size) @trusted nothrow @nogc {
-    return wgpuBufferReadMappedRange(self, offset, &data, size);
+    return wgpuBufferReadMappedRange(self, offset, data, size);
 }
 private extern(C) Status wgpuBufferReadMappedRange(Buffer.Handle, size_t, void*, size_t) nothrow @nogc;
 
@@ -2617,7 +2617,7 @@ private extern(C) Status wgpuBufferReadMappedRange(Buffer.Handle, size_t, void*,
 /// CallbackReentrancy). In Wasm, this is more efficient than copying from a
 /// `malloc`'d range into a mapped range.
 Status writeMappedRange(scope Buffer.Handle self, size_t offset, const(void)* data, size_t size) @trusted nothrow @nogc {
-    return wgpuBufferWriteMappedRange(self, offset, &data, size);
+    return wgpuBufferWriteMappedRange(self, offset, data, size);
 }
 private extern(C) Status wgpuBufferWriteMappedRange(Buffer.Handle, size_t, const(void)*, size_t) nothrow @nogc;
 
@@ -2794,7 +2794,7 @@ private extern(C) void wgpuComputePassEncoderSetBindGroup(ComputePassEncoder.Han
 
 /// TODO
 void setImmediates(scope ComputePassEncoder.Handle self, uint offset, const(void)* data, size_t size) @trusted nothrow @nogc {
-    wgpuComputePassEncoderSetImmediates(self, offset, &data, size);
+    wgpuComputePassEncoderSetImmediates(self, offset, data, size);
 }
 private extern(C) void wgpuComputePassEncoderSetImmediates(ComputePassEncoder.Handle, uint, const(void)*, size_t) nothrow @nogc;
 
@@ -3112,13 +3112,13 @@ private extern(C) Future wgpuQueueOnSubmittedWorkDone(Queue.Handle, QueueWorkDon
 /// Produces a @ref DeviceError both content-timeline (`size` alignment) and
 /// device-timeline errors defined by the WebGPU specification.
 void writeBuffer(scope Queue.Handle self, scope Buffer.Handle buffer, ulong bufferOffset, const(void)* data, size_t size) @trusted nothrow @nogc {
-    wgpuQueueWriteBuffer(self, buffer, bufferOffset, &data, size);
+    wgpuQueueWriteBuffer(self, buffer, bufferOffset, data, size);
 }
 private extern(C) void wgpuQueueWriteBuffer(Queue.Handle, Buffer.Handle, ulong, const(void)*, size_t) nothrow @nogc;
 
 /// TODO
 void writeTexture(scope Queue.Handle self, scope ref const TexelCopyTextureInfo destination, const(void)* data, size_t dataSize, scope ref const TexelCopyBufferLayout dataLayout, scope ref const Extent3D writeSize) @trusted nothrow @nogc {
-    wgpuQueueWriteTexture(self, &destination, &data, dataSize, &dataLayout, &writeSize);
+    wgpuQueueWriteTexture(self, &destination, data, dataSize, &dataLayout, &writeSize);
 }
 private extern(C) void wgpuQueueWriteTexture(Queue.Handle, const(TexelCopyTextureInfo)*, const(void)*, size_t, const(TexelCopyBufferLayout)*, const(Extent3D)*) nothrow @nogc;
 
@@ -3158,7 +3158,7 @@ private extern(C) void wgpuRenderBundleEncoderSetBindGroup(RenderBundleEncoder.H
 
 /// TODO
 void setImmediates(scope RenderBundleEncoder.Handle self, uint offset, const(void)* data, size_t size) @trusted nothrow @nogc {
-    wgpuRenderBundleEncoderSetImmediates(self, offset, &data, size);
+    wgpuRenderBundleEncoderSetImmediates(self, offset, data, size);
 }
 private extern(C) void wgpuRenderBundleEncoderSetImmediates(RenderBundleEncoder.Handle, uint, const(void)*, size_t) nothrow @nogc;
 
@@ -3247,7 +3247,7 @@ private extern(C) void wgpuRenderPassEncoderSetBindGroup(RenderPassEncoder.Handl
 
 /// TODO
 void setImmediates(scope RenderPassEncoder.Handle self, uint offset, const(void)* data, size_t size) @trusted nothrow @nogc {
-    wgpuRenderPassEncoderSetImmediates(self, offset, &data, size);
+    wgpuRenderPassEncoderSetImmediates(self, offset, data, size);
 }
 private extern(C) void wgpuRenderPassEncoderSetImmediates(RenderPassEncoder.Handle, uint, const(void)*, size_t) nothrow @nogc;
 
