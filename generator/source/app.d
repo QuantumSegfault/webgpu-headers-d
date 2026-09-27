@@ -414,6 +414,10 @@ void writeTypedef(const ref API.Typedef typedef_, ref File outFile, const scope 
 
 void writeEnum(const ref API.Enum enum_, ushort enumPrefix, ref File outFile, const scope string[string] identifierMap)
 {
+    // FIXME: a hack to appease `wgpu`. Undo once they standardize
+    if (enum_.namespace == "webgpu")
+        enumPrefix = 0;
+
     outFile.writeln(enum_.doc.toDocBlock);
 
     auto enumIdent = identifierMap["enum." ~ enum_.name];

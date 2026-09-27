@@ -501,7 +501,7 @@ enum PolygonMode : uint {
 /// FIXME: WGPUAddressMode =\u003e WGPUNativeAddressMode
 enum AddressMode : wegpu.webgpu.AddressMode {
     /// TODO
-    clampToBorder = cast(wegpu.webgpu.AddressMode)(0x0003_0000 | 4),
+    clampToBorder = cast(wegpu.webgpu.AddressMode)(0x0000_0000 | 4),
 }
 
 /// TODO
