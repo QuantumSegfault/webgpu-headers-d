@@ -232,3 +232,7 @@ struct CallbackInfo(bool withMode, alias invokeDelegate, Args...) {
         userdata2 = dg.ptr;
     }
 }
+
+struct Future {
+    ulong id;
+}

@@ -677,13 +677,12 @@ void generateReport(scope Instance.Handle instance, scope ref GlobalReport repor
 }
 private extern(C) void wgpuGenerateReport(Instance.Handle, GlobalReport*) nothrow @nogc;
 
-/// FIXME: swap arguments; make ret type void; `WGPULogCallbackInfo
-/// callbackInfo` =\u003e `WGPULogCallback callback` Don't forget Proc pointer
-/// as well!
-void setLogCallback(void* userdata) @trusted nothrow @nogc {
-    wgpuSetLogCallback(&userdata);
+/// FIXME: Signature needs to be: void wgpuSetLogCallback(WGPULogCallback
+/// callback, WGPU_NULLABLE void * userdata) Don't forget Proc pointer as well!
+Future setLogCallback(LogCallback callbackInfo) @trusted nothrow @nogc {
+    return wgpuSetLogCallback(callbackInfo);
 }
-private extern(C) void wgpuSetLogCallback(void*) nothrow @nogc;
+private extern(C) Future wgpuSetLogCallback(LogCallback) nothrow @nogc;
 
 /// TODO
 void setLogLevel(LogLevel level) @trusted nothrow @nogc {

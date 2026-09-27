@@ -247,13 +247,13 @@ string escapeIdentifier(return scope string str)
         return "_" ~ str;
     }
 
-    // `dg` and `self` are not keywords, but we reserve them for the codegen
+    // `dg`, `self`, and `callbackInfo` are not keywords, but we reserve them for the codegen
     switch (str) {
         static foreach (keyword; AliasSeq!(
                 "null", "auto", "false", "true", "float", "uint", "module",
                 "debug", "default",
 
-                "self", "dg"
+                "self", "dg", "callbackInfo"
             )) {
             case keyword:
                 return keyword ~ "_";
@@ -582,8 +582,6 @@ void writeFunction(const ref API.Function func, string objIdent, File outFile, c
         callArgs ~= "self";
     }
 
-    // TODO: functions that have a callback attached
-
     foreach (ref arg; func.args) {
         enforce(arg.default_.isNull);
 
@@ -603,6 +601,17 @@ void writeFunction(const ref API.Function func, string objIdent, File outFile, c
             cArgs ~= arg.type.toDType(TypeLocation.cParam, arg.pointer, identifierMap);
             callArgs ~= (arg.pointer ? "&" : "") ~ argName;
         }
+    }
+
+    if (func.callback) {
+        enforce(func.returns.isNull);
+
+        dRetType = "Future";
+        cRetType = "Future";
+
+        dArgs ~= identifierMap[func.callback] ~ " callbackInfo";
+        cArgs ~= identifierMap[func.callback];
+        callArgs ~= "callbackInfo";
     }
 
     string dFuncName = func.name.snakeToCamel(false).escapeIdentifier;

@@ -2542,10 +2542,10 @@ Status getInfo(scope Adapter.Handle self, scope ref AdapterInfo info) @trusted n
 private extern(C) Status wgpuAdapterGetInfo(Adapter.Handle, AdapterInfo*) nothrow @nogc;
 
 /// TODO
-void requestDevice(scope Adapter.Handle self, scope ref const DeviceDescriptor descriptor) @trusted nothrow @nogc {
-    wgpuAdapterRequestDevice(self, &descriptor);
+Future requestDevice(scope Adapter.Handle self, scope ref const DeviceDescriptor descriptor, RequestDeviceCallback callbackInfo) @trusted nothrow @nogc {
+    return wgpuAdapterRequestDevice(self, &descriptor, callbackInfo);
 }
-private extern(C) void wgpuAdapterRequestDevice(Adapter.Handle, const(DeviceDescriptor)*) nothrow @nogc;
+private extern(C) Future wgpuAdapterRequestDevice(Adapter.Handle, const(DeviceDescriptor)*, RequestDeviceCallback) nothrow @nogc;
 
 
 
@@ -2575,10 +2575,10 @@ private extern(C) void wgpuBindGroupLayoutSetLabel(BindGroupLayout.Handle, Strin
 alias Buffer = WebGPUObject!"Buffer";
 
 /// TODO
-void mapAsync(scope Buffer.Handle self, MapMode mode, size_t offset, size_t size) @trusted nothrow @nogc {
-    wgpuBufferMapAsync(self, mode, offset, size);
+Future mapAsync(scope Buffer.Handle self, MapMode mode, size_t offset, size_t size, BufferMapCallback callbackInfo) @trusted nothrow @nogc {
+    return wgpuBufferMapAsync(self, mode, offset, size, callbackInfo);
 }
-private extern(C) void wgpuBufferMapAsync(Buffer.Handle, MapMode, size_t, size_t) nothrow @nogc;
+private extern(C) Future wgpuBufferMapAsync(Buffer.Handle, MapMode, size_t, size_t, BufferMapCallback) nothrow @nogc;
 
 /// Returns a mutable pointer to beginning of the mapped range. See @ref
 /// MappedRangeBehavior for error conditions and guarantees. This function is
@@ -2877,10 +2877,10 @@ ComputePipeline.Uniq createComputePipeline(scope Device.Handle self, scope ref c
 private extern(C) ComputePipeline.Handle wgpuDeviceCreateComputePipeline(Device.Handle, const(ComputePipelineDescriptor)*) nothrow @nogc;
 
 /// TODO
-void createComputePipelineAsync(scope Device.Handle self, scope ref const ComputePipelineDescriptor descriptor) @trusted nothrow @nogc {
-    wgpuDeviceCreateComputePipelineAsync(self, &descriptor);
+Future createComputePipelineAsync(scope Device.Handle self, scope ref const ComputePipelineDescriptor descriptor, CreateComputePipelineAsyncCallback callbackInfo) @trusted nothrow @nogc {
+    return wgpuDeviceCreateComputePipelineAsync(self, &descriptor, callbackInfo);
 }
-private extern(C) void wgpuDeviceCreateComputePipelineAsync(Device.Handle, const(ComputePipelineDescriptor)*) nothrow @nogc;
+private extern(C) Future wgpuDeviceCreateComputePipelineAsync(Device.Handle, const(ComputePipelineDescriptor)*, CreateComputePipelineAsyncCallback) nothrow @nogc;
 
 /// TODO
 PipelineLayout.Uniq createPipelineLayout(scope Device.Handle self, scope ref const PipelineLayoutDescriptor descriptor) @trusted nothrow @nogc {
@@ -2895,10 +2895,10 @@ QuerySet.Uniq createQuerySet(scope Device.Handle self, scope ref const QuerySetD
 private extern(C) QuerySet.Handle wgpuDeviceCreateQuerySet(Device.Handle, const(QuerySetDescriptor)*) nothrow @nogc;
 
 /// TODO
-void createRenderPipelineAsync(scope Device.Handle self, scope ref const RenderPipelineDescriptor descriptor) @trusted nothrow @nogc {
-    wgpuDeviceCreateRenderPipelineAsync(self, &descriptor);
+Future createRenderPipelineAsync(scope Device.Handle self, scope ref const RenderPipelineDescriptor descriptor, CreateRenderPipelineAsyncCallback callbackInfo) @trusted nothrow @nogc {
+    return wgpuDeviceCreateRenderPipelineAsync(self, &descriptor, callbackInfo);
 }
-private extern(C) void wgpuDeviceCreateRenderPipelineAsync(Device.Handle, const(RenderPipelineDescriptor)*) nothrow @nogc;
+private extern(C) Future wgpuDeviceCreateRenderPipelineAsync(Device.Handle, const(RenderPipelineDescriptor)*, CreateRenderPipelineAsyncCallback) nothrow @nogc;
 
 /// TODO
 RenderBundleEncoder.Uniq createRenderBundleEncoder(scope Device.Handle self, scope ref const RenderBundleEncoderDescriptor descriptor) @trusted nothrow @nogc {
@@ -2981,10 +2981,10 @@ private extern(C) void wgpuDevicePushErrorScope(Device.Handle, ErrorFilter) noth
 
 /// Pops an error scope to the current thread's error scope stack,
 /// asynchronously returning the result. See @ref ErrorScopes.
-void popErrorScope(scope Device.Handle self) @trusted nothrow @nogc {
-    wgpuDevicePopErrorScope(self);
+Future popErrorScope(scope Device.Handle self, PopErrorScopeCallback callbackInfo) @trusted nothrow @nogc {
+    return wgpuDevicePopErrorScope(self, callbackInfo);
 }
-private extern(C) void wgpuDevicePopErrorScope(Device.Handle) nothrow @nogc;
+private extern(C) Future wgpuDevicePopErrorScope(Device.Handle, PopErrorScopeCallback) nothrow @nogc;
 
 /// TODO
 void setLabel(scope Device.Handle self, scope StringView label) @trusted nothrow @nogc {
@@ -3039,10 +3039,10 @@ void processEvents(scope Instance.Handle self) @trusted nothrow @nogc {
 private extern(C) void wgpuInstanceProcessEvents(Instance.Handle) nothrow @nogc;
 
 /// TODO
-void requestAdapter(scope Instance.Handle self, scope ref const RequestAdapterOptions options) @trusted nothrow @nogc {
-    wgpuInstanceRequestAdapter(self, &options);
+Future requestAdapter(scope Instance.Handle self, scope ref const RequestAdapterOptions options, RequestAdapterCallback callbackInfo) @trusted nothrow @nogc {
+    return wgpuInstanceRequestAdapter(self, &options, callbackInfo);
 }
-private extern(C) void wgpuInstanceRequestAdapter(Instance.Handle, const(RequestAdapterOptions)*) nothrow @nogc;
+private extern(C) Future wgpuInstanceRequestAdapter(Instance.Handle, const(RequestAdapterOptions)*, RequestAdapterCallback) nothrow @nogc;
 
 /// Wait for at least one WGPUFuture in `futures` to complete, and call
 /// callbacks of the respective completed asynchronous operations. See @ref
@@ -3104,10 +3104,10 @@ void submit(scope Queue.Handle self, scope const(CommandBuffer.Handle)[] command
 private extern(C) void wgpuQueueSubmit(Queue.Handle, size_t, const(CommandBuffer.Handle)*) nothrow @nogc;
 
 /// TODO
-void onSubmittedWorkDone(scope Queue.Handle self) @trusted nothrow @nogc {
-    wgpuQueueOnSubmittedWorkDone(self);
+Future onSubmittedWorkDone(scope Queue.Handle self, QueueWorkDoneCallback callbackInfo) @trusted nothrow @nogc {
+    return wgpuQueueOnSubmittedWorkDone(self, callbackInfo);
 }
-private extern(C) void wgpuQueueOnSubmittedWorkDone(Queue.Handle) nothrow @nogc;
+private extern(C) Future wgpuQueueOnSubmittedWorkDone(Queue.Handle, QueueWorkDoneCallback) nothrow @nogc;
 
 /// Produces a @ref DeviceError both content-timeline (`size` alignment) and
 /// device-timeline errors defined by the WebGPU specification.
@@ -3394,10 +3394,10 @@ private extern(C) void wgpuSamplerSetLabel(Sampler.Handle, StringView) nothrow @
 alias ShaderModule = WebGPUObject!"ShaderModule";
 
 /// TODO
-void getCompilationInfo(scope ShaderModule.Handle self) @trusted nothrow @nogc {
-    wgpuShaderModuleGetCompilationInfo(self);
+Future getCompilationInfo(scope ShaderModule.Handle self, CompilationInfoCallback callbackInfo) @trusted nothrow @nogc {
+    return wgpuShaderModuleGetCompilationInfo(self, callbackInfo);
 }
-private extern(C) void wgpuShaderModuleGetCompilationInfo(ShaderModule.Handle) nothrow @nogc;
+private extern(C) Future wgpuShaderModuleGetCompilationInfo(ShaderModule.Handle, CompilationInfoCallback) nothrow @nogc;
 
 /// TODO
 void setLabel(scope ShaderModule.Handle self, scope StringView label) @trusted nothrow @nogc {
