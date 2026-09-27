@@ -10,37 +10,37 @@ import webgpu.webgpu;
 alias SubmissionIndex = ulong;
 
 /// TODO
-enum SType : wegpu.webgpu.SType {
+enum SType : webgpu.webgpu.SType {
     /// Identifies @ref WGPUDeviceExtras.
-    deviceExtras = cast(wegpu.webgpu.SType)(0x0003_0000 | 1),
+    deviceExtras = cast(webgpu.webgpu.SType)(0x0003_0000 | 1),
     /// Identifies @ref WGPUNativeLimits.
-    nativeLimits = cast(wegpu.webgpu.SType)(0x0003_0000 | 2),
+    nativeLimits = cast(webgpu.webgpu.SType)(0x0003_0000 | 2),
     /// Identifies @ref WGPUShaderSourceGLSL.
-    shaderSourceGLSL = cast(wegpu.webgpu.SType)(0x0003_0000 | 3),
+    shaderSourceGLSL = cast(webgpu.webgpu.SType)(0x0003_0000 | 3),
     /// Identifies @ref WGPUInstanceExtras.
-    instanceExtras = cast(wegpu.webgpu.SType)(0x0003_0000 | 4),
+    instanceExtras = cast(webgpu.webgpu.SType)(0x0003_0000 | 4),
     /// Identifies @ref WGPUBindGroupEntryExtras.
-    bindGroupEntryExtras = cast(wegpu.webgpu.SType)(0x0003_0000 | 5),
+    bindGroupEntryExtras = cast(webgpu.webgpu.SType)(0x0003_0000 | 5),
     /// Identifies @ref WGPUBindGroupLayoutEntryExtras.
-    bindGroupLayoutEntryExtras = cast(wegpu.webgpu.SType)(0x0003_0000 | 6),
+    bindGroupLayoutEntryExtras = cast(webgpu.webgpu.SType)(0x0003_0000 | 6),
     /// Identifies @ref WGPUQuerySetDescriptorExtras.
-    querySetDescriptorExtras = cast(wegpu.webgpu.SType)(0x0003_0000 | 7),
+    querySetDescriptorExtras = cast(webgpu.webgpu.SType)(0x0003_0000 | 7),
     /// Identifies @ref WGPUSurfaceConfigurationExtras.
-    surfaceConfigurationExtras = cast(wegpu.webgpu.SType)(0x0003_0000 | 8),
+    surfaceConfigurationExtras = cast(webgpu.webgpu.SType)(0x0003_0000 | 8),
     /// Identifies @ref WGPUSurfaceSourceSwapChainPanel.
-    surfaceSourceSwapChainPanel = cast(wegpu.webgpu.SType)(0x0003_0000 | 9),
+    surfaceSourceSwapChainPanel = cast(webgpu.webgpu.SType)(0x0003_0000 | 9),
     /// Identifies @ref WGPUPrimitiveStateExtras.
-    primitiveStateExtras = cast(wegpu.webgpu.SType)(0x0003_0000 | 10),
+    primitiveStateExtras = cast(webgpu.webgpu.SType)(0x0003_0000 | 10),
     /// Identifies @ref WGPUSamplerDescriptorExtras.
-    samplerDescriptorExtras = cast(wegpu.webgpu.SType)(0x0003_0000 | 11),
+    samplerDescriptorExtras = cast(webgpu.webgpu.SType)(0x0003_0000 | 11),
     /// Identifies @ref WGPUSurfaceSourceOhosNativeWindow.
-    surfaceSourceOhosNativeWindow = cast(wegpu.webgpu.SType)(0x0003_0000 | 12),
+    surfaceSourceOhosNativeWindow = cast(webgpu.webgpu.SType)(0x0003_0000 | 12),
 }
 
 /// Native-only device features. These extend the standard @c WGPUFeatureName
 /// values and can be passed to @c WGPUDeviceDescriptor::requiredFeatures to
 /// request additional capabilities when creating a device.
-enum FeatureName : wegpu.webgpu.FeatureName {
+enum FeatureName : webgpu.webgpu.FeatureName {
     /// Allows the use of immediate data: small, fast blocks of memory that can
     /// be updated inside a render pass, compute pass, or render bundle encoder.
     /// Enables @ref wgpuRenderPassEncoderSetImmediates, @ref
@@ -53,7 +53,7 @@ enum FeatureName : wegpu.webgpu.FeatureName {
     /// corresponds to @c layout(immediates) @c uniform @c Name @c {..}.
     /// Supported platforms: - DX12 - Vulkan - Metal - OpenGL (emulated with
     /// uniforms) - WebGPU This is a web and native feature.
-    immediates = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 1),
+    immediates = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 1),
     /// Enables device-specific texture format features. By default only texture
     /// format properties as defined by the WebGPU specification are allowed.
     /// Enabling this feature flag extends the features of each format to the
@@ -61,7 +61,7 @@ enum FeatureName : wegpu.webgpu.FeatureName {
     /// read/write storage access is not allowed at all. This extension does not
     /// enable additional formats. Supported platforms: - Vulkan - DX12 - Metal
     /// This is a native only feature.
-    textureAdapterSpecificFormatFeatures = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 2),
+    textureAdapterSpecificFormatFeatures = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 2),
     /// Allows the use of a buffer containing the actual number of draw calls.
     /// Enables @ref wgpuRenderPassEncoderMultiDrawIndirectCount and @ref
     /// wgpuRenderPassEncoderMultiDrawIndexedIndirectCount. This feature being
@@ -71,12 +71,12 @@ enum FeatureName : wegpu.webgpu.FeatureName {
     /// with a series of @c draw_indirect calls. Supported platforms: - DX12 -
     /// Vulkan 1.2+ (or VK_KHR_draw_indirect_count) This is a native only
     /// feature.
-    multiDrawIndirectCount = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 4),
+    multiDrawIndirectCount = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 4),
     /// Enables bindings of writable storage buffers and textures visible to
     /// vertex shaders. Note: some (tiled-based) platforms do not support vertex
     /// shaders with any side-effects. Supported platforms: - All This is a
     /// native only feature.
-    vertexWritableStorage = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 5),
+    vertexWritableStorage = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 5),
     /// Allows the user to create uniform arrays of textures in shaders: - WGSL:
     /// @c var @c textures: @c binding_array\u003ctexture_2d\u003cf32\u003e, @c
     /// 10\u003e - GLSL: @c uniform @c texture2D @c textures[10] If @ref
@@ -85,7 +85,7 @@ enum FeatureName : wegpu.webgpu.FeatureName {
     /// capability allows them to exist and to be indexed by dynamically uniform
     /// values. Supported platforms: - DX12 - Metal (with MSL 2.0+ on macOS
     /// 10.13+) - Vulkan This is a native only feature.
-    textureBindingArray = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 6),
+    textureBindingArray = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 6),
     /// Allows shaders to index sampled texture and storage buffer resource
     /// arrays with dynamically non-uniform values: e.g. @c
     /// texture_array[vertex_data] In order to use this capability, the
@@ -95,7 +95,7 @@ enum FeatureName : wegpu.webgpu.FeatureName {
     /// constructor. WGSL and HLSL do not need any extension. Supported
     /// platforms: - DX12 - Metal (with MSL 2.0+ on macOS 10.13+) - Vulkan 1.2+
     /// (or VK_EXT_descriptor_indexing) This is a native only feature.
-    sampledTextureAndStorageBufferArrayNonUniformIndexing = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 7),
+    sampledTextureAndStorageBufferArrayNonUniformIndexing = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 7),
     /// Enables use of Pipeline Statistics Queries. These queries report the
     /// count of various operations performed between the start and stop call.
     /// Use @ref wgpuRenderPassEncoderBeginPipelineStatisticsQuery / @ref
@@ -104,25 +104,25 @@ enum FeatureName : wegpu.webgpu.FeatureName {
     /// wgpuCommandEncoderResolveQuerySet into a buffer. See @ref
     /// WGPUPipelineStatisticName for the list of available statistics.
     /// Supported platforms: - Vulkan - DX12 This is a native only feature.
-    pipelineStatisticsQuery = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 8),
+    pipelineStatisticsQuery = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 8),
     /// Allows the user to create uniform arrays of storage buffers or textures
     /// in shaders, if @ref WGPUNativeFeature_BufferBindingArray or @ref
     /// WGPUNativeFeature_TextureBindingArray (respectively) is also supported.
     /// This capability allows them to exist and to be indexed by dynamically
     /// uniform values. Supported platforms: - Metal (with MSL 2.2+ on macOS
     /// 10.13+) - Vulkan This is a native only feature.
-    storageResourceBindingArray = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 9),
+    storageResourceBindingArray = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 9),
     /// Allows the user to create bind groups containing arrays with fewer
     /// bindings than the @c WGPUBindGroupLayout requires. Supported platforms:
     /// - Vulkan - DX12 This is a native only feature.
-    partiallyBoundBindingArray = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 10),
+    partiallyBoundBindingArray = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 10),
     /// Enables normalized 16-bit texture formats: @ref
     /// WGPUTextureFormat_R16Unorm, @ref WGPUTextureFormat_R16Snorm, @ref
     /// WGPUTextureFormat_RG16Unorm, @ref WGPUTextureFormat_RG16Snorm, @ref
     /// WGPUTextureFormat_RGBA16Unorm, @ref WGPUTextureFormat_RGBA16Snorm.
     /// Supported platforms: - Vulkan - DX12 - Metal This is a native only
     /// feature.
-    textureFormat16bitNorm = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 11),
+    textureFormat16bitNorm = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 11),
     /// Enables ASTC HDR family of compressed textures. Compressed textures
     /// sacrifice some quality in exchange for significantly reduced bandwidth
     /// usage. Support for this feature guarantees availability of @c COPY_SRC |
@@ -130,7 +130,7 @@ enum FeatureName : wegpu.webgpu.FeatureName {
     /// type. @ref WGPUNativeFeature_TextureAdapterSpecificFormatFeatures may
     /// enable additional usages. Supported platforms: - Metal - Vulkan - OpenGL
     /// This is a native only feature.
-    textureCompressionAstcHdr = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 12),
+    textureCompressionAstcHdr = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 12),
     /// Removes the WebGPU restriction that @c MAP_READ and @c MAP_WRITE buffer
     /// usages must be paired exclusively with @c COPY_DST and @c COPY_SRC
     /// respectively. This is only beneficial on systems that share memory
@@ -138,7 +138,7 @@ enum FeatureName : wegpu.webgpu.FeatureName {
     /// severely hinder performance. Only use if you understand the
     /// consequences. Supported platforms: - Vulkan - DX12 - Metal This is a
     /// native only feature.
-    mappablePrimaryBuffers = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 14),
+    mappablePrimaryBuffers = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 14),
     /// Allows the user to create arrays of buffers in shaders: - WGSL: @c
     /// var\u003cuniform\u003e @c buffer_array: @c array\u003cMyBuffer, @c
     /// 10\u003e - GLSL: @c uniform @c myBuffer @c { @c ... @c } @c
@@ -147,58 +147,58 @@ enum FeatureName : wegpu.webgpu.FeatureName {
     /// WGPUNativeFeature_StorageResourceBindingArray is supported as well as
     /// this, the user may also create arrays of storage buffers. Supported
     /// platforms: - Vulkan This is a native only feature.
-    bufferBindingArray = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 15),
+    bufferBindingArray = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 15),
     /// Allows shaders to index storage texture resource arrays with dynamically
     /// non-uniform values. This is a native only feature.
-    storageTextureArrayNonUniformIndexing = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 16),
+    storageTextureArrayNonUniformIndexing = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 16),
     /// TODO
-    addressModeClampToZero = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 17),
+    addressModeClampToZero = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 17),
     /// TODO
-    addressModeClampToBorder = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 18),
+    addressModeClampToBorder = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 18),
     /// Allows the user to set @ref WGPUPolygonMode_Line in @ref
     /// WGPUPrimitiveStateExtras::polygonMode. This allows drawing
     /// polygons/triangles as lines (wireframe) instead of filled. Supported
     /// platforms: - DX12 - Vulkan - Metal This is a native only feature.
-    polygonModeLine = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 19),
+    polygonModeLine = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 19),
     /// Allows the user to set @ref WGPUPolygonMode_Point in @ref
     /// WGPUPrimitiveStateExtras::polygonMode. This allows only drawing the
     /// vertices of polygons/triangles instead of filled. Supported platforms: -
     /// Vulkan This is a native only feature.
-    polygonModePoint = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 20),
+    polygonModePoint = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 20),
     /// Allows the user to enable overestimation conservative rasterization via
     /// @ref WGPUPrimitiveStateExtras::conservative. Processing of degenerate
     /// triangles/lines is hardware specific. Only triangles are supported.
     /// Supported platforms: - Vulkan This is a native only feature.
-    conservativeRasterization = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 21),
+    conservativeRasterization = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 21),
     /// Enables clear to zero for textures. Supported platforms: - All This is a
     /// native only feature.
-    clearTexture = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 22),
+    clearTexture = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 22),
     /// Enables multiview render passes and `builtin(view_index)` in vertex/mesh
     /// shaders. Supported platforms: - Vulkan - Metal - DX12 - OpenGL (web
     /// only) This is a native only feature.
-    multiview = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 24),
+    multiview = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 24),
     /// Enables using 64-bit types for vertex attributes. Requires @ref
     /// WGPUNativeFeature_ShaderF64. This is a native only feature.
-    vertexAttribute64bit = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 25),
+    vertexAttribute64bit = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 25),
     /// Allows for creation of textures of format @ref
     /// WGPUNativeTextureFormat_NV12. Supported platforms: - DX12 - Vulkan This
     /// is a native only feature.
-    textureFormatNv12 = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 26),
+    textureFormatNv12 = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 26),
     /// Allows for the creation of ray-tracing queries within shaders. @b
     /// EXPERIMENTAL: Features enabled by this may have major bugs and are
     /// expected to be subject to breaking changes. Supported platforms: -
     /// Vulkan This is a native only feature.
-    rayQuery = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 28),
+    rayQuery = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 28),
     /// Enables 64-bit floating point types in SPIR-V shaders. Note: even when
     /// supported by GPU hardware, 64-bit floating point operations are
     /// frequently between 16 and 64 @e times slower than equivalent operations
     /// on 32-bit floats. Supported platforms: - Vulkan This is a native only
     /// feature.
-    shaderF64 = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 29),
+    shaderF64 = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 29),
     /// Allows shaders to use i16. Not currently supported in naga, only
     /// available through SPIR-V passthrough. Supported platforms: - Vulkan This
     /// is a native only feature.
-    shaderI16 = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 30),
+    shaderI16 = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 30),
     /// Allows shaders to use the @c early_depth_test attribute. The attribute
     /// is applied to the fragment shader entry point and can be used in two
     /// ways: 1. Force early depth/stencil tests: - WGSL: @c
@@ -209,24 +209,24 @@ enum FeatureName : wegpu.webgpu.FeatureName {
     /// layout(depth_\u003cgreater/less/unchanged\u003e) @c out @c float @c
     /// gl_FragDepth; Supported platforms: - Vulkan - GLES 3.1+ This is a native
     /// only feature.
-    shaderEarlyDepthTest = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 32),
+    shaderEarlyDepthTest = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 32),
     /// Allows compute and fragment shaders to use the subgroup operation
     /// built-ins and perform subgroup operations (except barriers). Supported
     /// platforms: - Vulkan - DX12 - Metal This is a native only feature.
-    subgroup = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 33),
+    subgroup = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 33),
     /// Allows vertex shaders to use the subgroup operation built-ins and
     /// perform subgroup operations (except barriers). Supported platforms: -
     /// Vulkan This is a native only feature.
-    subgroupVertex = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 34),
+    subgroupVertex = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 34),
     /// Allows compute shaders to use the subgroup barrier. Requires @ref
     /// WGPUNativeFeature_Subgroup. Without it, enables nothing. Supported
     /// platforms: - Vulkan - Metal This is a native only feature.
-    subgroupBarrier = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 35),
+    subgroupBarrier = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 35),
     /// Allows for timestamp queries directly on command encoders. Implies @c
     /// WGPUFeatureName_TimestampQuery is supported. Supported platforms: -
     /// Vulkan - DX12 - Metal - OpenGL (with GL_ARB_timer_query) This is a
     /// native only feature.
-    timestampQueryInsideEncoders = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 36),
+    timestampQueryInsideEncoders = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 36),
     /// Allows for timestamp queries inside render and compute passes. Implies
     /// @c WGPUFeatureName_TimestampQuery and @ref
     /// WGPUNativeFeature_TimestampQueryInsideEncoders are supported. Enables
@@ -235,49 +235,49 @@ enum FeatureName : wegpu.webgpu.FeatureName {
     /// tile-based rasterization GPUs. Supported platforms: - Vulkan - DX12 -
     /// Metal (AMD \u0026 Intel, not Apple GPUs) - OpenGL (with
     /// GL_ARB_timer_query) This is a native only feature.
-    timestampQueryInsidePasses = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 37),
+    timestampQueryInsidePasses = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 37),
     /// Allows shaders to use i64 and u64. Supported platforms: - Vulkan - DX12
     /// (DXC only) - Metal (with MSL 2.3+) This is a native only feature.
-    shaderInt64 = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 38),
+    shaderInt64 = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 38),
     /// Allows shaders to use f32 atomic load, store, add, sub, and exchange.
     /// Supported platforms: - Metal (with MSL 3.0+ and Apple7+/Mac2) - Vulkan
     /// (with [VK_EXT_shader_atomic_float]) This is a native only feature.
-    shaderFloat32Atomic = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 39),
+    shaderFloat32Atomic = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 39),
     /// Enables image atomic fetch add, and, xor, or, min, and max for R32Uint
     /// and R32Sint textures. Supported platforms: - Vulkan - DX12 - Metal (with
     /// MSL 3.1+) This is a native only feature.
-    textureAtomic = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 40),
+    textureAtomic = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 40),
     /// Allows for creation of textures of format @ref
     /// WGPUNativeTextureFormat_P010. Supported platforms: - DX12 - Vulkan This
     /// is a native only feature.
-    textureFormatP010 = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 41),
+    textureFormatP010 = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 41),
     /// Allows the use of pipeline cache objects Supported platforms: - Vulkan
     /// Unimplemented Platforms: - DX12 - Metal
-    pipelineCache = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 43),
+    pipelineCache = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 43),
     /// Allows shaders to use i64 and u64 atomic min and max. Supported
     /// platforms: - Vulkan (with VK_KHR_shader_atomic_int64) - DX12 (with SM
     /// 6.6+) - Metal (with MSL 2.4+) This is a native only feature.
-    shaderInt64AtomicMinMax = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 44),
+    shaderInt64AtomicMinMax = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 44),
     /// Allows shaders to use all i64 and u64 atomic operations. Supported
     /// platforms: - Vulkan (with VK_KHR_shader_atomic_int64) - DX12 (with SM
     /// 6.6+) This is a native only feature.
-    shaderInt64AtomicAllOps = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 45),
+    shaderInt64AtomicAllOps = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 45),
     /// Enables R64Uint image atomic min and max. Supported platforms: - Vulkan
     /// (with VK_EXT_shader_image_atomic_int64) - DX12 (with SM 6.6+) - Metal
     /// (with MSL 3.1+) This is a native only feature.
-    textureInt64Atomic = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 48),
+    textureInt64Atomic = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 48),
     /// Enables shader barycentric coordinates. Supported platforms: - Vulkan
     /// (with VK_KHR_fragment_shader_barycentric) - DX12 (with SM 6.1+) - Metal
     /// (with MSL 2.2+) This is a native only feature.
-    shaderBarycentrics = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 55),
+    shaderBarycentrics = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 55),
     /// Enables using multiview where not all texture array layers are rendered
     /// to in a single render pass/render pipeline. Making use of this feature
     /// also requires enabling `Features::MULTIVIEW`. Supported platforms -
     /// Vulkan - DX12 While metal supports this in theory, the behavior of
     /// `view_index` differs from vulkan and dx12 so the feature isn't exposed.
-    selectiveMultiview = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 56),
+    selectiveMultiview = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 56),
     /// TODO
-    multisampleArray = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 58),
+    multisampleArray = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 58),
     /// Enables cooperative matrix operations (also known as tensor cores on
     /// NVIDIA GPUs or simdgroup matrix operations on Apple GPUs). Cooperative
     /// matrices allow a workgroup to collectively load, store, and perform
@@ -293,28 +293,28 @@ enum FeatureName : wegpu.webgpu.FeatureName {
     /// Apple7+/Mac2+, using simdgroup matrix operations) - Vulkan (with
     /// [VK_KHR_cooperative_matrix](https://registry.khronos.org/vulkan/specs/latest/man/html/VK_KHR_cooperative_matrix.html),
     /// if 8x8 f32 is supported) This is a native only feature.
-    cooperativeMatrix = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 59),
+    cooperativeMatrix = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 59),
     /// Enables shader per-vertex attributes. Supported platforms: - Vulkan
     /// (with VK_KHR_fragment_shader_barycentric) This is a native only feature.
-    shaderPerVertex = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 60),
+    shaderPerVertex = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 60),
     /// Enables shader `draw_index` builtin. Supported platforms: - GLES -
     /// Vulkan Potential platforms: - DX12 - Metal This is a native only
     /// feature.
-    shaderDrawIndex = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 61),
+    shaderDrawIndex = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 61),
     /// Allows the user to create arrays of acceleration structures in shaders:
     /// ex. - `var tlas: binding_array\u003cacceleration_structure, 10\u003e`
     /// (WGSL) This capability allows them to exist and to be indexed by
     /// dynamically uniform values. Supported platforms: - DX12 - Vulkan This is
     /// a native only feature.
-    accelerationStructureBindingArray = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 62),
+    accelerationStructureBindingArray = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 62),
     /// Enables the `@coherent` memory decoration on storage buffer variables.
     /// Backend mapping: - Vulkan - DX12 - Metal (3.2+) - GLES (ES 3.1+ / GL
     /// 4.3+) This is a native only feature.
-    memoryDecorationCoherent = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 63),
+    memoryDecorationCoherent = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 63),
     /// Enables the `@volatile` memory decoration on storage buffer variables.
     /// Backend mapping: - Vulkan - GLES (ES 3.1+ / GL 4.3+) This is a native
     /// only feature.
-    memoryDecorationVolatile = cast(wegpu.webgpu.FeatureName)(0x0003_0000 | 64),
+    memoryDecorationVolatile = cast(webgpu.webgpu.FeatureName)(0x0003_0000 | 64),
 }
 
 /// TODO
@@ -335,7 +335,7 @@ enum LogLevel : uint {
 
 /// Additional surface-get-current-texture status codes defined by wgpu-native.
 /// These extend the standard @c WGPUSurfaceGetCurrentTextureStatus values.
-enum SurfaceGetCurrentTextureStatus : wegpu.webgpu.SurfaceGetCurrentTextureStatus {
+enum SurfaceGetCurrentTextureStatus : webgpu.webgpu.SurfaceGetCurrentTextureStatus {
     /// The surface texture was not acquired because the window is occluded
     /// (e.g. minimized or fully covered by another window). No texture is
     /// returned and the @c texture field of @c WGPUSurfaceTexture will be NULL.
@@ -352,7 +352,7 @@ enum SurfaceGetCurrentTextureStatus : wegpu.webgpu.SurfaceGetCurrentTextureStatu
     /// backends (Vulkan, DX12, GL) do not currently report this status; an
     /// occluded window on those backends may produce @c
     /// WGPUSurfaceGetCurrentTextureStatus_Timeout or simply succeed normally.
-    occluded = cast(wegpu.webgpu.SurfaceGetCurrentTextureStatus)(0x0003_0000 | 1),
+    occluded = cast(webgpu.webgpu.SurfaceGetCurrentTextureStatus)(0x0003_0000 | 1),
 }
 
 /// TODO
@@ -398,9 +398,10 @@ enum PipelineStatisticName : uint {
     computeShaderInvocations = 4,
 }
 
-enum QueryType : wegpu.webgpu.QueryType {
+/// FIXME: WGPUQueryType =\u003e WGPUNativeQueryType
+enum QueryType : webgpu.webgpu.QueryType {
     /// TODO
-    pipelineStatistics = cast(wegpu.webgpu.QueryType)(0x0003_0000 | 0),
+    pipelineStatistics = cast(webgpu.webgpu.QueryType)(0x0003_0000 | 0),
 }
 
 enum DxcMaxShaderModel : uint {
@@ -495,9 +496,9 @@ enum PolygonMode : uint {
     point = 2,
 }
 
-enum AddressMode : wegpu.webgpu.AddressMode {
+enum AddressMode : webgpu.webgpu.AddressMode {
     /// TODO
-    clampToBorder = cast(wegpu.webgpu.AddressMode)(0x0000_0000 | 4),
+    clampToBorder = cast(webgpu.webgpu.AddressMode)(0x0000_0000 | 4),
 }
 
 /// TODO
@@ -514,16 +515,17 @@ enum SamplerBorderColor : uint {
     zero = 4,
 }
 
-enum TextureFormat : wegpu.webgpu.TextureFormat {
+enum TextureFormat : webgpu.webgpu.TextureFormat {
     /// YUV 4:2:0 chroma subsampled format (NV12). Plane 0 contains R8Unorm
     /// luminance (Y), Plane 1 contains Rg8Unorm chrominance (UV) at half width
     /// and half height. Requires @ref WGPUNativeFeature_TextureFormatNv12.
-    nV12 = cast(wegpu.webgpu.TextureFormat)(0x0003_0000 | 7),
+    nV12 = cast(webgpu.webgpu.TextureFormat)(0x0003_0000 | 7),
     /// YUV 4:2:0 with 10 bits used from 16-bit channels (P010). Plane 0
     /// contains R16Unorm luminance (Y), Plane 1 contains Rg16Unorm chrominance
     /// (UV) at half width and half height.
-    p010 = cast(wegpu.webgpu.TextureFormat)(0x0003_0000 | 8),
+    p010 = cast(webgpu.webgpu.TextureFormat)(0x0003_0000 | 8),
 }
+
 
 /// Bitflags selecting which graphics backends the @ref WGPUInstance should
 /// enable. Pass in the @c backends field of @ref WGPUInstanceExtras.
@@ -661,7 +663,7 @@ private extern(C) void wgpuGenerateReport(Instance.Handle, GlobalReport*) nothro
 
 /// TODO
 void setLogCallback(LogCallbackFunc callback, void* userdata) @trusted nothrow @nogc {
-    return wgpuSetLogCallback(callback, userdata);
+    wgpuSetLogCallback(callback, userdata);
 }
 private extern(C) Future wgpuSetLogCallback(LogCallbackFunc, void*) nothrow @nogc;
 
@@ -680,7 +682,7 @@ private extern(C) uint wgpuGetVersion() nothrow @nogc;
 
 /// TODO
 struct InstanceExtras {
-    ChainableStruct chain = { sType: SType.instanceExtras };
+    ChainedStruct chain = { sType: SType.instanceExtras };
     /// Which backends to enable. Zero (@ref WGPUInstanceBackend_All) enables
     /// all backends.
     InstanceBackend backends = InstanceBackend.init;
@@ -719,7 +721,7 @@ struct InstanceExtras {
 
 /// TODO
 struct DeviceExtras {
-    ChainableStruct chain = { sType: SType.deviceExtras };
+    ChainedStruct chain = { sType: SType.deviceExtras };
     /// File system path for API trace output. When set to a non-empty path,
     /// wgpu will record all API calls to the given directory, which can later
     /// be replayed for debugging. An empty/undefined string view disables
@@ -741,7 +743,7 @@ struct DeviceExtras {
 
 /// TODO
 struct NativeLimits {
-    ChainableStruct chain = { sType: SType.nativeLimits };
+    ChainedStruct chain = { sType: SType.nativeLimits };
     /// Maximum number of live non-sampler bindings. Default is 1,000,000. Only
     /// meaningful on D3D12. @b Warning: On integrated GPUs, large values can
     /// cause significant system RAM consumption.
@@ -767,7 +769,7 @@ struct ShaderDefine {
 
 /// TODO
 struct ShaderSourceGLSL {
-    ChainableStruct chain = { sType: SType.shaderSourceGLSL };
+    ChainedStruct chain = { sType: SType.shaderSourceGLSL };
     /// The shader stage this GLSL source targets.
     ShaderStage stage = ShaderStage.init;
     /// GLSL source code.
@@ -848,14 +850,14 @@ struct GlobalReport {
 
 /// TODO
 struct InstanceEnumerateAdapterOptions {
-    ChainableStruct* nextInChain;
+    ChainedStruct* nextInChain;
     /// TODO
     InstanceBackend backends = InstanceBackend.init;
 }
 
 /// TODO
 struct BindGroupEntryExtras {
-    ChainableStruct chain = { sType: SType.bindGroupEntryExtras };
+    ChainedStruct chain = { sType: SType.bindGroupEntryExtras };
     /// TODO
     const(Buffer.Handle)* buffers = null;
     /// Array count for `buffers`
@@ -872,7 +874,7 @@ struct BindGroupEntryExtras {
 
 /// TODO
 struct BindGroupLayoutEntryExtras {
-    ChainableStruct chain = { sType: SType.bindGroupLayoutEntryExtras };
+    ChainedStruct chain = { sType: SType.bindGroupLayoutEntryExtras };
     /// Number of resources in this binding array slot. Corresponds to the array
     /// size in the shader (e.g. @c binding_array\u003cT, @c N\u003e).
     uint count = 0;
@@ -880,7 +882,7 @@ struct BindGroupLayoutEntryExtras {
 
 /// TODO
 struct QuerySetDescriptorExtras {
-    ChainableStruct chain = { sType: SType.querySetDescriptorExtras };
+    ChainedStruct chain = { sType: SType.querySetDescriptorExtras };
     /// TODO
     const(PipelineStatisticName)* pipelineStatistics = null;
     // Array count for `pipelineStatistics`
@@ -889,7 +891,7 @@ struct QuerySetDescriptorExtras {
 
 /// TODO
 struct SurfaceConfigurationExtras {
-    ChainableStruct chain = { sType: SType.surfaceConfigurationExtras };
+    ChainedStruct chain = { sType: SType.surfaceConfigurationExtras };
     /// Desired maximum number of frames in flight (i.e. the number of monitor
     /// refreshes between @c wgpuSurfaceGetCurrentTexture and presentation). -
     /// 1: Minimize latency (CPU and GPU cannot run in parallel). - 2: Balance
@@ -901,7 +903,7 @@ struct SurfaceConfigurationExtras {
 /// WinUI
 /// [`SwapChainPanel`](https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.swapchainpanel).
 struct SurfaceSourceSwapChainPanel {
-    ChainableStruct chain = { sType: SType.surfaceSourceSwapChainPanel };
+    ChainedStruct chain = { sType: SType.surfaceSourceSwapChainPanel };
     /// A pointer to the
     /// [`ISwapChainPanelNative`](https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/win32/microsoft.ui.xaml.media.dxinterop/nn-microsoft-ui-xaml-media-dxinterop-iswapchainpanelnative)
     /// interface of the SwapChainPanel that will be wrapped by the @ref
@@ -911,7 +913,7 @@ struct SurfaceSourceSwapChainPanel {
 
 /// TODO
 struct PrimitiveStateExtras {
-    ChainableStruct chain = { sType: SType.primitiveStateExtras };
+    ChainedStruct chain = { sType: SType.primitiveStateExtras };
     /// Controls the way each polygon is rasterized. See @ref WGPUPolygonMode.
     /// Defaults to @ref WGPUPolygonMode_Fill.
     PolygonMode polygonMode = cast(PolygonMode)0;
@@ -925,7 +927,7 @@ struct PrimitiveStateExtras {
 /// Chained in @ref WGPUSurfaceDescriptor to make a @ref WGPUSurface wrapping an
 /// OpenHarmony @c OHNativeWindow.
 struct SurfaceSourceOhosNativeWindow {
-    ChainableStruct chain = { sType: SType.surfaceSourceOhosNativeWindow };
+    ChainedStruct chain = { sType: SType.surfaceSourceOhosNativeWindow };
     /// A pointer to an OpenHarmony @c OHNativeWindow. Must not be NULL.
     void* window = null;
 }
@@ -966,11 +968,11 @@ struct DisplayHandle {
     DisplayHandleType type = cast(DisplayHandleType)0;
     union {
         /// TODO
-        XlibDisplayHandle xlib = XlibDisplayHandle.init;
+        XlibDisplayHandle xlib;
         /// TODO
-        XcbDisplayHandle xcb = XcbDisplayHandle.init;
+        XcbDisplayHandle xcb;
         /// TODO
-        WaylandDisplayHandle wayland = WaylandDisplayHandle.init;
+        WaylandDisplayHandle wayland;
     }
 }
 
@@ -990,7 +992,7 @@ struct ImageSubresourceRange {
 
 /// TODO
 struct SamplerDescriptorExtras {
-    ChainableStruct chain = { sType: SType.samplerDescriptorExtras };
+    ChainedStruct chain = { sType: SType.samplerDescriptorExtras };
     /// TODO
     SamplerBorderColor samplerBorderColor = SamplerBorderColor.undefined;
 }

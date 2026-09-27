@@ -211,11 +211,8 @@ template asUniq(R) if (isWebGPUObject!(__traits(parent, R))) {
     }
 }
 
-struct CallbackInfo(bool withMode, alias invokeDelegate, Args...) {
+struct CallbackInfo(bool withMode, Callback, Delegate, alias invokeDelegate) {
     import std.traits : Parameters;
-
-    alias Callback = extern (C) void function(Args);
-    alias Delegate = Parameters!invokeDelegate[0];
 
     ChainedStruct* nextInChain;
     static if (withMode) {
@@ -231,8 +228,4 @@ struct CallbackInfo(bool withMode, alias invokeDelegate, Args...) {
         userdata1 = dg.funcptr;
         userdata2 = dg.ptr;
     }
-}
-
-struct Future {
-    ulong id;
 }

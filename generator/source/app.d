@@ -421,7 +421,7 @@ void writeEnum(const ref API.Enum enum_, ushort enumPrefix, ref File outFile, co
     outFile.writeln(enum_.doc.toDocBlock);
 
     auto enumIdent = identifierMap["enum." ~ enum_.name];
-    auto extendedIdent = "wegpu.webgpu." ~ enumIdent;
+    auto extendedIdent = "webgpu.webgpu." ~ enumIdent;
     outFile.writeln("enum " ~ enumIdent ~ " : " ~ (enum_.extended ? extendedIdent : "uint") ~ " {");
     enforce(enum_.entries.length < 65536);
     foreach (i, ref entry; enum_.entries) {
@@ -520,10 +520,13 @@ void writeCallback(const ref API.Callback callback, ref File outFile, const scop
 
     outFile.writeln(callback.doc.toDocBlock);
 
-    outFile.writefln!"alias %s = CallbackInfo!(%(%r, %));"(
+    outFile.writefln!"alias %s = CallbackInfo!(%s, %sFunc, %sDelegate, invoke%s);"(
         callbackIdent,
-        only(callback.style == API.Callback.Style.callback_mode ? "true" : "false").chain(
-            cArgs));
+        callback.style == API.Callback.Style.callback_mode,
+        callbackIdent,
+        callbackIdent,
+        callbackIdent
+    );
 
     outFile.writeln("/// ditto");
 
@@ -543,14 +546,14 @@ void writeCallback(const ref API.Callback callback, ref File outFile, const scop
 
     outFile.writeln("/// ditto");
 
-    outFile.writefln!"private extern(C) void %s(%(%r, %)) {"(
-        "invoke" ~ callbackIdent,
+    outFile.writefln!"private extern(C) void invoke%s(%(%r, %)) {"(
+        callbackIdent,
         zip(cArgs, cArgNames)
             .map!"a[0] ~ ' ' ~ a[1]".chain(
                 only("void* userdata1", "void* userdata2"))
     );
     outFile.writeln("    " ~ callbackIdent ~ "Delegate dg;");
-    outFile.writeln("    dg.funcptr = userdata1;");
+    outFile.writeln("    dg.funcptr = cast(typeof(" ~ callbackIdent ~ "Delegate.funcptr))userdata1;");
     outFile.writeln("    dg.ptr = userdata2;");
 
     outFile.writefln!"    dg(%(%r, %));"(callArgs);
@@ -660,11 +663,11 @@ void writeStruct(const ref API.Struct struct_, const scope bool[string] enumHasU
     final switch (struct_.type) {
         case API.Struct.Type.extensible:
         case API.Struct.Type.extensible_callback_arg:
-            outFile.writeln("    ChainableStruct* nextInChain;");
+            outFile.writeln("    ChainedStruct* nextInChain;");
             break;
         case API.Struct.Type.extension:
             outFile.writeln(
-                "    ChainableStruct chain = { sType: SType." ~ struct_.name.snakeToCamel(false)
+                "    ChainedStruct chain = { sType: SType." ~ struct_.name.snakeToCamel(false)
                     .escapeIdentifier ~ " };");
             break;
         case API.Struct.Type.standalone:
