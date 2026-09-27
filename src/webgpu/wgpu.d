@@ -37,10 +37,9 @@ enum SType : wegpu.webgpu.SType {
     surfaceSourceOhosNativeWindow = cast(wegpu.webgpu.SType)(0x0003_0000 | 12),
 }
 
-/// FIXME: WGPUFeatureName =\u003e WGPUNativeFeature Native-only device
-/// features. These extend the standard @c WGPUFeatureName values and can be
-/// passed to @c WGPUDeviceDescriptor::requiredFeatures to request additional
-/// capabilities when creating a device.
+/// Native-only device features. These extend the standard @c WGPUFeatureName
+/// values and can be passed to @c WGPUDeviceDescriptor::requiredFeatures to
+/// request additional capabilities when creating a device.
 enum FeatureName : wegpu.webgpu.FeatureName {
     /// Allows the use of immediate data: small, fast blocks of memory that can
     /// be updated inside a render pass, compute pass, or render bundle encoder.
@@ -399,30 +398,28 @@ enum PipelineStatisticName : uint {
     computeShaderInvocations = 4,
 }
 
-/// FIXME: WGPUQueryType =\u003e WGPUNativeQueryType
 enum QueryType : wegpu.webgpu.QueryType {
     /// TODO
     pipelineStatistics = cast(wegpu.webgpu.QueryType)(0x0003_0000 | 0),
 }
 
-/// FIXME: V60 =\u003e V6_0, etc.
 enum DxcMaxShaderModel : uint {
     /// TODO
-    v60 = 0,
+    v6_0 = 0,
     /// Shader Model 6.1
-    v61 = 1,
+    v6_1 = 1,
     /// Shader Model 6.2
-    v62 = 2,
+    v6_2 = 2,
     /// Shader Model 6.3
-    v63 = 3,
+    v6_3 = 3,
     /// Shader Model 6.4
-    v64 = 4,
+    v6_4 = 4,
     /// Shader Model 6.5
-    v65 = 5,
+    v6_5 = 5,
     /// Shader Model 6.6
-    v66 = 6,
+    v6_6 = 6,
     /// Shader Model 6.7
-    v67 = 7,
+    v6_7 = 7,
 }
 
 /// TODO
@@ -498,7 +495,6 @@ enum PolygonMode : uint {
     point = 2,
 }
 
-/// FIXME: WGPUAddressMode =\u003e WGPUNativeAddressMode
 enum AddressMode : wegpu.webgpu.AddressMode {
     /// TODO
     clampToBorder = cast(wegpu.webgpu.AddressMode)(0x0000_0000 | 4),
@@ -518,7 +514,6 @@ enum SamplerBorderColor : uint {
     zero = 4,
 }
 
-/// FIXME: WGPUTextureFormat =\u003e WGPUNativeTextureFormat
 enum TextureFormat : wegpu.webgpu.TextureFormat {
     /// YUV 4:2:0 chroma subsampled format (NV12). Plane 0 contains R8Unorm
     /// luminance (Y), Plane 1 contains Rg8Unorm chrominance (UV) at half width
@@ -529,7 +524,6 @@ enum TextureFormat : wegpu.webgpu.TextureFormat {
     /// (UV) at half width and half height.
     p010 = cast(wegpu.webgpu.TextureFormat)(0x0003_0000 | 8),
 }
-
 
 /// Bitflags selecting which graphics backends the @ref WGPUInstance should
 /// enable. Pass in the @c backends field of @ref WGPUInstanceExtras.
@@ -655,20 +649,8 @@ struct ShaderRuntimeChecks {
 }
 
 
-/// FIXME: remove WGPULogCallbackInfo, remove userdata2, userdata1 =\u003e
-/// userdata
-alias LogCallback = CallbackInfo!(false, LogLevel, StringView);
-/// ditto
-alias LogCallbackDelegate = void delegate(LogLevel level, scope StringView message);
-/// ditto
-alias LogCallbackFunc = extern(C) void function(LogLevel level, StringView message, void* userdata1, void* userdata2);
-/// ditto
-private extern(C) void invokeLogCallback(LogLevel level, StringView message, void* userdata1, void* userdata2) {
-    LogCallbackDelegate dg;
-    dg.funcptr = userdata1;
-    dg.ptr = userdata2;
-    dg(level, message);
-}
+/// TODO
+alias LogCallbackFunc = extern(C) void function(LogLevel level, StringView message, void* userdata);
 
 
 /// TODO
@@ -677,12 +659,11 @@ void generateReport(scope Instance.Handle instance, scope ref GlobalReport repor
 }
 private extern(C) void wgpuGenerateReport(Instance.Handle, GlobalReport*) nothrow @nogc;
 
-/// FIXME: Signature needs to be: void wgpuSetLogCallback(WGPULogCallback
-/// callback, WGPU_NULLABLE void * userdata) Don't forget Proc pointer as well!
-Future setLogCallback(LogCallback callbackInfo) @trusted nothrow @nogc {
-    return wgpuSetLogCallback(callbackInfo);
+/// TODO
+void setLogCallback(LogCallbackFunc callback, void* userdata) @trusted nothrow @nogc {
+    return wgpuSetLogCallback(callback, userdata);
 }
-private extern(C) Future wgpuSetLogCallback(LogCallback) nothrow @nogc;
+private extern(C) Future wgpuSetLogCallback(LogCallbackFunc, void*) nothrow @nogc;
 
 /// TODO
 void setLogLevel(LogLevel level) @trusted nothrow @nogc {
@@ -791,8 +772,10 @@ struct ShaderSourceGLSL {
     ShaderStage stage = ShaderStage.init;
     /// GLSL source code.
     StringView code = StringView.init;
-    /// FIXME: count type size_t =\u003e uint32_t
-    const(ShaderDefine)[] defines = null;
+    /// Array count for `defines`
+    uint defineCount = 0;
+    /// TODO
+    const(ShaderDefine)* defines = null;
 }
 
 /// TODO
@@ -873,12 +856,18 @@ struct InstanceEnumerateAdapterOptions {
 /// TODO
 struct BindGroupEntryExtras {
     ChainableStruct chain = { sType: SType.bindGroupEntryExtras };
-    /// FIXME: swap count and pointer
-    const(Buffer.Handle)[] buffers = null;
-    /// FIXME: swap count and pointer
-    const(Sampler.Handle)[] samplers = null;
-    /// FIXME: swap count and pointer
-    const(TextureView.Handle)[] textureViews = null;
+    /// TODO
+    const(Buffer.Handle)* buffers = null;
+    /// Array count for `buffers`
+    size_t bufferCount = 0;
+    /// TODO
+    const(Sampler.Handle)* samplers = null;
+    /// Array count for `samplers`
+    size_t samplerCount = 0;
+    /// TODO
+    const(TextureView.Handle)* textureViews = null;
+    /// Array count for `textureViews`
+    size_t textureViewCount = 0;
 }
 
 /// TODO
@@ -892,8 +881,10 @@ struct BindGroupLayoutEntryExtras {
 /// TODO
 struct QuerySetDescriptorExtras {
     ChainableStruct chain = { sType: SType.querySetDescriptorExtras };
-    /// FIXME: swap count and pointer
-    const(PipelineStatisticName)[] pipelineStatistics = null;
+    /// TODO
+    const(PipelineStatisticName)* pipelineStatistics = null;
+    // Array count for `pipelineStatistics`
+    size_t pipelineStatsticCount = 0;
 }
 
 /// TODO
@@ -962,23 +953,25 @@ struct WaylandDisplayHandle {
     void* display = null;
 }
 
-/// FIXME: Needs `data` union Platform display connection, passed as a field of
-/// @ref WGPUInstanceExtras. This is a tagged union. Set @c type to indicate
-/// which variant is active, then populate the corresponding field in @c data.
-/// Zero-initialization yields @ref WGPUNativeDisplayHandleType_None, meaning no
-/// display handle is provided. Currently required by the GLES backend when
-/// presenting on Wayland. Other backends ignore this field. If the instance is
-/// created with a display handle, all surfaces created from it must use the
-/// same display connection.
+/// Platform display connection, passed as a field of @ref WGPUInstanceExtras.
+/// This is a tagged union. Set @c type to indicate which variant is active,
+/// then populate the corresponding field in @c data. Zero-initialization
+/// yields @ref WGPUNativeDisplayHandleType_None, meaning no display handle is
+/// provided. Currently required by the GLES backend when presenting on
+/// Wayland. Other backends ignore this field. If the instance is created with
+/// a display handle, all surfaces created from it must use the same display
+/// connection.
 struct DisplayHandle {
     /// TODO
     DisplayHandleType type = cast(DisplayHandleType)0;
-    /// TODO
-    XlibDisplayHandle xlib = XlibDisplayHandle.init;
-    /// TODO
-    XcbDisplayHandle xcb = XcbDisplayHandle.init;
-    /// TODO
-    WaylandDisplayHandle wayland = WaylandDisplayHandle.init;
+    union {
+        /// TODO
+        XlibDisplayHandle xlib = XlibDisplayHandle.init;
+        /// TODO
+        XcbDisplayHandle xcb = XcbDisplayHandle.init;
+        /// TODO
+        WaylandDisplayHandle wayland = WaylandDisplayHandle.init;
+    }
 }
 
 /// TODO
