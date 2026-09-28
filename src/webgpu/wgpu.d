@@ -683,6 +683,8 @@ private extern(C) uint wgpuGetVersion() nothrow @nogc;
 /// TODO
 struct InstanceExtras {
     ChainedStruct chain = { sType: SType.instanceExtras };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// Which backends to enable. Zero (@ref WGPUInstanceBackend_All) enables
     /// all backends.
     InstanceBackend backends = InstanceBackend.init;
@@ -722,6 +724,8 @@ struct InstanceExtras {
 /// TODO
 struct DeviceExtras {
     ChainedStruct chain = { sType: SType.deviceExtras };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// File system path for API trace output. When set to a non-empty path,
     /// wgpu will record all API calls to the given directory, which can later
     /// be replayed for debugging. An empty/undefined string view disables
@@ -744,6 +748,8 @@ struct DeviceExtras {
 /// TODO
 struct NativeLimits {
     ChainedStruct chain = { sType: SType.nativeLimits };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// Maximum number of live non-sampler bindings. Default is 1,000,000. Only
     /// meaningful on D3D12. @b Warning: On integrated GPUs, large values can
     /// cause significant system RAM consumption.
@@ -770,6 +776,8 @@ struct ShaderDefine {
 /// TODO
 struct ShaderSourceGLSL {
     ChainedStruct chain = { sType: SType.shaderSourceGLSL };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// The shader stage this GLSL source targets.
     ShaderStage stage = ShaderStage.init;
     /// GLSL source code.
@@ -858,6 +866,8 @@ struct InstanceEnumerateAdapterOptions {
 /// TODO
 struct BindGroupEntryExtras {
     ChainedStruct chain = { sType: SType.bindGroupEntryExtras };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// TODO
     const(Buffer.Handle)* buffers = null;
     /// Array count for `buffers`
@@ -875,6 +885,8 @@ struct BindGroupEntryExtras {
 /// TODO
 struct BindGroupLayoutEntryExtras {
     ChainedStruct chain = { sType: SType.bindGroupLayoutEntryExtras };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// Number of resources in this binding array slot. Corresponds to the array
     /// size in the shader (e.g. @c binding_array\u003cT, @c N\u003e).
     uint count = 0;
@@ -883,6 +895,8 @@ struct BindGroupLayoutEntryExtras {
 /// TODO
 struct QuerySetDescriptorExtras {
     ChainedStruct chain = { sType: SType.querySetDescriptorExtras };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// TODO
     const(PipelineStatisticName)* pipelineStatistics = null;
     // Array count for `pipelineStatistics`
@@ -892,6 +906,8 @@ struct QuerySetDescriptorExtras {
 /// TODO
 struct SurfaceConfigurationExtras {
     ChainedStruct chain = { sType: SType.surfaceConfigurationExtras };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// Desired maximum number of frames in flight (i.e. the number of monitor
     /// refreshes between @c wgpuSurfaceGetCurrentTexture and presentation). -
     /// 1: Minimize latency (CPU and GPU cannot run in parallel). - 2: Balance
@@ -904,6 +920,8 @@ struct SurfaceConfigurationExtras {
 /// [`SwapChainPanel`](https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.swapchainpanel).
 struct SurfaceSourceSwapChainPanel {
     ChainedStruct chain = { sType: SType.surfaceSourceSwapChainPanel };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// A pointer to the
     /// [`ISwapChainPanelNative`](https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/win32/microsoft.ui.xaml.media.dxinterop/nn-microsoft-ui-xaml-media-dxinterop-iswapchainpanelnative)
     /// interface of the SwapChainPanel that will be wrapped by the @ref
@@ -914,6 +932,8 @@ struct SurfaceSourceSwapChainPanel {
 /// TODO
 struct PrimitiveStateExtras {
     ChainedStruct chain = { sType: SType.primitiveStateExtras };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// Controls the way each polygon is rasterized. See @ref WGPUPolygonMode.
     /// Defaults to @ref WGPUPolygonMode_Fill.
     PolygonMode polygonMode = cast(PolygonMode)0;
@@ -928,6 +948,8 @@ struct PrimitiveStateExtras {
 /// OpenHarmony @c OHNativeWindow.
 struct SurfaceSourceOhosNativeWindow {
     ChainedStruct chain = { sType: SType.surfaceSourceOhosNativeWindow };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// A pointer to an OpenHarmony @c OHNativeWindow. Must not be NULL.
     void* window = null;
 }
@@ -993,6 +1015,8 @@ struct ImageSubresourceRange {
 /// TODO
 struct SamplerDescriptorExtras {
     ChainedStruct chain = { sType: SType.samplerDescriptorExtras };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// TODO
     SamplerBorderColor samplerBorderColor = SamplerBorderColor.undefined;
 }

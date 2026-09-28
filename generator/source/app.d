@@ -682,6 +682,9 @@ void writeStruct(const ref API.Struct struct_, const scope bool[string] enumHasU
             outFile.writeln(
                 "    ChainedStruct chain = { sType: SType." ~ struct_.name.snakeToCamel(false)
                     .escapeIdentifier ~ " };");
+                    
+            outFile.writeln("    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;");
+            outFile.writeln("    alias chainPtr this;");
             break;
         case API.Struct.Type.standalone:
             break;

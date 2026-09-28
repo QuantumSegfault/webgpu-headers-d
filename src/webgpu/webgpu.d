@@ -1636,6 +1636,8 @@ struct CommandEncoderDescriptor {
 /// behave as defined in the WebGPU spec.
 struct CompatibilityModeLimits {
     ChainedStruct chain = { sType: SType.compatibilityModeLimits };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// TODO
     uint maxStorageBuffersInVertexStage = LIMIT_U32_UNDEFINED;
     /// TODO
@@ -1776,6 +1778,8 @@ struct Extent3D {
 /// WGPUExternalTextureBindingLayout in the @ref WGPUBindGroupLayout.
 struct ExternalTextureBindingEntry {
     ChainedStruct chain = { sType: SType.externalTextureBindingEntry };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// TODO
     ExternalTexture.Handle externalTexture = ExternalTexture.Handle.init;
 }
@@ -1784,6 +1788,8 @@ struct ExternalTextureBindingEntry {
 /// entries in an @ref WGPUBindGroup will contain an @ref WGPUExternalTexture.
 struct ExternalTextureBindingLayout {
     ChainedStruct chain = { sType: SType.externalTextureBindingLayout };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
 }
 
 /// TODO
@@ -2065,6 +2071,8 @@ struct RenderPassDescriptor {
 /// TODO
 struct RenderPassMaxDrawCount {
     ChainedStruct chain = { sType: SType.renderPassMaxDrawCount };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// TODO
     ulong maxDrawCount = 50000000;
 }
@@ -2115,6 +2123,8 @@ struct RequestAdapterOptions {
 /// interop (i.e. Wasm).
 struct RequestAdapterWebXROptions {
     ChainedStruct chain = { sType: SType.requestAdapterWebXROptions };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// Sets the `xrCompatible` option in the JS API.
     Bool xrCompatible = false;
 }
@@ -2170,6 +2180,8 @@ struct ShaderModuleDescriptor {
 /// TODO
 struct ShaderSourceSPIRV {
     ChainedStruct chain = { sType: SType.shaderSourceSPIRV };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// TODO
     uint codeSize = 0;
     /// TODO
@@ -2179,6 +2191,8 @@ struct ShaderSourceSPIRV {
 /// TODO
 struct ShaderSourceWGSL {
     ChainedStruct chain = { sType: SType.shaderSourceWGSL };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// TODO
     StringView code = StringView.init;
 }
@@ -2252,6 +2266,8 @@ struct SurfaceCapabilities {
 /// Extension of @ref WGPUSurfaceConfiguration for color spaces and HDR.
 struct SurfaceColorManagement {
     ChainedStruct chain = { sType: SType.surfaceColorManagement };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// TODO
     PredefinedColorSpace colorSpace = cast(PredefinedColorSpace)0;
     /// TODO
@@ -2303,6 +2319,8 @@ struct SurfaceDescriptor {
 /// [`ANativeWindow`](https://developer.android.com/ndk/reference/group/a-native-window).
 struct SurfaceSourceAndroidNativeWindow {
     ChainedStruct chain = { sType: SType.surfaceSourceAndroidNativeWindow };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// The pointer to the
     /// [`ANativeWindow`](https://developer.android.com/ndk/reference/group/a-native-window)
     /// that will be wrapped by the @ref WGPUSurface.
@@ -2313,6 +2331,8 @@ struct SurfaceSourceAndroidNativeWindow {
 /// [`CAMetalLayer`](https://developer.apple.com/documentation/quartzcore/cametallayer?language=objc).
 struct SurfaceSourceMetalLayer {
     ChainedStruct chain = { sType: SType.surfaceSourceMetalLayer };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// The pointer to the
     /// [`CAMetalLayer`](https://developer.apple.com/documentation/quartzcore/cametallayer?language=objc)
     /// that will be wrapped by the @ref WGPUSurface.
@@ -2324,6 +2344,8 @@ struct SurfaceSourceMetalLayer {
 /// [`wl_surface`](https://wayland.freedesktop.org/docs/html/apa.html#protocol-spec-wl_surface).
 struct SurfaceSourceWaylandSurface {
     ChainedStruct chain = { sType: SType.surfaceSourceWaylandSurface };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// A
     /// [`wl_display`](https://wayland.freedesktop.org/docs/html/apa.html#protocol-spec-wl_display)
     /// for this Wayland instance.
@@ -2339,6 +2361,8 @@ struct SurfaceSourceWaylandSurface {
 /// [`HWND`](https://learn.microsoft.com/en-us/windows/apps/develop/ui-input/retrieve-hwnd).
 struct SurfaceSourceWindowsHWND {
     ChainedStruct chain = { sType: SType.surfaceSourceWindowsHWND };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// The
     /// [`HINSTANCE`](https://learn.microsoft.com/en-us/windows/win32/learnwin32/winmain--the-application-entry-point)
     /// for this application. Most commonly `GetModuleHandle(nullptr)`.
@@ -2353,6 +2377,8 @@ struct SurfaceSourceWindowsHWND {
 /// an [XCB](https://xcb.freedesktop.org/) `xcb_window_t`.
 struct SurfaceSourceXCBWindow {
     ChainedStruct chain = { sType: SType.surfaceSourceXCBWindow };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// The `xcb_connection_t` for the connection to the X server.
     void* connection = null;
     /// The `xcb_window_t` for the window that will be wrapped by the @ref
@@ -2365,6 +2391,8 @@ struct SurfaceSourceXCBWindow {
 /// `Window`.
 struct SurfaceSourceXlibWindow {
     ChainedStruct chain = { sType: SType.surfaceSourceXlibWindow };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// A pointer to the
     /// [`Display`](https://www.x.org/releases/current/doc/libX11/libX11/libX11.html#Opening_the_Display)
     /// connected to the X server.
@@ -2439,6 +2467,8 @@ struct TextureBindingLayout {
 /// feature).
 struct TextureBindingViewDimension {
     ChainedStruct chain = { sType: SType.textureBindingViewDimension };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// TODO
     TextureViewDimension textureBindingViewDimension = TextureViewDimension.undefined;
 }
@@ -2469,6 +2499,8 @@ struct TextureComponentSwizzle {
 /// TODO
 struct TextureComponentSwizzleDescriptor {
     ChainedStruct chain = { sType: SType.textureComponentSwizzleDescriptor };
+    ChainedStruct* chainPtr() @trusted @nogc nothrow => &chain;
+    alias chainPtr this;
     /// TODO
     TextureComponentSwizzle swizzle = TextureComponentSwizzle.init;
 }
