@@ -306,7 +306,9 @@ enum TypeLocation {
     dParam,
     cParam,
     dRet,
-    cRet
+    cRet,
+    dCbParam,
+    cCbParam
 }
 
 string toDType(string type, TypeLocation loc, string pointer, const scope string[string] identifierMap)
@@ -317,8 +319,9 @@ string toDType(string type, TypeLocation loc, string pointer, const scope string
         enforce(loc != TypeLocation.dRet && loc != TypeLocation.cRet);
         enforce(pointer == "mutable" || pointer == "immutable");
         auto innerType = toDType(type[11 .. $ - 6], TypeLocation.field, null, identifierMap);
-        return (loc == TypeLocation.dParam ? "scope " : "") ~ (pointer == "immutable" ? (
-                "const(" ~ innerType ~ ")") : innerType) ~ (loc == TypeLocation.cParam ? "*" : "[]");
+        return ((loc == TypeLocation.dParam || loc == TypeLocation.dCbParam) ? "scope " : "") ~ (pointer == "immutable" ? (
+                "const(" ~ innerType ~ ")") : innerType) ~ ((loc == TypeLocation.cParam || loc == TypeLocation
+                .cCbParam) ? "*" : "[]");
     }
 
     string result;
@@ -326,7 +329,8 @@ string toDType(string type, TypeLocation loc, string pointer, const scope string
         case "out_string":
         case "string_with_default_empty":
         case "nullable_string":
-            result = loc == TypeLocation.dParam ? "scope StringView" : "StringView";
+            result = (loc == TypeLocation.dParam || loc == TypeLocation.dCbParam) ? "scope StringView"
+                : "StringView";
             enforce(loc != TypeLocation.dRet && loc != TypeLocation.cRet);
             break;
         case "uint8":
@@ -366,8 +370,9 @@ string toDType(string type, TypeLocation loc, string pointer, const scope string
     }
 
     if (type.startsWith("object.")) {
-        result = ((loc == TypeLocation.dParam && !pointer) ? "scope " : "") ~ identifierMap[type] ~ (
-            loc == TypeLocation.dRet ? ".Uniq" : ".Handle");
+        result = (((loc == TypeLocation.dParam || loc == TypeLocation.dCbParam) && !pointer) ? "scope "
+                : "") ~ identifierMap[type] ~ (
+            (loc == TypeLocation.dRet || loc == TypeLocation.dCbParam || (loc == TypeLocation.cCbParam && pointer)) ? ".Uniq" : ".Handle");
     }
 
     if (!result) {
@@ -376,7 +381,7 @@ string toDType(string type, TypeLocation loc, string pointer, const scope string
 
     if (result) {
         if (pointer) {
-            if (loc == TypeLocation.dParam && result != "void") {
+            if ((loc == TypeLocation.dParam || loc == TypeLocation.dCbParam) && result != "void") {
                 if (pointer == "immutable")
                     return "scope ref const " ~ result;
                 else
@@ -500,21 +505,25 @@ void writeCallback(const ref API.Callback callback, ref File outFile, const scop
 
         string argName = arg.name.snakeToCamel(false).escapeIdentifier;
 
-        dArgs ~= arg.type.toDType(TypeLocation.dParam, arg.pointer, identifierMap) ~ " " ~ argName;
+        dArgs ~= arg.type.toDType(TypeLocation.dCbParam, arg.pointer, identifierMap) ~ " " ~ argName;
 
         if (arg.type.startsWith("array\\u003c")) {
             enforce(arg.pointer == "mutable" || arg.pointer == "immutable");
 
             cArgs ~= "size_t";
             cArgNames ~= argName ~ "Count";
-            cArgs ~= arg.type.toDType(TypeLocation.cParam, arg.pointer, identifierMap);
+            cArgs ~= arg.type.toDType(TypeLocation.cCbParam, arg.pointer, identifierMap);
             cArgNames ~= argName ~ "Ptr";
 
             callArgs ~= argName ~ "Ptr[0.." ~ argName ~ "Count]";
         } else {
-            cArgs ~= arg.type.toDType(TypeLocation.cParam, arg.pointer, identifierMap);
+            cArgs ~= arg.type.toDType(TypeLocation.cCbParam, arg.pointer, identifierMap);
             cArgNames ~= argName;
-            callArgs ~= (arg.pointer ? "*" : "") ~ argName;
+            if (arg.type.startsWith("object.") && !arg.pointer) {
+                callArgs ~= identifierMap[arg.type] ~ ".Uniq(" ~ argName ~ ")";
+            } else {
+                callArgs ~= (arg.pointer ? "*" : "") ~ argName;
+            }
         }
     }
 
@@ -537,26 +546,30 @@ void writeCallback(const ref API.Callback callback, ref File outFile, const scop
 
     outFile.writeln("/// ditto");
 
-    outFile.writefln!"alias %sFunc = extern(C) void function(%(%r, %));"(
+    outFile.writefln!"alias %sFunc = void function(%(%r, %));"(
         callbackIdent,
-        zip(cArgs, cArgNames)
-            .map!"a[0] ~ ' ' ~ a[1]".chain(
-                only("void* userdata1", "void* userdata2"))
+        dArgs.chain(
+            only("void* userdata"))
     );
 
     outFile.writeln("/// ditto");
 
-    outFile.writefln!"private extern(C) void invoke%s(%(%r, %)) {"(
+    outFile.writefln!"private extern(C) void invoke%s(bool isDg)(%(%r, %)) {"(
         callbackIdent,
         zip(cArgs, cArgNames)
             .map!"a[0] ~ ' ' ~ a[1]".chain(
                 only("void* userdata1", "void* userdata2"))
     );
-    outFile.writeln("    " ~ callbackIdent ~ "Delegate dg;");
-    outFile.writeln("    dg.funcptr = cast(typeof(" ~ callbackIdent ~ "Delegate.funcptr))userdata1;");
-    outFile.writeln("    dg.ptr = userdata2;");
-
-    outFile.writefln!"    dg(%(%r, %));"(callArgs);
+    outFile.writeln("    static if (isDg) {");
+    outFile.writeln("        " ~ callbackIdent ~ "Delegate dg;");
+    outFile.writeln(
+        "        dg.funcptr = cast(typeof(" ~ callbackIdent ~ "Delegate.funcptr))userdata1;");
+    outFile.writeln("        dg.ptr = userdata2;");
+    outFile.writefln!"        dg(%(%r, %));"(callArgs);
+    outFile.writeln("    } else {");
+    outFile.writeln("        " ~ callbackIdent ~ "Func fn = cast(" ~ callbackIdent ~ "Func)userdata1;");
+    outFile.writefln!"        fn(%(%r, %));"(callArgs.chain(only("userdata2")));
+    outFile.writeln("    }");
     outFile.writeln("}");
     outFile.writeln("");
 }

@@ -211,20 +211,27 @@ template asUniq(R) if (isWebGPUObject!(__traits(parent, R))) {
     }
 }
 
-struct CallbackInfo(bool withMode, Callback, Delegate, alias invokeDelegate) {
+struct CallbackInfo(bool withMode, Func, Delegate, alias invokeCallback) {
     import std.traits : Parameters;
 
     ChainedStruct* nextInChain;
     static if (withMode) {
         CallbackMode mode = cast(CallbackMode)0;
     }
-    Callback callback;
-    void* userdata1;
-    void* userdata2;
+    private typeof(&(invokeCallback!false)) callback;
+    private void* userdata1;
+    private void* userdata2;
+
+    void setFunc(Func fn, void* userdata) @trusted @nogc nothrow
+    {
+        callback = &(invokeCallback!false);
+        userdata1 = fn;
+        userdata2 = userdata;
+    }
 
     void setDelegate(Delegate dg) @trusted @nogc nothrow
     {
-        callback = &invokeDelegate;
+        callback = &(invokeCallback!true);
         userdata1 = dg.funcptr;
         userdata2 = dg.ptr;
     }
