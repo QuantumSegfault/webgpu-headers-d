@@ -74,7 +74,7 @@ struct StringView {
     size_t toHash() const => this[].hashOf;
 }
 
-auto asStringView(T)(const(char)[] slice) => StringView(slice);
+auto asStringView(const(char)[] slice) => StringView(slice);
 
 package enum ZeroInit(T) = () {
     static if (__traits(isZeroInit, T)) {
@@ -111,7 +111,7 @@ struct ChainedStruct {
 template WebGPUObject(string ident) {
     package struct Impl;
 
-    package alias Handle = Impl*;
+    alias Handle = Impl*;
 
     extern (C) nothrow @nogc {
         pragma(mangle, "wgpu" ~ ident ~ "AddRef")
@@ -123,9 +123,10 @@ template WebGPUObject(string ident) {
 
     struct Uniq {
     nothrow @nogc:
-        package Handle handle;
+        Handle handle;
 
-        package this(Handle handle)
+        /+package +/
+        this(Handle handle)
         {
             this.handle = handle;
         }
@@ -145,6 +146,13 @@ template WebGPUObject(string ident) {
             if (handle)
                 addRef(handle);
             return Uniq(handle);
+        }
+
+        void clear() @trusted
+        {
+            if (handle)
+                release(handle);
+            handle = null;
         }
 
         ~this() scope @trusted
@@ -172,6 +180,13 @@ template WebGPUObject(string ident) {
 
         Handle getHandle() return @safe => handle;
         alias getHandle this;
+
+        void clear() @trusted
+        {
+            if (handle)
+                release(handle);
+            handle = null;
+        }
 
         ~this() scope @trusted
         {
