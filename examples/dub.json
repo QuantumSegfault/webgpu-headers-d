@@ -1,0 +1,26 @@
+{
+    "name": "examples",
+    "description": "Various examples of the WebGPU API with these bindings.",
+    "authors": ["Demetrius Kanios"],
+    "license": "MIT",
+    "targetType": "executable",
+    "sourcePaths": ["source"],
+    "dependencies": {
+        "bindbc-sdl": "~>2.4.2",
+        "webgpu-headers-d": {
+            "path": ".."
+        }
+    },
+    "subConfigurations": {
+        "bindbc-sdl": "static"
+    },
+    "lflags": [
+        "-lSDL3",
+        "libwgpu_native.a", // wgpu-native 29; in source directory; FIXME
+        "-framework",
+        "Metal",
+        "-framework",
+        "Cocoa"
+    ],
+    "versions": ["SDL_3_0"]
+}
